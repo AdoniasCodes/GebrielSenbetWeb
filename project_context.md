@@ -205,3 +205,40 @@ Next steps:
 - Configure cPanel environment variable APP_DEPLOY_TOKEN to match the GitHub secret and ensure document root is public/.
 - (Optional) Configure Remote MySQL in cPanel to allow local IP; update local APP_DB_HOST to cPanel MySQL hostname and use cPanel DB user/pass for direct dev against prod DB (or create a staging DB).
 - Trigger GitHub Actions by pushing to main; verify FTP upload and migration run succeed; monitor response from /api/admin/deploy/migrate.php.
+---
+
+Date: 2026-01-26T06:48:15+03:00
+Task performed: Added .env.example for environment variable documentation; confirmed CI/CD workflow and deployment process; planned next feature sequence per production pipeline.
+Files affected:
+- .env.example (new)
+Database changes: None.
+Reason for change: Provide clear reference for env configuration and lock-in of day-to-day workflow; prep for next feature sprint under stable CI/CD.
+Next steps:
+- Await selection of next feature to build (Grades recommended first).
+- On selection, implement endpoints, UI, and any migrations; update project_context.md accordingly and rely on CI/CD for deployment.
+---
+
+Date: 2026-01-26T06:53:41+03:00
+Task performed: Implemented Grades feature end-to-end (migrations, RBAC, APIs, UI).
+Files affected:
+- db/migrations/003_grades_unique_index.sql (new)
+- api/teacher/_guard.php (new)
+- api/teacher/assignments/list.php (new)
+- api/teacher/grades/index.php (new)
+- public/api/teacher/assignments/list.php (new wrapper)
+- public/api/teacher/grades/index.php (new wrapper)
+- api/terms/index.php (new)
+- public/api/terms/index.php (new wrapper)
+- api/teacher/classes/students.php (new)
+- public/api/teacher/classes/students.php (new wrapper)
+- api/student/grades/index.php (new)
+- public/api/student/grades/index.php (new wrapper)
+- public/teacher/grades.php (new UI page)
+- public/student/grades.php (new UI page)
+Database changes: Added unique index and lookup index for grades via 003_grades_unique_index.sql.
+Reason for change: Deliver teacher grading capability (create/update) and student read-only grades view with proper RBAC and CSRF protection.
+Next steps:
+- Proceed to Student Promotions (transactional archive of old assignment, create new assignment).
+- Then Payments endpoints + admin UI (with bulk unpaid queries).
+- Then Blog/attachments, and Events & Notifications.
+Current system status: Grades feature implemented; ready to deploy via CI/CD (migration will apply automatically).
