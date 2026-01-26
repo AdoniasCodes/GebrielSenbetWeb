@@ -1,0 +1,22 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# VCS / CI
+/.git/
+
+# Node (not used, but safe to exclude)
+node_modules/
+
+# Logs
+*.log
+
+# App-specific temp/uploads (configure actual upload dir later)
+/tmp/
+/uploads/
+
+# Credentials (we are using config.php; keep sensitive info out of commits)
+.env
+.env.*

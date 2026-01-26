@@ -1,0 +1,8 @@
+# Root .htaccess (not under public)
+# Prevent serving files if the web server docroot is accidentally set to the repository root.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>

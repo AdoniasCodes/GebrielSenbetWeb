@@ -1,0 +1,21 @@
+# public/.htaccess
+# Ensure this directory is the document root on cPanel
+
+# Disable directory listing
+Options -Indexes
+
+# Security headers
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Referrer-Policy "no-referrer-when-downgrade"
+  Header set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+</IfModule>
+
+# Deny direct access to hidden files
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Clean URLs for public API wrapper if desired (optional, keeping explicit .php for clarity)
