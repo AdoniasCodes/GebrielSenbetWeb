@@ -242,3 +242,15 @@ Next steps:
 - Then Payments endpoints + admin UI (with bulk unpaid queries).
 - Then Blog/attachments, and Events & Notifications.
 Current system status: Grades feature implemented; ready to deploy via CI/CD (migration will apply automatically).
+---
+
+Date: 2026-02-04T13:43:54+03:00
+Task performed: Implemented Admin CRUD API and UI for Academic Terms; added navigation link; enforced validation rules (date ordering, no overlapping terms within academic_year); CSRF and RBAC applied.
+Files affected:
+- api/admin/terms/index.php (new)
+- public/api/admin/terms/index.php (new wrapper)
+- public/admin/terms.php (new UI page)
+- public/admin/index.php (updated navigation)
+Database changes: None (academic_terms table already exists; constraints enforced at application level).
+Reason for change: Grades, promotions, and payments depend on term definitions; admins need to manage terms before those workflows.
+Next recommended feature: Student Promotions (transactional), then Payments (admin UI + bulk unpaid queries).

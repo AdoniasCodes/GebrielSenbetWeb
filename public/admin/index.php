@@ -39,6 +39,7 @@ $csrf = Csrf::getToken();
 <main>
   <nav>
     <a href="/">Home</a>
+    <a href="/admin/terms.php" style="margin-left:12px;">Academic Terms</a>
   </nav>
   <p>Welcome, Admin.</p>
   <button id="logoutBtn">Logout</button>
