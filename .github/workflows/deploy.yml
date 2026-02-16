@@ -20,16 +20,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
-          passive: true
-          timeout: 60000
           local-dir: ./
-          server-dir: ${{ secrets.FTP_ROOT_DIR }}
-          # Exclude local-only and VCS files
+          server-dir: /
           exclude: |
             **/.git*
             **/.github/**
             **/.DS_Store
             node_modules/**
+
 
       - name: Trigger DB migrations on server
         env:
