@@ -12,36 +12,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test FTP connectivity
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp curl
-
-          echo "=== FTP_USERNAME: $FTP_USERNAME ==="
-          echo "=== FTP_SERVER: $FTP_SERVER ==="
-
-          # Raw FTP test to see exact server responses
-          curl -v --ftp-pasv --connect-timeout 15 \
-            "ftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
-            2>&1 | head -40 || true
-
-          echo ""
-          echo "=== Trying FTPS (explicit TLS) ==="
-          curl -v --ftp-pasv --ftp-ssl --connect-timeout 15 -k \
-            "ftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
-            2>&1 | head -40 || true
-
-          echo ""
-          echo "=== Trying port 2222 (SFTP) ==="
-          curl -v --connect-timeout 10 \
-            "sftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
-            2>&1 | head -20 || true
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: ./
+          server-dir: ${{ secrets.FTP_ROOT_DIR }}
+          # Exclude local-only and VCS files
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/.DS_Store
+            node_modules/**
 
       - name: Trigger DB migrations on server
-        if: false
         env:
           DEPLOY_TOKEN: ${{ secrets.APP_DEPLOY_TOKEN }}
           BASE_URL: ${{ secrets.APP_BASE_URL }}
