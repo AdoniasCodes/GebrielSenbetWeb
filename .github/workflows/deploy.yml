@@ -12,22 +12,62 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          local-dir: ./
-          server-dir: /
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/.DS_Store
-            node_modules/**
+      - name: FTP Deploy via lftp
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_ROOT_DIR: ${{ secrets.FTP_ROOT_DIR }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 
+          echo "=== Testing FTP connection ==="
+          echo "Server: $FTP_SERVER"
+          echo "Username: $FTP_USERNAME"
+          echo "Target dir: $FTP_ROOT_DIR"
+
+          # Try plain FTP first, fallback to FTPS
+          lftp -e "
+            set ftp:ssl-allow yes;
+            set ftp:ssl-force no;
+            set ftp:ssl-protect-data yes;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode yes;
+            set net:timeout 30;
+            set net:max-retries 3;
+            debug 3;
+            open -u ${FTP_USERNAME},${FTP_PASSWORD} ftp://${FTP_SERVER};
+            pwd;
+            ls;
+            bye;
+          " 2>&1 | head -50
+
+          echo "=== Connection test done ==="
+
+      - name: Deploy files
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_ROOT_DIR: ${{ secrets.FTP_ROOT_DIR }}
+        run: |
+          lftp -e "
+            set ftp:ssl-allow yes;
+            set ftp:ssl-force no;
+            set ftp:ssl-protect-data yes;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode yes;
+            set net:timeout 60;
+            set net:max-retries 3;
+            open -u ${FTP_USERNAME},${FTP_PASSWORD} ftp://${FTP_SERVER};
+            mirror --reverse --delete --verbose \
+              --exclude-glob .git* \
+              --exclude-glob .github/ \
+              --exclude-glob .DS_Store \
+              --exclude-glob node_modules/ \
+              ./ ${FTP_ROOT_DIR};
+            bye;
+          "
 
       - name: Trigger DB migrations on server
         env:
