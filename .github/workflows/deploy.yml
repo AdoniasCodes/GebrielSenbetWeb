@@ -12,64 +12,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: FTP Deploy via lftp
+      - name: Test FTP connectivity
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_ROOT_DIR: ${{ secrets.FTP_ROOT_DIR }}
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp curl
 
-          echo "=== Testing FTP connection ==="
-          echo "Server: $FTP_SERVER"
-          echo "Username: $FTP_USERNAME"
-          echo "Target dir: $FTP_ROOT_DIR"
+          echo "=== FTP_USERNAME: $FTP_USERNAME ==="
+          echo "=== FTP_SERVER: $FTP_SERVER ==="
 
-          # Try plain FTP first, fallback to FTPS
-          lftp -e "
-            set ftp:ssl-allow yes;
-            set ftp:ssl-force no;
-            set ftp:ssl-protect-data yes;
-            set ssl:verify-certificate no;
-            set ftp:passive-mode yes;
-            set net:timeout 30;
-            set net:max-retries 3;
-            debug 3;
-            open -u ${FTP_USERNAME},${FTP_PASSWORD} ftp://${FTP_SERVER};
-            pwd;
-            ls;
-            bye;
-          " 2>&1 | head -50
+          # Raw FTP test to see exact server responses
+          curl -v --ftp-pasv --connect-timeout 15 \
+            "ftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
+            2>&1 | head -40 || true
 
-          echo "=== Connection test done ==="
+          echo ""
+          echo "=== Trying FTPS (explicit TLS) ==="
+          curl -v --ftp-pasv --ftp-ssl --connect-timeout 15 -k \
+            "ftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
+            2>&1 | head -40 || true
 
-      - name: Deploy files
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          FTP_ROOT_DIR: ${{ secrets.FTP_ROOT_DIR }}
-        run: |
-          lftp -e "
-            set ftp:ssl-allow yes;
-            set ftp:ssl-force no;
-            set ftp:ssl-protect-data yes;
-            set ssl:verify-certificate no;
-            set ftp:passive-mode yes;
-            set net:timeout 60;
-            set net:max-retries 3;
-            open -u ${FTP_USERNAME},${FTP_PASSWORD} ftp://${FTP_SERVER};
-            mirror --reverse --delete --verbose \
-              --exclude-glob .git* \
-              --exclude-glob .github/ \
-              --exclude-glob .DS_Store \
-              --exclude-glob node_modules/ \
-              ./ ${FTP_ROOT_DIR};
-            bye;
-          "
+          echo ""
+          echo "=== Trying port 2222 (SFTP) ==="
+          curl -v --connect-timeout 10 \
+            "sftp://${FTP_USERNAME}:${FTP_PASSWORD}@${FTP_SERVER}/" \
+            2>&1 | head -20 || true
 
       - name: Trigger DB migrations on server
+        if: false
         env:
           DEPLOY_TOKEN: ${{ secrets.APP_DEPLOY_TOKEN }}
           BASE_URL: ${{ secrets.APP_BASE_URL }}
