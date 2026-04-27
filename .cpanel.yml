@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - /usr/bin/rsync -av --delete --exclude=.git/ --exclude=.github/ --exclude=.cpanel.yml --exclude=.DS_Store --exclude=node_modules/ --exclude=.well-known/ --exclude=.user.ini --exclude=.ftpquota /home/eagleerq/repos/GebrielSenbetWeb/ /home/eagleerq/gebriel.eagleeyebgp.com/ > /home/eagleerq/cpanel-deploy.log 2>&1
-    - /bin/echo "Deploy completed at $(/bin/date)" >> /home/eagleerq/cpanel-deploy.log
+    - /bin/sh -c 'RSYNC=""; for p in /bin/rsync /usr/bin/rsync /usr/local/bin/rsync; do [ -x "$p" ] && RSYNC="$p" && break; done; [ -z "$RSYNC" ] && RSYNC=$(command -v rsync 2>/dev/null); if [ -z "$RSYNC" ]; then echo "rsync not found"; exit 1; fi; echo "Using $RSYNC"; "$RSYNC" -av --delete --exclude=.git/ --exclude=.github/ --exclude=.cpanel.yml --exclude=.DS_Store --exclude=node_modules/ --exclude=.well-known/ --exclude=.user.ini --exclude=.ftpquota /home/eagleerq/repos/GebrielSenbetWeb/ /home/eagleerq/gebriel.eagleeyebgp.com/' > /home/eagleerq/cpanel-deploy.log 2>&1
+    - /bin/echo "Deploy finished at $(/bin/date)" >> /home/eagleerq/cpanel-deploy.log
