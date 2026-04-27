@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/eagleerq/gebriel.eagleeyebgp.com/
-    - /usr/bin/rsync -av --delete --exclude=.git/ --exclude=.github/ --exclude=.cpanel.yml --exclude=.DS_Store --exclude=node_modules/ --exclude=.well-known/ --exclude=.user.ini --exclude=.ftpquota ./ $DEPLOYPATH
+    - /usr/bin/rsync -av --delete --exclude=.git/ --exclude=.github/ --exclude=.cpanel.yml --exclude=.DS_Store --exclude=node_modules/ --exclude=.well-known/ --exclude=.user.ini --exclude=.ftpquota /home/eagleerq/repos/GebrielSenbetWeb/ /home/eagleerq/gebriel.eagleeyebgp.com/ > /home/eagleerq/cpanel-deploy.log 2>&1
+    - /bin/echo "Deploy completed at $(/bin/date)" >> /home/eagleerq/cpanel-deploy.log
