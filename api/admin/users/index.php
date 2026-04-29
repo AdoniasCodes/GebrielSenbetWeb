@@ -88,6 +88,7 @@ if ($method === 'POST') {
         }
 
         $pdo->commit();
+        \App\Audit::log('user.create', 'user', $userId, ['role' => $roleName, 'email' => $email]);
         Response::json(['message' => 'User created', 'user_id' => $userId, 'generated_password' => $password], 201);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
@@ -157,6 +158,7 @@ if ($method === 'PUT') {
         }
 
         $pdo->commit();
+        \App\Audit::log('user.update', 'user', $userId, ['role' => $user['role_name']]);
         Response::json(['message' => 'User updated']);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
@@ -188,6 +190,7 @@ if ($method === 'DELETE') {
         }
 
         $pdo->commit();
+        \App\Audit::log('user.archive', 'user', $userId, ['role' => $u['role_name']]);
         Response::json(['message' => 'User archived']);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();

@@ -85,7 +85,9 @@ if ($method === 'POST') {
         $ins = $pdo->prepare('INSERT INTO payments (student_id, term_id, amount, paid_amount, status, notes) VALUES (?, ?, ?, ?, ?, ?)');
         $ins->execute([$studentId, $termId, $amount, $paid, $status, $notes]);
         $pdo->commit();
-        Response::json(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
+        $newId = (int)$pdo->lastInsertId();
+        \App\Audit::log('payment.create', 'payment', $newId, ['student_id' => $studentId, 'term_id' => $termId, 'amount' => $amount, 'paid_amount' => $paid, 'status' => $status]);
+        Response::json(['ok' => true, 'id' => $newId]);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         Response::error('Failed to create payment', 500);
@@ -119,6 +121,7 @@ if ($method === 'PUT') {
 
     $upd = $pdo->prepare($sql);
     $upd->execute($params);
+    \App\Audit::log('payment.update', 'payment', $id, ['amount' => $amount, 'paid_amount' => $paid, 'status' => $status]);
     Response::json(['ok' => true]);
 }
 
@@ -128,6 +131,7 @@ if ($method === 'DELETE') {
     if ($id <= 0) Response::error('id is required', 422);
     $stmt = $pdo->prepare('UPDATE payments SET is_archived=1, archived_at=NOW() WHERE id=? AND is_archived=0');
     $stmt->execute([$id]);
+    \App\Audit::log('payment.archive', 'payment', $id);
     Response::json(['ok' => true]);
 }
 

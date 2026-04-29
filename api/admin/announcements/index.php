@@ -55,7 +55,9 @@ if ($method === 'POST') {
 
     $ins = $pdo->prepare('INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message) VALUES (?, ?, ?, ?, ?, ?)');
     $ins->execute([$userId ?: null, $roleId ?: null, $tgt, $payloadJson, $title, $message]);
-    Response::json(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
+    $newId = (int)$pdo->lastInsertId();
+    \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt]);
+    Response::json(['ok' => true, 'id' => $newId]);
 }
 
 if ($method === 'DELETE') {

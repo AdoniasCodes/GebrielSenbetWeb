@@ -37,6 +37,7 @@ if ($method === 'PUT') {
         $upd = $pdo->prepare("UPDATE academic_terms SET is_current=1 WHERE id=?");
         $upd->execute([$id]);
         $pdo->commit();
+        \App\Audit::log('settings.current_term', 'term', $id);
         Response::json(['ok' => true]);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();

@@ -71,6 +71,7 @@ if ($method === 'POST') {
         $newId = (int)$pdo->lastInsertId();
 
         $pdo->commit();
+        \App\Audit::log('student_assignment.create', 'student', $studentId, ['class_id' => $classId, 'assigned_at' => $assignedAt, 'assignment_id' => $newId]);
         Response::json(['ok' => true, 'id' => $newId]);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();

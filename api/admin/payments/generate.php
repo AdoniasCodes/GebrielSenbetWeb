@@ -60,6 +60,7 @@ try {
         $created++;
     }
     $pdo->commit();
+    \App\Audit::log('payment.generate', 'term', $termId, ['class_id' => $classId, 'amount' => $amount, 'created' => $created, 'skipped' => $skipped]);
     Response::json(['ok'=>true, 'created'=>$created, 'skipped'=>$skipped]);
 } catch (\Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();

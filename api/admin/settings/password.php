@@ -36,4 +36,5 @@ $newHash = password_hash($next, PASSWORD_DEFAULT);
 $upd = $pdo->prepare("UPDATE users SET password_hash=? WHERE id=?");
 $upd->execute([$newHash, $userId]);
 
+\App\Audit::log('settings.password_change', 'user', $userId);
 Response::json(['ok' => true]);

@@ -18,8 +18,12 @@ require __DIR__ . '/_partials/page-shell.php';
 
   <!-- Profile / account info -->
   <section class="panel">
-    <header class="px-6 py-5 border-b border-outline-soft/40">
+    <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between">
       <h2 class="font-display text-lg text-ink" data-en="Your account" data-am="የእርስዎ መለያ">Your account</h2>
+      <a href="/admin/audit-log.php" class="text-xs font-semibold uppercase tracking-widestest text-gold hover:text-primary inline-flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 8v4l3 3M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/></svg>
+        <span data-en="Activity log" data-am="የእንቅስቃሴ መዝገብ">Activity log</span>
+      </a>
     </header>
     <div class="p-6 space-y-3">
       <dl class="grid grid-cols-2 gap-4 text-sm">
