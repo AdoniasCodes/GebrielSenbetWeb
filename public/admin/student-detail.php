@@ -57,8 +57,12 @@ require __DIR__ . '/_partials/page-shell.php';
   </section>
 
   <section class="panel lg:col-span-2">
-    <header class="px-6 py-5 border-b border-outline-soft/40">
+    <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between">
       <h2 class="font-display text-lg text-ink" data-en="Grades" data-am="ውጤቶች">Grades</h2>
+      <a id="reportCardLink" target="_blank" class="text-xs font-semibold uppercase tracking-widestest text-gold hover:text-primary inline-flex items-center gap-2" href="/admin/report-card.php?student_id=<?= (int)$student_id ?>">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span data-en="Print report card" data-am="ሪፖርት ካርድ ይታተም">Print report card</span>
+      </a>
     </header>
     <div id="gradesWrap" class="table-wrap">
       <p class="px-6 py-12 text-center text-ink-soft text-sm">—</p>

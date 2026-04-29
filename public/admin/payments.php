@@ -33,6 +33,10 @@ require __DIR__ . '/_partials/page-shell.php';
         <option value="unpaid">Unpaid</option>
       </select>
     </div>
+    <a id="exportBtn" href="/api/admin/export/payments.php" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span>Export CSV</span>
+    </a>
     <button id="reloadBtn" class="btn-ghost">Refresh</button>
     <button id="generateBtn" class="btn-primary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -165,6 +169,15 @@ require __DIR__ . '/_partials/page-shell.php';
 
   ['filterTerm','filterClass','filterStatus'].forEach(function(id){ document.getElementById(id).addEventListener('change', load); });
   document.getElementById('reloadBtn').addEventListener('click', load);
+
+  // Update export href when filter changes (so CSV scopes to current term filter)
+  function updateExportHref() {
+    var t = document.getElementById('filterTerm').value;
+    var href = '/api/admin/export/payments.php' + (t ? '?term_id='+encodeURIComponent(t) : '');
+    document.getElementById('exportBtn').setAttribute('href', href);
+  }
+  document.getElementById('filterTerm').addEventListener('change', updateExportHref);
+  updateExportHref();
 
   // Generate payments for a term
   document.getElementById('generateBtn').addEventListener('click', async function () {

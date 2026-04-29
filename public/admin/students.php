@@ -28,6 +28,15 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
       <option value="0">Active only</option>
       <option value="1">Include archived</option>
     </select>
+    <a href="/api/admin/export/students.php" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span>Export CSV</span>
+    </a>
+    <button id="importBtn" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+      <span>Import CSV</span>
+    </button>
+    <input id="importFile" type="file" accept=".csv" class="hidden" />
     <button id="newBtn" class="btn-primary">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       <span data-en="New Student" data-am="አዲስ ተማሪ">New Student</span>
@@ -244,6 +253,38 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
       try { await gs.api('/api/admin/users/index.php', { method: 'PUT', body: JSON.stringify({ id: id, role: 'student', is_archived: 0 }) }); gs.toast('Restored', 'success'); await load(); }
       catch (err) { gs.toast(err.message, 'error'); }
     }
+  });
+
+  // CSV import
+  document.getElementById('importBtn').addEventListener('click', function () { document.getElementById('importFile').click(); });
+  document.getElementById('importFile').addEventListener('change', async function (e) {
+    var f = e.target.files[0];
+    if (!f) return;
+    if (!await gs.confirm('Import students from "' + f.name + '"? Required columns: first_name, last_name, email.')) return;
+    var fd = new FormData(); fd.append('file', f);
+    try {
+      var token = await gs.ensureCsrf();
+      var res = await fetch('/api/admin/import/students.php', { method:'POST', headers: { 'X-CSRF-Token': token }, body: fd });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Import failed');
+      var msg = 'Imported ' + data.created_count + ', skipped ' + data.skipped_count;
+      if (data.error_count) msg += ', errors ' + data.error_count;
+      gs.toast(msg, data.error_count ? 'error' : 'success');
+      if (data.created && data.created.length) {
+        // Show generated passwords once
+        var html = data.created.map(function (c) {
+          return c.first_name + ' ' + c.last_name + ' <' + c.email + '> · ' + c.password;
+        }).join('\n');
+        var w = window.open('', '_blank');
+        if (w) {
+          w.document.title = 'Generated passwords — save these';
+          w.document.body.style.cssText = 'font-family:monospace; padding:24px; background:#fcf9f2; color:#1c1c18; white-space:pre-wrap;';
+          w.document.body.textContent = 'Generated passwords (save these now — they will not be shown again):\n\n' + html;
+        }
+      }
+      e.target.value = '';
+      load();
+    } catch (err) { gs.toast(err.message,'error'); }
   });
 
   load();

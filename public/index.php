@@ -160,7 +160,7 @@ $year = date('Y');
         <a class="hover:text-primary transition-colors" href="#about" data-en="About" data-am="ስለ እኛ">About</a>
         <a class="hover:text-primary transition-colors" href="#programs" data-en="Programs" data-am="ፕሮግራሞች">Programs</a>
         <a class="hover:text-primary transition-colors" href="#calendar" data-en="Calendar" data-am="የቀን መቁጠሪያ">Calendar</a>
-        <a class="hover:text-primary transition-colors" href="#blog" data-en="Blog" data-am="ብሎግ">Blog</a>
+        <a class="hover:text-primary transition-colors" href="/blog.php" data-en="Blog" data-am="ብሎግ">Blog</a>
       </nav>
 
       <div class="flex items-center gap-3">
