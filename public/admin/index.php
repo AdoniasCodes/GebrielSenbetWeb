@@ -84,10 +84,12 @@ require __DIR__ . '/_partials/page-shell.php';
   <div class="space-y-6">
     <section class="panel p-6">
       <header class="flex items-center justify-between mb-5">
-        <h2 class="font-display text-lg text-ink" data-en="This Week" data-am="በዚህ ሳምንት">This Week</h2>
+        <h2 class="font-display text-lg text-ink" data-en="Upcoming" data-am="መጪ ዝግጅቶች">Upcoming</h2>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#795901" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       </header>
-      <p class="text-sm text-ink-soft" data-en="No events scheduled. Add events from the Resources menu." data-am="ምንም ዝግጅት የለም። ከመርጃዎች ዝርዝር ይጨምሩ።">No events scheduled. Add events from the Resources menu.</p>
+      <ul id="upcomingEventsWrap" class="space-y-4">
+        <li class="text-sm text-ink-soft">Loading…</li>
+      </ul>
       <a href="/admin/events.php" class="mt-6 block w-full text-center bg-surface-mid border border-outline-soft/50 text-xs font-semibold uppercase tracking-widestest text-ink py-2.5 rounded hover:bg-surface-high transition-colors" data-en="Open Calendar" data-am="የቀን መቁጠሪያ ክፈት">Open Calendar</a>
     </section>
 
@@ -156,6 +158,23 @@ require __DIR__ . '/_partials/page-shell.php';
           '<table class="data"><thead><tr>' +
           '<th>Class</th><th>Teacher</th><th>Subject</th><th>Score</th><th>When</th>' +
           '</tr></thead><tbody>' + rows + '</tbody></table>';
+      }
+
+      // Upcoming events
+      var ev = d.upcoming_events || [];
+      var evWrap = document.getElementById('upcomingEventsWrap');
+      if (ev.length === 0) {
+        evWrap.innerHTML = '<li class="text-sm text-ink-soft">No events in the next 30 days. <a href="/admin/events.php" class="text-gold hover:text-primary">Add one</a>.</li>';
+      } else {
+        evWrap.innerHTML = ev.map(function (e) {
+          var d2 = new Date((e.start_datetime||'').replace(' ','T'));
+          var when = isNaN(d2) ? e.start_datetime : d2.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          return '<li class="flex gap-3"><span class="block w-2 h-2 rounded-full bg-gold mt-2 flex-shrink-0"></span>' +
+            '<div class="flex-1"><p class="text-[10px] uppercase tracking-widestest text-gold mb-0.5">' + escHtml(when) + '</p>' +
+            '<p class="font-display text-ink leading-snug">' + escHtml(e.title) + '</p>' +
+            (e.description ? '<p class="text-xs text-ink-soft mt-0.5">' + escHtml(e.description) + '</p>' : '') +
+            '</div></li>';
+        }).join('');
       }
 
       // Recent enrollments

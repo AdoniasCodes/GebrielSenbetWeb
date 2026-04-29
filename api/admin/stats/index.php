@@ -34,7 +34,7 @@ if (!$currentTerm) {
 $unpaidThisTerm = 0;
 $outstandingAmount = 0.0;
 if ($currentTerm) {
-    $u = $pdo->prepare("SELECT COUNT(*) AS c, COALESCE(SUM(amount),0) AS owed FROM payments WHERE term_id=? AND status IN ('unpaid','partial') AND is_archived=0");
+    $u = $pdo->prepare("SELECT COUNT(*) AS c, COALESCE(SUM(GREATEST(amount - paid_amount, 0)),0) AS owed FROM payments WHERE term_id=? AND status IN ('unpaid','partial') AND is_archived=0");
     $u->execute([(int)$currentTerm['id']]);
     $row = $u->fetch();
     $unpaidThisTerm = (int)$row['c'];
@@ -84,6 +84,16 @@ $stmt = $pdo->query("
 ");
 $recentEnrollments = $stmt->fetchAll();
 
+// Upcoming events (next 5 within 30 days)
+$stmt = $pdo->query("
+    SELECT id, title, description, start_datetime, end_datetime, is_recurring
+    FROM events
+    WHERE is_archived=0 AND start_datetime >= NOW() AND start_datetime <= DATE_ADD(NOW(), INTERVAL 30 DAY)
+    ORDER BY start_datetime ASC
+    LIMIT 5
+");
+$upcomingEvents = $stmt->fetchAll();
+
 Response::json([
     'stats' => [
         'total_students'    => $totalStudents,
@@ -96,4 +106,5 @@ Response::json([
     'current_term'        => $currentTerm,
     'recent_grades'       => $recentGrades,
     'recent_enrollments'  => $recentEnrollments,
+    'upcoming_events'     => $upcomingEvents,
 ]);

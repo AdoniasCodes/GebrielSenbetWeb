@@ -14,7 +14,7 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
-    $sql = 'SELECT id, name, academic_year, start_date, end_date, is_current, is_archived, archived_at, created_at, updated_at
+    $sql = 'SELECT id, name, academic_year, start_date, end_date, default_tuition, is_current, is_archived, archived_at, created_at, updated_at
             FROM academic_terms';
     if (!$includeArchived) { $sql .= ' WHERE is_archived = 0'; }
     $sql .= ' ORDER BY academic_year DESC, start_date DESC, name ASC';
@@ -49,8 +49,10 @@ if ($method === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare('INSERT INTO academic_terms (name, academic_year, start_date, end_date) VALUES (?, ?, ?, ?)');
-        $stmt->execute([$name, $academicYear, $start, $end]);
+        $defaultTuition = isset($input['default_tuition']) ? (float)$input['default_tuition'] : 0.00;
+        if ($defaultTuition < 0) Response::error('default_tuition must be non-negative', 422);
+        $stmt = $pdo->prepare('INSERT INTO academic_terms (name, academic_year, start_date, end_date, default_tuition) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$name, $academicYear, $start, $end, $defaultTuition]);
         Response::json(['message' => 'Term created', 'id' => (int)$pdo->lastInsertId()], 201);
     } catch (\PDOException $e) {
         if ((int)$e->getCode() === 23000) {
@@ -111,6 +113,11 @@ if ($method === 'PUT') {
     if ($academicYear !== null && $academicYear !== '') { $fields[]='academic_year = ?'; $params[]=$academicYear; }
     if ($start !== null && $start !== '') { $fields[]='start_date = ?'; $params[]=$start; }
     if ($end !== null && $end !== '') { $fields[]='end_date = ?'; $params[]=$end; }
+    if (array_key_exists('default_tuition', $input)) {
+        $dt = (float)$input['default_tuition'];
+        if ($dt < 0) Response::error('default_tuition must be non-negative', 422);
+        $fields[] = 'default_tuition = ?'; $params[] = $dt;
+    }
     if (!$fields) { Response::error('No changes provided', 422); }
     $params[] = $id;
 

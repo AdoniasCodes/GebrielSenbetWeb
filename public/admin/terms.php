@@ -44,6 +44,11 @@ require __DIR__ . '/_partials/page-shell.php';
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">End date</label>
       <input id="f_end" type="date" class="input-field" required />
     </div>
+    <div class="md:col-span-2">
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Default tuition (ETB)</label>
+      <input id="f_tuition" type="number" step="0.01" min="0" class="input-field" placeholder="0.00" />
+      <p class="text-xs text-outline mt-1">Used when generating payment rows for this term.</p>
+    </div>
     <div class="md:col-span-4 flex items-center gap-3">
       <button type="submit" class="btn-primary">Save</button>
       <button type="button" id="cancelBtn2" class="btn-ghost">Cancel</button>
@@ -78,6 +83,7 @@ require __DIR__ . '/_partials/page-shell.php';
     document.getElementById('f_year').value = item ? item.academic_year : '';
     document.getElementById('f_start').value = item ? item.start_date : '';
     document.getElementById('f_end').value = item ? item.end_date : '';
+    document.getElementById('f_tuition').value = item ? (item.default_tuition || '0.00') : '0.00';
     formTitle.textContent = item ? 'Edit Term' : 'New Term';
     formPanel.scrollIntoView({ behavior:'smooth', block:'center' });
   }
@@ -127,6 +133,7 @@ require __DIR__ . '/_partials/page-shell.php';
       academic_year: document.getElementById('f_year').value.trim(),
       start_date: document.getElementById('f_start').value,
       end_date: document.getElementById('f_end').value,
+      default_tuition: parseFloat(document.getElementById('f_tuition').value || '0') || 0,
     };
     try {
       if (id) { body.id = parseInt(id,10); await gs.api('/api/admin/terms/index.php', { method:'PUT', body: JSON.stringify(body) }); }
