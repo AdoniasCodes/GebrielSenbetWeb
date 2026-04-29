@@ -1,11 +1,220 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
+  <title>Sign in · Gebriel Senbet</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7','surface-high':'#ebe8e1',
+            ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
+            primary:'#5b0617','primary-soft':'#7a1f2b','primary-warm':'#a13c46',
+            gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
+            olive:'#384700','olive-soft':'#a2b665',
+            error:'#ba1a1a',
+          },
+          fontFamily: {
+            display: ['Newsreader','"Noto Serif Ethiopic"','serif'],
+            body: ['"Plus Jakarta Sans"','"Noto Sans Ethiopic"','system-ui','sans-serif'],
+            ethiopic: ['"Noto Sans Ethiopic"','serif'],
+          },
+          letterSpacing: { widestest: '0.18em' },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html, body { background: #fcf9f2; }
+    .font-display { font-family: 'Newsreader','Noto Serif Ethiopic',serif; }
+    .ethiopic { font-family: 'Noto Sans Ethiopic', serif; }
+
+    .paper {
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(91,6,23,0.035) 1px, transparent 0),
+        radial-gradient(circle at 13px 9px, rgba(121,89,1,0.025) 1px, transparent 0);
+      background-size: 24px 24px, 28px 28px;
+    }
+
+    /* Card with gold-rule border (offset, manuscript-style) */
+    .login-card {
+      background: linear-gradient(180deg,#fffdf6 0%,#fbf6e9 100%);
+      box-shadow: 0 1px 0 rgba(91,6,23,0.06), 0 12px 32px -16px rgba(91,6,23,0.18);
+    }
+    .login-card-frame {
+      position: relative;
+    }
+    .login-card-frame::before {
+      content:''; position:absolute; inset:8px;
+      border:1px solid #c9a14a;
+      pointer-events:none;
+      border-radius: 4px;
+      opacity: 0.7;
+    }
+
+    .seg-active { background:#fed175; color:#5b0617; }
+
+    :where(a, button, input, select, textarea):focus-visible {
+      outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(252,249,242,0.8);
+      border: 1px solid rgba(137,113,114,0.25);
+      border-radius: 4px;
+      font-size: 15px;
+      color: #1c1c18;
+      transition: all 150ms ease;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #c9a14a;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(201,161,74,0.12);
+    }
+    .input-field::placeholder { color: #897172; }
+  </style>
 </head>
-<body>
-  <p>Placeholder page. Dashboards per role will be implemented.</p>
+<body class="bg-surface text-ink font-body antialiased min-h-screen flex flex-col">
+
+  <!-- Top bar (logo + lang) -->
+  <header class="flex items-center justify-between px-6 lg:px-10 h-16">
+    <a href="/" class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-7 h-7 rounded-sm bg-primary text-surface">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+          <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
+      <span class="font-display text-base font-semibold text-primary" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</span>
+    </a>
+    <div data-lang-toggle class="flex items-center bg-surface-mid rounded-full p-0.5 border border-outline-soft/50">
+      <button data-lang="en" class="seg-active px-3 py-1 text-xs font-semibold rounded-full">EN</button>
+      <button data-lang="am" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft hover:text-primary ethiopic">አማ</button>
+    </div>
+  </header>
+
+  <!-- Main: centered card -->
+  <main class="flex-1 paper flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-[440px]">
+      <div class="login-card-frame">
+        <div class="login-card rounded-lg p-10 lg:p-12">
+
+          <!-- Diamond cross emblem -->
+          <div class="flex flex-col items-center mb-8">
+            <div class="relative w-16 h-16 mb-6">
+              <div class="absolute inset-0 border border-primary/60 transform rotate-45 rounded-sm"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5b0617" stroke-width="1.6" stroke-linecap="round">
+                  <path d="M12 4v16M4 12h16"/>
+                </svg>
+              </div>
+            </div>
+            <h1 class="font-display text-3xl text-primary mb-2 leading-none" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</h1>
+            <p class="text-[11px] font-semibold uppercase tracking-widestest text-gold" data-en="Sacred Administration" data-am="ቅዱስ አስተዳደር">Sacred Administration</p>
+          </div>
+
+          <!-- Form -->
+          <form id="loginForm" class="space-y-5" novalidate>
+            <div>
+              <label for="email" class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Email address" data-am="ኢሜይል አድራሻ">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="scholar@senbet.edu" />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label for="password" class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft" data-en="Password" data-am="የይለፍ ቃል">Password</label>
+                <a href="#" class="text-xs text-gold hover:text-primary transition-colors" data-en="Forgot password?" data-am="የይለፍ ቃል ረስተዋል?">Forgot password?</a>
+              </div>
+              <input id="password" name="password" type="password" autocomplete="current-password" required class="input-field" placeholder="••••••••" />
+            </div>
+
+            <div id="loginMsg" class="text-sm text-error hidden"></div>
+
+            <button type="submit" id="submitBtn" class="w-full inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+              <span data-en="Sign in" data-am="ግባ">Sign in</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <p class="text-center text-xs text-outline mt-8 uppercase tracking-widestest">
+        <span data-en="Not a member?" data-am="አባል አይደሉም?">Not a member?</span>
+        <a href="/#enroll" class="text-gold hover:text-primary transition-colors ml-2" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="px-6 lg:px-10 py-6 text-center text-[11px] uppercase tracking-widestest text-outline">
+    <a href="/" class="hover:text-primary transition-colors" data-en="← Back to home" data-am="← ወደ መነሻ ተመለስ">← Back to home</a>
+  </footer>
+
+  <script>
+    (function () {
+      function applyLang(lang) {
+        if (lang !== 'en' && lang !== 'am') lang = 'en';
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-en], [data-am]').forEach(function (el) {
+          var v = el.getAttribute('data-' + lang);
+          if (v !== null) el.innerHTML = v;
+        });
+        document.querySelectorAll('[data-lang-toggle]').forEach(function (group) {
+          group.querySelectorAll('button').forEach(function (btn) {
+            btn.classList.toggle('seg-active', btn.dataset.lang === lang);
+            btn.classList.toggle('text-ink-soft', btn.dataset.lang !== lang);
+          });
+        });
+        try { localStorage.setItem('gs_lang', lang); } catch (e) {}
+      }
+      document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
+        btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
+      });
+      var saved = 'en';
+      try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
+      applyLang(saved);
+    })();
+
+    // Login submission
+    var msg = document.getElementById('loginMsg');
+    var btn = document.getElementById('submitBtn');
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      msg.classList.add('hidden');
+      btn.disabled = true;
+      try {
+        var email = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        var res = await fetch('/api/auth/login.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: password })
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Sign-in failed');
+        try { sessionStorage.setItem('csrf_token', data.csrf_token); } catch (e) {}
+        var dest = data.role === 'admin' ? '/admin/index.php'
+                 : data.role === 'teacher' ? '/teacher/index.php'
+                 : '/student/index.php';
+        window.location.href = dest;
+      } catch (err) {
+        msg.textContent = err.message;
+        msg.classList.remove('hidden');
+        btn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
