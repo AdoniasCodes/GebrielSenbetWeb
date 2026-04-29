@@ -14,7 +14,7 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
-    $sql = 'SELECT id, name, academic_year, start_date, end_date, is_archived, archived_at, created_at, updated_at
+    $sql = 'SELECT id, name, academic_year, start_date, end_date, is_current, is_archived, archived_at, created_at, updated_at
             FROM academic_terms';
     if (!$includeArchived) { $sql .= ' WHERE is_archived = 0'; }
     $sql .= ' ORDER BY academic_year DESC, start_date DESC, name ASC';

@@ -31,11 +31,11 @@ if ($method === 'GET') {
     // fetch minimal profile data per role
     foreach ($users as &$u) {
         if ($u['role'] === 'student') {
-            $ps = $pdo->prepare('SELECT first_name, last_name, guardian_name, phone FROM students WHERE user_id = ?');
+            $ps = $pdo->prepare('SELECT id AS student_id, first_name, last_name, guardian_name, phone, address, date_of_birth FROM students WHERE user_id = ?');
             $ps->execute([$u['id']]);
             $u['profile'] = $ps->fetch() ?: null;
         } elseif ($u['role'] === 'teacher') {
-            $pt = $pdo->prepare('SELECT first_name, last_name, phone, bio FROM teachers WHERE user_id = ?');
+            $pt = $pdo->prepare('SELECT id AS teacher_id, first_name, last_name, phone, bio FROM teachers WHERE user_id = ?');
             $pt->execute([$u['id']]);
             $u['profile'] = $pt->fetch() ?: null;
         } else {
@@ -116,6 +116,19 @@ if ($method === 'PUT') {
             if ($du->fetch()) { $pdo->rollBack(); Response::error('Email already in use', 409); }
             $ue = $pdo->prepare('UPDATE users SET email = ? WHERE id = ?');
             $ue->execute([$email, $userId]);
+        }
+
+        // Allow unarchive via { is_archived: 0 }
+        if (array_key_exists('is_archived', $input) && (int)$input['is_archived'] === 0) {
+            $uu = $pdo->prepare('UPDATE users SET is_archived = 0, archived_at = NULL WHERE id = ?');
+            $uu->execute([$userId]);
+            if ($user['role_name'] === 'student') {
+                $ps = $pdo->prepare('UPDATE students SET is_archived = 0, archived_at = NULL WHERE user_id = ?');
+                $ps->execute([$userId]);
+            } elseif ($user['role_name'] === 'teacher') {
+                $pt = $pdo->prepare('UPDATE teachers SET is_archived = 0, archived_at = NULL WHERE user_id = ?');
+                $pt->execute([$userId]);
+            }
         }
 
         if ($user['role_name'] === 'student') {

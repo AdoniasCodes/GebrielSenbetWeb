@@ -43,9 +43,10 @@ if (!$user || !password_verify($password, $user['password_hash']) || (int)$user[
 // Regenerate session ID to prevent fixation
 session_regenerate_id(true);
 
-$_SESSION['user_id'] = (int)$user['id'];
-$_SESSION['role_id'] = (int)$user['role_id'];
-$_SESSION['role_name'] = $user['role_name'];
+$_SESSION['user_id']    = (int)$user['id'];
+$_SESSION['user_email'] = $user['email'] ?? '';
+$_SESSION['role_id']    = (int)$user['role_id'];
+$_SESSION['role_name']  = $user['role_name'];
 
 $csrf = Csrf::getToken();
 

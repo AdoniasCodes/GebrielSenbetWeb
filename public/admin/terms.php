@@ -1,127 +1,157 @@
 <?php
 require_once __DIR__ . '/../../bootstrap.php';
 use App\Utils\Csrf;
-
 $config = app_config();
 Csrf::ensureSession($config['app']['session_name']);
-if (($_SESSION['role_name'] ?? null) !== 'admin') {
-  header('Location: /');
-  exit;
-}
-?><!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Academic Terms</title>
-  <style>
-    body{font-family:system-ui,Arial,sans-serif;margin:0}
-    header{background:#2c3e50;color:#fff;padding:16px}
-    main{padding:16px;max-width:1100px;margin:0 auto}
-    .card{border:1px solid #e3e3e3;border-radius:8px;padding:16px;margin-bottom:16px}
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    input,select,button{padding:8px}
-    table{width:100%;border-collapse:collapse;margin-top:8px}
-    th,td{border:1px solid #ddd;padding:8px;text-align:left}
-    th{background:#f5f5f5}
-    .muted{color:#666}
-  </style>
-</head>
-<body>
-<header><h1>Academic Terms</h1></header>
-<main>
-  <nav>
-    <a href="/admin/index.php">← Back to Dashboard</a>
-  </nav>
+if (($_SESSION['role_name'] ?? null) !== 'admin') { header('Location: /'); exit; }
 
-  <div class="card">
-    <h2>Create Term</h2>
-    <div class="row">
-      <input id="name" placeholder="Term name (e.g., Term 1)" />
-      <input id="ay" placeholder="Academic Year (e.g., 2025/2026)" />
-      <input id="start" type="date" />
-      <input id="end" type="date" />
-      <button id="createBtn">Create</button>
+$page_title    = 'Academic Terms';
+$page_title_am = 'የትምህርት ወቅቶች';
+$page_eyebrow    = 'Classroom';
+$page_eyebrow_am = 'ክፍል';
+$active_nav = 'terms';
+require __DIR__ . '/_partials/page-shell.php';
+?>
+
+<div class="flex items-center justify-between flex-wrap gap-3">
+  <p class="text-sm text-ink-soft max-w-xl">Each academic year is divided into terms. Grades and payments are recorded per term.</p>
+  <button id="newBtn" class="btn-primary">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    <span>New Term</span>
+  </button>
+</div>
+
+<section id="formPanel" class="panel hidden">
+  <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between">
+    <h2 id="formTitle" class="font-display text-lg text-ink">New Term</h2>
+    <button type="button" id="cancelBtn" class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </header>
+  <form id="entityForm" class="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+    <input type="hidden" id="f_id" />
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Term name</label>
+      <input id="f_name" class="input-field" required placeholder="Term 1" />
     </div>
-    <div id="createMsg" class="muted"></div>
-  </div>
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Academic year</label>
+      <input id="f_year" class="input-field" required placeholder="2025/2026" />
+    </div>
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Start date</label>
+      <input id="f_start" type="date" class="input-field" required />
+    </div>
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">End date</label>
+      <input id="f_end" type="date" class="input-field" required />
+    </div>
+    <div class="md:col-span-4 flex items-center gap-3">
+      <button type="submit" class="btn-primary">Save</button>
+      <button type="button" id="cancelBtn2" class="btn-ghost">Cancel</button>
+      <p id="formMsg" class="text-sm text-error hidden"></p>
+    </div>
+  </form>
+</section>
 
-  <div class="card">
-    <h2>Terms</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th><th>Name</th><th>Academic Year</th><th>Start</th><th>End</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="termsBody"></tbody>
+<section class="panel">
+  <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between">
+    <h2 class="font-display text-lg text-ink">All terms · <span id="rowCount" class="text-ink-soft text-sm">—</span></h2>
+  </header>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Year</th><th>Name</th><th>Start</th><th>End</th><th>Status</th><th class="text-right">&nbsp;</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="6" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
     </table>
   </div>
-</main>
+</section>
+
 <script>
-  async function ensureCsrf(){
-    let t = sessionStorage.getItem('csrf_token');
-    if(!t){ const r = await fetch('/api/auth/csrf.php'); const d = await r.json(); t = d.csrf_token; sessionStorage.setItem('csrf_token', t); }
-    return t;
+  var formPanel = document.getElementById('formPanel');
+  var formTitle = document.getElementById('formTitle');
+  var msg = document.getElementById('formMsg');
+  var all = [];
+
+  function showForm(item) {
+    formPanel.classList.remove('hidden');
+    msg.classList.add('hidden');
+    document.getElementById('f_id').value = item ? item.id : '';
+    document.getElementById('f_name').value = item ? item.name : '';
+    document.getElementById('f_year').value = item ? item.academic_year : '';
+    document.getElementById('f_start').value = item ? item.start_date : '';
+    document.getElementById('f_end').value = item ? item.end_date : '';
+    formTitle.textContent = item ? 'Edit Term' : 'New Term';
+    formPanel.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+  function hideForm() { formPanel.classList.add('hidden'); }
+  document.getElementById('newBtn').addEventListener('click', function () { showForm(null); });
+  document.getElementById('cancelBtn').addEventListener('click', hideForm);
+  document.getElementById('cancelBtn2').addEventListener('click', hideForm);
+
+  function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+  function render() {
+    document.getElementById('rowCount').textContent = all.length + ' total';
+    var tbody = document.getElementById('tbody');
+    if (!all.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-ink-soft py-16">No terms yet.</td></tr>'; return; }
+    tbody.innerHTML = all.map(function (t) {
+      var pill = t.is_archived == 1 ? '<span class="pill pill-archived">Archived</span>'
+              : (t.is_current == 1 ? '<span class="pill pill-active">Current</span>' : '<span class="pill pill-active">Active</span>');
+      return '<tr>' +
+        '<td class="text-ink-soft">'+escHtml(t.academic_year)+'</td>' +
+        '<td class="font-medium">'+escHtml(t.name)+'</td>' +
+        '<td class="text-ink-soft">'+escHtml(t.start_date)+'</td>' +
+        '<td class="text-ink-soft">'+escHtml(t.end_date)+'</td>' +
+        '<td>'+pill+'</td>' +
+        '<td class="text-right"><div class="inline-flex items-center gap-1">' +
+          (t.is_archived == 0 && t.is_current != 1
+            ? '<button class="btn-icon" title="Set as current" data-current="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></svg></button>'
+            : '') +
+          '<button class="btn-icon" title="Edit" data-edit="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+          (t.is_archived == 1 ? '' :
+            '<button class="btn-icon danger" title="Archive" data-archive="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>') +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
   }
 
-  async function loadTerms(){
-    const r = await fetch('/api/admin/terms/index.php');
-    const d = await r.json();
-    const body = document.getElementById('termsBody'); body.innerHTML='';
-    (d.data||[]).forEach(term => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${term.id}</td>
-        <td><input class="nameInp" value="${term.name}"/></td>
-        <td><input class="ayInp" value="${term.academic_year}"/></td>
-        <td><input class="startInp" type="date" value="${term.start_date}"/></td>
-        <td><input class="endInp" type="date" value="${term.end_date}"/></td>
-        <td>
-          <button class="saveBtn" data-id="${term.id}">Save</button>
-          <button class="archiveBtn" data-id="${term.id}">Archive</button>
-        </td>`;
-      body.appendChild(tr);
-    });
+  async function load() {
+    try { var d = await gs.api('/api/admin/terms/index.php'); all = d.data || []; render(); }
+    catch (e) { gs.toast(e.message,'error'); }
   }
 
-  document.getElementById('createBtn').addEventListener('click', async ()=>{
-    const name = document.getElementById('name').value.trim();
-    const academic_year = document.getElementById('ay').value.trim();
-    const start_date = document.getElementById('start').value;
-    const end_date = document.getElementById('end').value;
-    const msg = document.getElementById('createMsg'); msg.textContent='';
-    if(!name || !academic_year || !start_date || !end_date){ msg.textContent='All fields required'; return; }
-    const token = await ensureCsrf();
-    const res = await fetch('/api/admin/terms/index.php', { method: 'POST', headers: { 'Content-Type':'application/json','X-CSRF-Token': token }, body: JSON.stringify({ name, academic_year, start_date, end_date })});
-    const d = await res.json(); if(!res.ok){ msg.textContent = d.error || 'Failed to create'; return; }
-    document.getElementById('name').value=''; document.getElementById('ay').value=''; document.getElementById('start').value=''; document.getElementById('end').value='';
-    await loadTerms();
+  document.getElementById('entityForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    msg.classList.add('hidden');
+    var id = document.getElementById('f_id').value;
+    var body = {
+      name: document.getElementById('f_name').value.trim(),
+      academic_year: document.getElementById('f_year').value.trim(),
+      start_date: document.getElementById('f_start').value,
+      end_date: document.getElementById('f_end').value,
+    };
+    try {
+      if (id) { body.id = parseInt(id,10); await gs.api('/api/admin/terms/index.php', { method:'PUT', body: JSON.stringify(body) }); }
+      else    await gs.api('/api/admin/terms/index.php', { method:'POST', body: JSON.stringify(body) });
+      gs.toast(id ? 'Updated' : 'Created','success'); hideForm(); load();
+    } catch (err) { msg.textContent = err.message; msg.classList.remove('hidden'); }
   });
 
-  document.getElementById('termsBody').addEventListener('click', async (e)=>{
-    const row = e.target.closest('tr'); if(!row) return;
-    const id = parseInt(e.target.getAttribute('data-id'),10);
-    if(e.target.classList.contains('saveBtn')){
-      const name = row.querySelector('.nameInp').value.trim();
-      const academic_year = row.querySelector('.ayInp').value.trim();
-      const start_date = row.querySelector('.startInp').value;
-      const end_date = row.querySelector('.endInp').value;
-      const token = await ensureCsrf();
-      const res = await fetch('/api/admin/terms/index.php', { method:'PUT', headers:{ 'Content-Type':'application/json','X-CSRF-Token': token }, body: JSON.stringify({ id, name, academic_year, start_date, end_date })});
-      if(!res.ok){ const d = await res.json(); alert(d.error||'Failed to save'); return; }
-      await loadTerms();
+  document.addEventListener('click', async function (e) {
+    var t = e.target.closest('[data-edit], [data-archive], [data-current]');
+    if (!t) return;
+    var id = parseInt(t.dataset.edit || t.dataset.archive || t.dataset.current, 10);
+    if (t.dataset.edit) { var item = all.find(function (x) { return x.id === id; }); if (item) showForm(item); }
+    else if (t.dataset.archive) {
+      if (!await gs.confirm('Archive this term?')) return;
+      try { await gs.api('/api/admin/terms/index.php', { method:'DELETE', body: JSON.stringify({ id: id })}); gs.toast('Archived','success'); load(); }
+      catch (err) { gs.toast(err.message,'error'); }
     }
-    if(e.target.classList.contains('archiveBtn')){
-      if(!confirm('Archive this term?')) return;
-      const token = await ensureCsrf();
-      const res = await fetch('/api/admin/terms/index.php', { method:'DELETE', headers:{ 'Content-Type':'application/json','X-CSRF-Token': token }, body: JSON.stringify({ id })});
-      if(!res.ok){ const d = await res.json(); alert(d.error||'Failed to archive'); return; }
-      await loadTerms();
+    else if (t.dataset.current) {
+      try { await gs.api('/api/admin/settings/current-term.php', { method:'PUT', body: JSON.stringify({ id: id })}); gs.toast('Set as current','success'); load(); }
+      catch (err) { gs.toast(err.message,'error'); }
     }
   });
 
-  (async function init(){ await loadTerms(); })();
+  load();
 </script>
-</body>
-</html>
+
+<?php require __DIR__ . '/_partials/page-shell-end.php'; ?>
