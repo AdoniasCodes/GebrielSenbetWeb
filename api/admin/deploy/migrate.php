@@ -116,28 +116,41 @@ foreach ($files as $path) {
         continue; // do not reapply changed migration
     }
 
+    // Strip line comments so they don't end up at the head of a statement
+    // and cause the splitter to discard real SQL with them.
+    $cleanSql = preg_replace('/^\s*--.*$/m', '', $sql);
+    // DDL (ALTER/CREATE/DROP/RENAME/TRUNCATE) implicitly commits in MySQL.
+    // Skip the transaction wrapper for migrations that contain any DDL.
+    $usesDdl = (bool)preg_match('/\b(ALTER|CREATE|DROP|RENAME|TRUNCATE)\b/i', $cleanSql);
+    $statements = [];
+    foreach (preg_split("/(;\s*\n)|(;\s*$)/m", $cleanSql) as $part) {
+        $chunk = trim($part);
+        if ($chunk === '') { continue; }
+        $statements[] = $chunk;
+    }
     try {
-        $pdo->beginTransaction();
-        // Strip line comments first so they don't end up at the head of a
-        // statement and cause the splitter to discard real SQL with them.
-        $cleanSql = preg_replace('/^\s*--.*$/m', '', $sql);
-        $statements = [];
-        foreach (preg_split("/(;\s*\n)|(;\s*$)/m", $cleanSql) as $part) {
-            $chunk = trim($part);
-            if ($chunk === '') { continue; }
-            $statements[] = $chunk;
-        }
+        if (!$usesDdl) { $pdo->beginTransaction(); }
         foreach ($statements as $stmtSql) {
             $pdo->exec($stmtSql);
         }
         $ins = $pdo->prepare('INSERT INTO schema_migrations (filename, checksum) VALUES (?, ?)');
         $ins->execute([$filename, $checksum]);
-        $pdo->commit();
+        if (!$usesDdl && $pdo->inTransaction()) { $pdo->commit(); }
         $appliedNow[] = $filename;
     } catch (\Throwable $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
+        if ($pdo->inTransaction()) { try { $pdo->rollBack(); } catch (\Throwable $_) {} }
+        // For DDL migrations, statements may have partially applied. If the
+        // artifact is now present, record the migration as applied and move on.
+        if (_migration_artifact_present($pdo, $filename) === true) {
+            try {
+                $pdo->prepare('INSERT INTO schema_migrations (filename, checksum) VALUES (?, ?)')
+                    ->execute([$filename, $checksum]);
+                $appliedNow[] = $filename;
+                continue;
+            } catch (\Throwable $_) { /* fall through to failure */ }
+        }
         $failed[] = [$filename, $e->getMessage()];
-        break; // stop on first failure
+        break; // stop on first hard failure
     }
 }
 
