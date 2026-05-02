@@ -86,7 +86,7 @@ require __DIR__ . '/_partials/page-shell.php';
   var all = [];
 
   function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
-  function fmtDate(s) { if (!s) return '—'; var d = new Date(s.replace(' ','T')); if (isNaN(d)) return s; return d.toLocaleString(); }
+  function fmtDate(s) { return s ? gs.fmtDate(s, 'datetime') : '—'; }
 
   function showRecurrenceFields() {
     var on = document.getElementById('f_recurring').checked;
@@ -148,6 +148,7 @@ require __DIR__ . '/_partials/page-shell.php';
   }
   document.getElementById('upcomingOnly').addEventListener('change', load);
   document.getElementById('includeArchived').addEventListener('change', load);
+  document.addEventListener('gs:lang-change', render);
 
   document.getElementById('entityForm').addEventListener('submit', async function (ev) {
     ev.preventDefault();

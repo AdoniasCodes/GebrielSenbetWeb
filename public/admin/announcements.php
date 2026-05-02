@@ -137,7 +137,7 @@ require __DIR__ . '/_partials/page-shell.php';
             '<p class="font-medium leading-tight">'+escHtml(n.title)+publicPill+'</p>' +
             '<button class="btn-icon danger flex-shrink-0" title="Archive" data-archive="'+n.id+'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
           '</div>' +
-          '<p class="text-xs text-outline mb-2">'+escHtml(describeTarget(n))+' · '+escHtml(n.created_at)+'</p>' +
+          '<p class="text-xs text-outline mb-2">'+escHtml(describeTarget(n))+' · '+escHtml(gs.fmtDate(n.created_at, "datetime"))+'</p>' +
           '<p class="text-sm text-ink-soft whitespace-pre-wrap">'+escHtml(n.message)+'</p>' +
         '</li>';
       }).join('');

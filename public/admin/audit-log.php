@@ -50,7 +50,8 @@ require __DIR__ . '/_partials/page-shell.php';
 
 <script>
   function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
-  function fmt(s) { if (!s) return ''; var d = new Date(s.replace(' ','T')); if (isNaN(d)) return s; return d.toLocaleString(); }
+  function fmt(s) { return s ? gs.fmtDate(s, 'datetime') : ''; }
+  document.addEventListener('gs:lang-change', load);
 
   async function load() {
     var qs = '';

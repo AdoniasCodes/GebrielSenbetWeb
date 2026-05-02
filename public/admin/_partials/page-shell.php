@@ -46,6 +46,7 @@ $nav_groups = [
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="/assets/js/ec-date.js"></script>
   <script>
     tailwind.config = {
       theme: { extend: {

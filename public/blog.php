@@ -17,6 +17,7 @@ $year = date('Y');
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="/assets/js/ec-date.js"></script>
   <script>
     tailwind.config = {
       theme: { extend: {
@@ -126,7 +127,7 @@ $year = date('Y');
     })();
 
     function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
-    function fmtDate(s) { if (!s) return ''; var d = new Date(s.replace(' ','T')); if (isNaN(d)) return s; return d.toLocaleDateString([], { year:'numeric', month:'long', day:'numeric' }); }
+    function fmtDate(s) { return s && window.EC ? EC.fmtDate(s, 'long') : (s || ''); }
 
     (async function () {
       try {

@@ -20,6 +20,14 @@
         });
       });
       try { localStorage.setItem('gs_lang', lang); } catch (e) {}
+      // Re-render any date columns that were rendered with gs.fmtDate.
+      document.querySelectorAll('[data-iso]').forEach(function (el) {
+        var iso = el.getAttribute('data-iso');
+        var st = el.getAttribute('data-fmt-style') || 'datetime';
+        if (window.EC) el.textContent = EC.fmtDate(iso, st);
+      });
+      // Trigger a soft reload signal so list pages can refresh their tables.
+      document.dispatchEvent(new CustomEvent('gs:lang-change', { detail: { lang: lang } }));
     }
     document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
       btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
@@ -31,6 +39,15 @@
 
   // === CSRF + auth helpers (shared) ===
   window.gs = window.gs || {};
+
+  // Lang-aware date formatter. Uses Ethiopian calendar in Amharic mode.
+  // style: 'short' | 'long' | 'datetime' (default).
+  gs.fmtDate = function (input, style) {
+    if (window.EC && typeof EC.fmtDate === 'function') return EC.fmtDate(input, style);
+    if (!input) return '—';
+    var d = new Date(String(input).replace(' ', 'T'));
+    return isNaN(d) ? String(input) : d.toLocaleString();
+  };
 
   gs.ensureCsrf = async function () {
     var t = sessionStorage.getItem('csrf_token');

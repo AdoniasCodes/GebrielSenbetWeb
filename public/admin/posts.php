@@ -120,7 +120,7 @@ require __DIR__ . '/_partials/page-shell.php';
             '<button class="btn-icon danger" title="Archive" data-archive="'+p.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
           '</div>' +
         '</div>' +
-        '<p class="text-xs text-outline mb-2">'+escHtml(p.author_email||'')+' · '+escHtml(p.created_at)+(p.attachments && p.attachments.length ? ' · '+p.attachments.length+' attachment(s)' : '')+'</p>' +
+        '<p class="text-xs text-outline mb-2">'+escHtml(p.author_email||'')+' · '+escHtml(gs.fmtDate(p.created_at, "datetime"))+(p.attachments && p.attachments.length ? ' · '+p.attachments.length+' attachment(s)' : '')+'</p>' +
         '<p class="text-sm text-ink-soft">'+escHtml(snippet)+(p.content && p.content.length > 200 ? '…' : '')+'</p>' +
       '</li>';
     }).join('');

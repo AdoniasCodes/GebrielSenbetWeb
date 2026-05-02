@@ -32,6 +32,7 @@ $year = date('Y');
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="/assets/js/ec-date.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -616,32 +617,31 @@ $year = date('Y');
     function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
 
     var EN_MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    var AM_MONTHS_SHORT = ['ጥር','የካቲ','መጋቢ','ሚያዝ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','መስከ','ጥቅም','ኅዳር','ታኅሳ'];
-    var EN_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var AM_DAYS = ['እሁድ','ሰኞ','ማክሰኞ','ረቡዕ','ሐሙስ','ዓርብ','ቅዳሜ'];
+    var AM_MONTHS_SHORT = ['መስከ','ጥቅም','ኅዳር','ታኅሳ','ጥር','የካቲ','መጋቢ','ሚያዝ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','ጳጉሜ'];
 
     function parseDt(s) { if (!s) return null; var d = new Date(String(s).replace(' ','T')); return isNaN(d) ? null : d; }
-    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
-    function fmtTime(d) { var h = d.getHours(); var m = d.getMinutes(); var ap = h >= 12 ? 'PM' : 'AM'; var hh = h % 12; if (hh === 0) hh = 12; return hh + ':' + pad2(m) + ' ' + ap; }
 
+    // Build a card whose date pill carries data-iso so EC.rerenderIsoNodes
+    // refreshes it on language change.
     function eventCardHtml(e) {
       var d = parseDt(e.start_datetime);
       if (!d) return '';
       var moEn = EN_MONTHS_SHORT[d.getMonth()];
-      var moAm = AM_MONTHS_SHORT[d.getMonth()];
-      var dayNo = pad2(d.getDate());
-      var weekEn = EN_DAYS[d.getDay()] + ' · ' + fmtTime(d);
-      var weekAm = AM_DAYS[d.getDay()] + ' · ' + fmtTime(d);
+      var ec = window.EC ? EC.gregorianToEC(d) : null;
+      var moAm = ec ? AM_MONTHS_SHORT[ec.month - 1] : EN_MONTHS_SHORT[d.getMonth()];
+      var dayEn = String(d.getDate());
+      var dayAm = ec ? String(ec.day) : dayEn;
+      var iso = e.start_datetime;
       var title = escHtml(e.title || '');
       var desc  = escHtml(e.description || '');
       return '<article class="bg-surface rounded-lg border border-outline-soft/40 p-6 hover:shadow-md transition-shadow flex gap-4">' +
         '<div class="flex-shrink-0 w-14 text-center">' +
           '<div class="text-[10px] font-semibold uppercase tracking-widestest text-gold" data-en="'+moEn+'" data-am="'+moAm+'">'+moEn+'</div>' +
-          '<div class="font-display text-3xl text-primary leading-none mt-1">'+dayNo+'</div>' +
+          '<div class="font-display text-3xl text-primary leading-none mt-1" data-en="'+dayEn+'" data-am="'+dayAm+'">'+dayEn+'</div>' +
         '</div>' +
         '<div class="border-l border-outline-soft/40 pl-4">' +
           '<h3 class="font-display text-base text-ink leading-tight mb-1">'+title+'</h3>' +
-          '<p class="text-xs text-ink-soft mb-2" data-en="'+escHtml(weekEn)+'" data-am="'+escHtml(weekAm)+'">'+escHtml(weekEn)+'</p>' +
+          '<p class="text-xs text-ink-soft mb-2" data-iso="'+escHtml(iso)+'" data-fmt-style="datetime">'+escHtml(iso)+'</p>' +
           (desc ? '<span class="text-[10px] uppercase tracking-widestest text-outline">'+desc.substring(0, 48)+(desc.length > 48 ? '…' : '')+'</span>' : '') +
         '</div>' +
       '</article>';
@@ -673,6 +673,7 @@ $year = date('Y');
           grid.innerHTML = rows.slice(0, 8).map(eventCardHtml).join('');
         }
         if (window._applyLang) window._applyLang(window._currentLang || 'en');
+        if (window.EC) EC.rerenderIsoNodes();
       }).catch(function () {});
 
       fetch('/api/announcements/index.php?limit=4').then(function (r) { return r.json(); }).then(function (d) {

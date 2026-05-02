@@ -167,8 +167,7 @@ require __DIR__ . '/_partials/page-shell.php';
         evWrap.innerHTML = '<li class="text-sm text-ink-soft">No events in the next 30 days. <a href="/admin/events.php" class="text-gold hover:text-primary">Add one</a>.</li>';
       } else {
         evWrap.innerHTML = ev.map(function (e) {
-          var d2 = new Date((e.start_datetime||'').replace(' ','T'));
-          var when = isNaN(d2) ? e.start_datetime : d2.toLocaleString([], { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          var when = e.start_datetime ? gs.fmtDate(e.start_datetime, 'datetime') : '';
           return '<li class="flex gap-3"><span class="block w-2 h-2 rounded-full bg-gold mt-2 flex-shrink-0"></span>' +
             '<div class="flex-1"><p class="text-[10px] uppercase tracking-widestest text-gold mb-0.5">' + escHtml(when) + '</p>' +
             '<p class="font-display text-ink leading-snug">' + escHtml(e.title) + '</p>' +
