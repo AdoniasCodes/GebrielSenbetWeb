@@ -29,6 +29,31 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS schema_migrations (
   applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB");
 
+// Per-migration "is this already in the schema?" probes. Used both to (a)
+// bootstrap when the tracker is empty but the base schema is present, and
+// (b) prune stale tracker rows that point at migrations whose effects are
+// missing (e.g. a botched earlier bootstrap that marked too many as applied).
+function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
+    $checks = [
+        '001_initial_schema.sql'           => "SHOW TABLES LIKE 'users'",
+        '002_seed_tracks_levels.sql'       => "SELECT 1 FROM education_tracks LIMIT 1",
+        '003_grades_unique_index.sql'      => "SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='grades' AND index_name='uq_grade_unique' LIMIT 1",
+        '004_academic_terms_is_current.sql'=> "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='academic_terms' AND column_name='is_current' LIMIT 1",
+        '005_payments_extensions.sql'      => "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='payments' AND column_name='paid_amount' LIMIT 1",
+        '006_audit_log.sql'                => "SHOW TABLES LIKE 'audit_log'",
+        '007_notifications_public_flag.sql'=> "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name='is_public' LIMIT 1",
+        '008_seed_demo_content.sql'        => "SELECT 1 FROM events WHERE title='Sabbath Morning Service' LIMIT 1",
+        '009_parents.sql'                  => "SELECT 1 FROM roles WHERE name='parent' LIMIT 1",
+    ];
+    if (!isset($checks[$filename])) return null;
+    try {
+        $r = $pdo->query($checks[$filename])->fetch();
+        return $r !== false;
+    } catch (\Throwable $e) {
+        return false;
+    }
+}
+
 $applied = [];
 $stmt = $pdo->query('SELECT filename, checksum FROM schema_migrations');
 foreach ($stmt->fetchAll() as $row) { $applied[$row['filename']] = $row['checksum']; }
@@ -37,10 +62,23 @@ $dir = __DIR__ . '/../../../db/migrations';
 $files = glob($dir . '/*.sql');
 sort($files, SORT_NATURAL);
 
-// Bootstrap: if the tracker is empty but the base schema is already present
-// (production was migrated manually before this endpoint existed), backfill
-// the tracker with rows for every existing migration file. This is a one-shot
-// safety net so subsequent migrations don't try to re-run already-applied SQL.
+// Self-heal: drop any tracker rows whose schema artifact isn't actually
+// present. This catches earlier bad bootstraps that recorded migrations as
+// applied when their effects were never installed.
+$pruned = [];
+$delStmt = $pdo->prepare('DELETE FROM schema_migrations WHERE filename = ?');
+foreach (array_keys($applied) as $fn) {
+    $present = _migration_artifact_present($pdo, $fn);
+    if ($present === false) {
+        $delStmt->execute([$fn]);
+        unset($applied[$fn]);
+        $pruned[] = $fn;
+    }
+}
+
+// Bootstrap: when the tracker is empty AND the base schema is present, mark
+// each migration as applied ONLY if its artifact already exists. Migrations
+// whose artifacts are missing flow through the normal apply path below.
 $bootstrapped = [];
 if (empty($applied)) {
     $hasUsers = $pdo->query("SHOW TABLES LIKE 'users'")->fetch();
@@ -48,6 +86,7 @@ if (empty($applied)) {
         $insBoot = $pdo->prepare('INSERT INTO schema_migrations (filename, checksum) VALUES (?, ?)');
         foreach ($files as $path) {
             $fn = basename($path);
+            if (_migration_artifact_present($pdo, $fn) !== true) continue;
             $sqlContent = file_get_contents($path);
             if ($sqlContent === false) continue;
             $cs = hash('sha256', $sqlContent);
@@ -79,12 +118,13 @@ foreach ($files as $path) {
 
     try {
         $pdo->beginTransaction();
-        // Basic splitting by semicolons, skipping comments and empty lines.
+        // Strip line comments first so they don't end up at the head of a
+        // statement and cause the splitter to discard real SQL with them.
+        $cleanSql = preg_replace('/^\s*--.*$/m', '', $sql);
         $statements = [];
-        $buffer = '';
-        foreach (preg_split("/(;\s*\n)|(;\s*$)/m", $sql) as $part) {
+        foreach (preg_split("/(;\s*\n)|(;\s*$)/m", $cleanSql) as $part) {
             $chunk = trim($part);
-            if ($chunk === '' || preg_match('/^--/', $chunk)) { continue; }
+            if ($chunk === '') { continue; }
             $statements[] = $chunk;
         }
         foreach ($statements as $stmtSql) {
@@ -106,4 +146,5 @@ Response::json([
     'skipped' => $skipped,
     'failed' => $failed,
     'bootstrapped' => $bootstrapped,
+    'pruned' => $pruned,
 ]);
