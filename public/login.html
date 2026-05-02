@@ -207,6 +207,7 @@
         try { sessionStorage.setItem('csrf_token', data.csrf_token); } catch (e) {}
         var dest = data.role === 'admin' ? '/admin/index.php'
                  : data.role === 'teacher' ? '/teacher/index.php'
+                 : data.role === 'parent' ? '/parent/index.php'
                  : '/student/index.php';
         window.location.href = dest;
       } catch (err) {

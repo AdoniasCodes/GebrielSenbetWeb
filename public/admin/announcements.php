@@ -79,7 +79,7 @@ require __DIR__ . '/_partials/page-shell.php';
     var w = document.getElementById('payloadWrap');
     if (t === 'role') {
       w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Role</label>' +
-        '<select id="p_role" class="input-field"><option value="student">Students</option><option value="teacher">Teachers</option><option value="admin">Admins</option></select>';
+        '<select id="p_role" class="input-field"><option value="student">Students</option><option value="parent">Parents</option><option value="teacher">Teachers</option><option value="admin">Admins</option></select>';
     } else if (t === 'class') {
       w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Class</label>' +
         '<select id="p_class" class="input-field">' + classes.filter(function(c){return c.is_archived==0;}).map(function(c){

@@ -14,6 +14,7 @@ $nav_groups = [
   ['label_en' => 'Registry', 'label_am' => 'መዝገብ', 'items' => [
     ['slug'=>'students','href'=>'/admin/students.php','en'=>'Students','am'=>'ተማሪዎች','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>'],
     ['slug'=>'teachers','href'=>'/admin/teachers.php','en'=>'Teachers','am'=>'መምህራን','svg'=>'<path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 11l-3-3m3 3l-3 3m3-3h-7"/>'],
+    ['slug'=>'parents','href'=>'/admin/parents.php','en'=>'Parents','am'=>'ወላጆች','svg'=>'<path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM15 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M15 15h2a4 4 0 0 1 4 4v2"/>'],
   ]],
   ['label_en' => 'Classroom', 'label_am' => 'ክፍል', 'items' => [
     ['slug'=>'tracks','href'=>'/admin/tracks.php','en'=>'Tracks','am'=>'ኮርሶች','svg'=>'<path d="M2 4h6a4 4 0 0 1 4 4v13M22 4h-6a4 4 0 0 0-4 4v13"/>'],
