@@ -64,9 +64,12 @@ require __DIR__ . '/_partials/page-shell.php';
 </section>
 
 <section class="panel">
-  <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between">
+  <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between flex-wrap gap-3">
     <h2 class="font-display text-lg text-ink">Events · <span id="rowCount" class="text-ink-soft text-sm">—</span></h2>
-    <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="upcomingOnly" type="checkbox" class="w-4 h-4" checked /> <span>Upcoming only</span></label>
+    <div class="flex items-center gap-4">
+      <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="upcomingOnly" type="checkbox" class="w-4 h-4" /> <span>Upcoming only</span></label>
+      <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="includeArchived" type="checkbox" class="w-4 h-4" /> <span>Include archived</span></label>
+    </div>
   </header>
   <div class="table-wrap">
     <table class="data">
@@ -136,11 +139,15 @@ require __DIR__ . '/_partials/page-shell.php';
   }
 
   async function load() {
-    var qs = document.getElementById('upcomingOnly').checked ? '?upcoming=1' : '?include_archived=1';
-    try { var d = await gs.api('/api/admin/events/index.php' + qs); all = d.data || []; render(); }
+    var qs = [];
+    if (document.getElementById('upcomingOnly').checked) qs.push('upcoming=1');
+    if (document.getElementById('includeArchived').checked) qs.push('include_archived=1');
+    var url = '/api/admin/events/index.php' + (qs.length ? '?' + qs.join('&') : '');
+    try { var d = await gs.api(url); all = d.data || []; render(); }
     catch (e) { gs.toast(e.message,'error'); }
   }
   document.getElementById('upcomingOnly').addEventListener('change', load);
+  document.getElementById('includeArchived').addEventListener('change', load);
 
   document.getElementById('entityForm').addEventListener('submit', async function (ev) {
     ev.preventDefault();

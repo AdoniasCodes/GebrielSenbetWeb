@@ -9,16 +9,13 @@ $config = app_config();
 Csrf::ensureSession($config['app']['session_name']);
 $role = $_SESSION['role_name'] ?? null;
 
-if ($role === 'admin') {
-    header('Location: /admin/index.php');
-    exit;
-} elseif ($role === 'teacher') {
-    header('Location: /teacher/index.php');
-    exit;
-} elseif ($role === 'student') {
-    header('Location: /student/index.php');
-    exit;
-}
+$dashboard_href = null;
+$dashboard_label_en = null;
+$dashboard_label_am = null;
+if ($role === 'admin')   { $dashboard_href = '/admin/index.php';   $dashboard_label_en = 'Admin dashboard';   $dashboard_label_am = 'የአስተዳዳሪ ዳሽቦርድ'; }
+elseif ($role === 'teacher') { $dashboard_href = '/teacher/index.php'; $dashboard_label_en = 'Teacher portal'; $dashboard_label_am = 'የመምህር ፖርታል'; }
+elseif ($role === 'student') { $dashboard_href = '/student/index.php'; $dashboard_label_en = 'Student portal'; $dashboard_label_am = 'የተማሪ ፖርታል'; }
+elseif ($role === 'parent')  { $dashboard_href = '/parent/index.php';  $dashboard_label_en = 'Parent portal';  $dashboard_label_am = 'የወላጅ ፖርታል'; }
 
 $year = date('Y');
 ?>
@@ -168,10 +165,17 @@ $year = date('Y');
           <button data-lang="en" class="seg-active px-3 py-1 text-xs font-semibold rounded-full">EN</button>
           <button data-lang="am" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft hover:text-primary ethiopic">አማ</button>
         </div>
-        <a href="/login.html" class="inline-flex items-center gap-2 bg-primary text-surface px-4 py-2 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
-          <span data-en="Sign in" data-am="ግባ">Sign in</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-        </a>
+        <?php if ($dashboard_href): ?>
+          <a href="<?= htmlspecialchars($dashboard_href) ?>" class="inline-flex items-center gap-2 bg-primary text-surface px-4 py-2 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+            <span data-en="<?= htmlspecialchars($dashboard_label_en) ?>" data-am="<?= htmlspecialchars($dashboard_label_am) ?>"><?= htmlspecialchars($dashboard_label_en) ?></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        <?php else: ?>
+          <a href="/login.html" class="inline-flex items-center gap-2 bg-primary text-surface px-4 py-2 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+            <span data-en="Sign in" data-am="ግባ">Sign in</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        <?php endif; ?>
       </div>
     </div>
   </header>
@@ -199,10 +203,17 @@ $year = date('Y');
           </p>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3">
-            <a href="/login.html" class="inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
-              <span data-en="Sign in" data-am="ግባ">Sign in</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </a>
+            <?php if ($dashboard_href): ?>
+              <a href="<?= htmlspecialchars($dashboard_href) ?>" class="inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+                <span data-en="<?= htmlspecialchars($dashboard_label_en) ?>" data-am="<?= htmlspecialchars($dashboard_label_am) ?>"><?= htmlspecialchars($dashboard_label_en) ?></span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </a>
+            <?php else: ?>
+              <a href="/login.html" class="inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+                <span data-en="Sign in" data-am="ግባ">Sign in</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </a>
+            <?php endif; ?>
             <a href="#enroll" class="inline-flex justify-center items-center gap-2 border border-outline text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface-mid transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
           </div>
 
