@@ -37,6 +37,27 @@ $dir = __DIR__ . '/../../../db/migrations';
 $files = glob($dir . '/*.sql');
 sort($files, SORT_NATURAL);
 
+// Bootstrap: if the tracker is empty but the base schema is already present
+// (production was migrated manually before this endpoint existed), backfill
+// the tracker with rows for every existing migration file. This is a one-shot
+// safety net so subsequent migrations don't try to re-run already-applied SQL.
+$bootstrapped = [];
+if (empty($applied)) {
+    $hasUsers = $pdo->query("SHOW TABLES LIKE 'users'")->fetch();
+    if ($hasUsers) {
+        $insBoot = $pdo->prepare('INSERT INTO schema_migrations (filename, checksum) VALUES (?, ?)');
+        foreach ($files as $path) {
+            $fn = basename($path);
+            $sqlContent = file_get_contents($path);
+            if ($sqlContent === false) continue;
+            $cs = hash('sha256', $sqlContent);
+            $insBoot->execute([$fn, $cs]);
+            $applied[$fn] = $cs;
+            $bootstrapped[] = $fn;
+        }
+    }
+}
+
 $appliedNow = [];
 $skipped = [];
 $failed = [];
@@ -84,4 +105,5 @@ Response::json([
     'applied' => $appliedNow,
     'skipped' => $skipped,
     'failed' => $failed,
+    'bootstrapped' => $bootstrapped,
 ]);

@@ -21,8 +21,8 @@ $validTargets = ['role','class','subject','payment_defaulters','event'];
 
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
-    $sql = "SELECT n.id, n.title, n.message, n.target_type, n.target_payload, n.read_by, n.is_archived,
-                   n.created_at, n.updated_at,
+    $sql = "SELECT n.id, n.title, n.message, n.target_type, n.target_payload, n.read_by, n.is_public,
+                   n.is_archived, n.created_at, n.updated_at,
                    u.email AS sender_email, r.name AS sender_role
             FROM notifications n
             LEFT JOIN users u ON u.id=n.sender_user_id
@@ -44,6 +44,7 @@ if ($method === 'POST') {
     $message = trim($input['message'] ?? '');
     $tgt     = trim($input['target_type'] ?? '');
     $payload = $input['target_payload'] ?? null;
+    $isPublic = !empty($input['is_public']) ? 1 : 0;
 
     if ($title === '' || $message === '') Response::error('title and message are required', 422);
     if (!in_array($tgt, $validTargets, true)) Response::error('Invalid target_type', 422);
@@ -53,10 +54,10 @@ if ($method === 'POST') {
     $userId = (int)($_SESSION['user_id'] ?? 0);
     $roleId = (int)($_SESSION['role_id'] ?? 0);
 
-    $ins = $pdo->prepare('INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message) VALUES (?, ?, ?, ?, ?, ?)');
-    $ins->execute([$userId ?: null, $roleId ?: null, $tgt, $payloadJson, $title, $message]);
+    $ins = $pdo->prepare('INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message, is_public) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    $ins->execute([$userId ?: null, $roleId ?: null, $tgt, $payloadJson, $title, $message, $isPublic]);
     $newId = (int)$pdo->lastInsertId();
-    \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt]);
+    \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt, 'is_public' => $isPublic]);
     Response::json(['ok' => true, 'id' => $newId]);
 }
 

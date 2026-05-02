@@ -46,6 +46,11 @@ require __DIR__ . '/_partials/page-shell.php';
         </div>
       </div>
 
+      <label class="inline-flex items-center gap-2 mt-1">
+        <input id="f_public" type="checkbox" class="w-4 h-4" />
+        <span class="text-sm text-ink-soft" data-en="Also show on the public site" data-am="በይፋዊ ጣቢያ ላይም አሳይ">Also show on the public site</span>
+      </label>
+
       <div class="flex items-center gap-3">
         <button type="submit" class="btn-primary">Send</button>
         <p id="msg" class="text-sm hidden"></p>
@@ -126,9 +131,10 @@ require __DIR__ . '/_partials/page-shell.php';
       var ul = document.getElementById('listWrap');
       if (!rows.length) { ul.innerHTML = '<li class="px-6 py-12 text-center text-ink-soft text-sm">No announcements yet.</li>'; return; }
       ul.innerHTML = rows.map(function (n) {
+        var publicPill = n.is_public == 1 ? '<span class="pill pill-active text-[10px] ml-2">Public</span>' : '';
         return '<li class="px-6 py-4">' +
           '<div class="flex items-start justify-between gap-3 mb-1">' +
-            '<p class="font-medium leading-tight">'+escHtml(n.title)+'</p>' +
+            '<p class="font-medium leading-tight">'+escHtml(n.title)+publicPill+'</p>' +
             '<button class="btn-icon danger flex-shrink-0" title="Archive" data-archive="'+n.id+'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
           '</div>' +
           '<p class="text-xs text-outline mb-2">'+escHtml(describeTarget(n))+' · '+escHtml(n.created_at)+'</p>' +
@@ -162,6 +168,7 @@ require __DIR__ . '/_partials/page-shell.php';
       message: document.getElementById('f_message').value,
       target_type: document.getElementById('f_target').value,
       target_payload: buildPayload(),
+      is_public: document.getElementById('f_public').checked ? 1 : 0,
     };
     try {
       await gs.api('/api/admin/announcements/index.php', { method:'POST', body: JSON.stringify(body) });

@@ -504,28 +504,35 @@ $year = date('Y');
         </a>
       </div>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <?php
-          $events = [
-            ['en_mo'=>'MAY','am_mo'=>'ግንቦት','day'=>'12','en_t'=>'Term 1 begins','am_t'=>'መጀመሪያ ኮርስ ይጀምራል','en_w'=>'Sunday · 9:00 AM','am_w'=>'እሁድ · 9:00 ጥዋት','en_x'=>'All tracks','am_x'=>'ሁሉም ኮርሶች'],
-            ['en_mo'=>'MAY','am_mo'=>'ግንቦት','day'=>'19','en_t'=>'Parent orientation','am_t'=>'የወላጆች መግለጫ','en_w'=>'Sunday · 11:30 AM','am_w'=>'እሁድ · 11:30 ጥዋት','en_x'=>"Children's Track",'am_x'=>'የልጆች ኮርስ'],
-            ['en_mo'=>'JUN','am_mo'=>'ሰኔ','day'=>'02','en_t'=>'Liturgical retreat','am_t'=>'መንፈሳዊ ጉባኤ','en_w'=>'Saturday · 9:00 AM','am_w'=>'ቅዳሜ · 9:00 ጥዋት','en_x'=>'Youth & Adult','am_x'=>'ወጣቶች እና አዋቂዎች'],
-            ['en_mo'=>'JUN','am_mo'=>'ሰኔ','day'=>'23','en_t'=>'Mid-term assessments','am_t'=>'መካከለኛ ፈተናዎች','en_w'=>'Sunday · 9:00 AM','am_w'=>'እሁድ · 9:00 ጥዋት','en_x'=>'All tracks','am_x'=>'ሁሉም ኮርሶች'],
-          ];
-          foreach ($events as $e): ?>
-            <article class="bg-surface rounded-lg border border-outline-soft/40 p-6 hover:shadow-md transition-shadow flex gap-4">
-              <div class="flex-shrink-0 w-14 text-center">
-                <div class="text-[10px] font-semibold uppercase tracking-widestest text-gold" data-en="<?= htmlspecialchars($e['en_mo']) ?>" data-am="<?= htmlspecialchars($e['am_mo']) ?>"><?= htmlspecialchars($e['en_mo']) ?></div>
-                <div class="font-display text-3xl text-primary leading-none mt-1"><?= htmlspecialchars($e['day']) ?></div>
-              </div>
-              <div class="border-l border-outline-soft/40 pl-4">
-                <h3 class="font-display text-base text-ink leading-tight mb-1" data-en="<?= htmlspecialchars($e['en_t']) ?>" data-am="<?= htmlspecialchars($e['am_t']) ?>"><?= htmlspecialchars($e['en_t']) ?></h3>
-                <p class="text-xs text-ink-soft mb-2" data-en="<?= htmlspecialchars($e['en_w']) ?>" data-am="<?= htmlspecialchars($e['am_w']) ?>"><?= htmlspecialchars($e['en_w']) ?></p>
-                <span class="text-[10px] uppercase tracking-widestest text-outline" data-en="<?= htmlspecialchars($e['en_x']) ?>" data-am="<?= htmlspecialchars($e['am_x']) ?>"><?= htmlspecialchars($e['en_x']) ?></span>
-              </div>
-            </article>
-          <?php endforeach; ?>
+      <div id="liveEventsGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <p class="text-sm text-ink-soft col-span-full text-center py-8" data-en="Loading upcoming events…" data-am="መጪ ዝግጅቶችን በመጫን ላይ…">Loading upcoming events…</p>
       </div>
+    </section>
+
+    <!-- ============ ANNOUNCEMENTS ============ -->
+    <section id="liveAnnouncementsSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-12 hidden">
+      <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
+        <div>
+          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Notice Board" data-am="የማስታወቂያ ሰሌዳ">Notice Board</span><span class="rule-gold-tiny"></span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Announcements." data-am="ማስታወቂያዎች።">Announcements.</h2>
+        </div>
+      </div>
+      <div id="liveAnnouncementsGrid" class="grid md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ============ LATEST POSTS ============ -->
+    <section id="livePostsSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 hidden">
+      <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
+        <div>
+          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="From the School" data-am="ከት/ቤታችን">From the School</span><span class="rule-gold-tiny"></span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Latest reflections." data-am="የቅርብ ጊዜ ጽሑፎች።">Latest reflections.</h2>
+        </div>
+        <a href="/blog.php" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary">
+          <span data-en="Read the blog" data-am="ብሎጉን ያንብቡ">Read the blog</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div id="livePostsGrid" class="grid md:grid-cols-3 gap-5"></div>
     </section>
 
     <!-- ============ FINAL CTA ============ -->
@@ -606,6 +613,83 @@ $year = date('Y');
   </footer>
 
   <script>
+    function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+
+    var EN_MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    var AM_MONTHS_SHORT = ['ጥር','የካቲ','መጋቢ','ሚያዝ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','መስከ','ጥቅም','ኅዳር','ታኅሳ'];
+    var EN_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var AM_DAYS = ['እሁድ','ሰኞ','ማክሰኞ','ረቡዕ','ሐሙስ','ዓርብ','ቅዳሜ'];
+
+    function parseDt(s) { if (!s) return null; var d = new Date(String(s).replace(' ','T')); return isNaN(d) ? null : d; }
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function fmtTime(d) { var h = d.getHours(); var m = d.getMinutes(); var ap = h >= 12 ? 'PM' : 'AM'; var hh = h % 12; if (hh === 0) hh = 12; return hh + ':' + pad2(m) + ' ' + ap; }
+
+    function eventCardHtml(e) {
+      var d = parseDt(e.start_datetime);
+      if (!d) return '';
+      var moEn = EN_MONTHS_SHORT[d.getMonth()];
+      var moAm = AM_MONTHS_SHORT[d.getMonth()];
+      var dayNo = pad2(d.getDate());
+      var weekEn = EN_DAYS[d.getDay()] + ' · ' + fmtTime(d);
+      var weekAm = AM_DAYS[d.getDay()] + ' · ' + fmtTime(d);
+      var title = escHtml(e.title || '');
+      var desc  = escHtml(e.description || '');
+      return '<article class="bg-surface rounded-lg border border-outline-soft/40 p-6 hover:shadow-md transition-shadow flex gap-4">' +
+        '<div class="flex-shrink-0 w-14 text-center">' +
+          '<div class="text-[10px] font-semibold uppercase tracking-widestest text-gold" data-en="'+moEn+'" data-am="'+moAm+'">'+moEn+'</div>' +
+          '<div class="font-display text-3xl text-primary leading-none mt-1">'+dayNo+'</div>' +
+        '</div>' +
+        '<div class="border-l border-outline-soft/40 pl-4">' +
+          '<h3 class="font-display text-base text-ink leading-tight mb-1">'+title+'</h3>' +
+          '<p class="text-xs text-ink-soft mb-2" data-en="'+escHtml(weekEn)+'" data-am="'+escHtml(weekAm)+'">'+escHtml(weekEn)+'</p>' +
+          (desc ? '<span class="text-[10px] uppercase tracking-widestest text-outline">'+desc.substring(0, 48)+(desc.length > 48 ? '…' : '')+'</span>' : '') +
+        '</div>' +
+      '</article>';
+    }
+
+    function announcementCardHtml(n) {
+      return '<article class="bg-surface rounded-lg border border-outline-soft/40 p-5">' +
+        '<h3 class="font-display text-base text-ink mb-2">'+escHtml(n.title || '')+'</h3>' +
+        '<p class="text-sm text-ink-soft whitespace-pre-wrap">'+escHtml(n.message || '')+'</p>' +
+      '</article>';
+    }
+
+    function postCardHtml(p) {
+      var snippet = (p.content || '').replace(/\s+/g, ' ').trim();
+      if (snippet.length > 140) snippet = snippet.substring(0, 140) + '…';
+      return '<a href="/blog.php" class="block bg-surface rounded-lg border border-outline-soft/40 p-5 hover:shadow-md transition-shadow">' +
+        '<h3 class="font-display text-base text-ink mb-2">'+escHtml(p.title || '')+'</h3>' +
+        '<p class="text-sm text-ink-soft">'+escHtml(snippet)+'</p>' +
+      '</a>';
+    }
+
+    function loadLiveContent() {
+      fetch('/api/events/index.php?limit=8').then(function (r) { return r.json(); }).then(function (d) {
+        var grid = document.getElementById('liveEventsGrid');
+        var rows = (d && d.data) || [];
+        if (!rows.length) {
+          grid.innerHTML = '<p class="text-sm text-ink-soft col-span-full text-center py-8" data-en="No upcoming events yet." data-am="ገና የተመዘገቡ ዝግጅቶች የሉም።">No upcoming events yet.</p>';
+        } else {
+          grid.innerHTML = rows.slice(0, 8).map(eventCardHtml).join('');
+        }
+        if (window._applyLang) window._applyLang(window._currentLang || 'en');
+      }).catch(function () {});
+
+      fetch('/api/announcements/index.php?limit=4').then(function (r) { return r.json(); }).then(function (d) {
+        var rows = (d && d.data) || [];
+        if (!rows.length) return;
+        document.getElementById('liveAnnouncementsSection').classList.remove('hidden');
+        document.getElementById('liveAnnouncementsGrid').innerHTML = rows.map(announcementCardHtml).join('');
+      }).catch(function () {});
+
+      fetch('/api/posts/index.php?limit=3').then(function (r) { return r.json(); }).then(function (d) {
+        var rows = (d && d.data) || [];
+        if (!rows.length) return;
+        document.getElementById('livePostsSection').classList.remove('hidden');
+        document.getElementById('livePostsGrid').innerHTML = rows.map(postCardHtml).join('');
+      }).catch(function () {});
+    }
+
     (function () {
       function applyLang(lang) {
         if (lang !== 'en' && lang !== 'am') lang = 'en';
@@ -626,8 +710,10 @@ $year = date('Y');
           });
         });
 
+        window._currentLang = lang;
         try { localStorage.setItem('gs_lang', lang); } catch (e) {}
       }
+      window._applyLang = applyLang;
 
       document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
         btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
@@ -636,6 +722,7 @@ $year = date('Y');
       var saved = 'en';
       try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
       applyLang(saved);
+      loadLiveContent();
     })();
   </script>
 </body>
