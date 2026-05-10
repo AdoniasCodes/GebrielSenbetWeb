@@ -44,6 +44,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '007_notifications_public_flag.sql'=> "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name='is_public' LIMIT 1",
         '008_seed_demo_content.sql'        => "SELECT 1 FROM events WHERE title='Sabbath Morning Service' LIMIT 1",
         '009_parents.sql'                  => "SELECT 1 FROM roles WHERE name='parent' LIMIT 1",
+        '010_video_embeds.sql'             => "SHOW TABLES LIKE 'video_embeds'",
     ];
     if (!isset($checks[$filename])) return null;
     try {

@@ -32,6 +32,7 @@ $nav_groups = [
     ['slug'=>'announcements','href'=>'/admin/announcements.php','en'=>'Announcements','am'=>'ማስታወቂያዎች','svg'=>'<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>'],
     ['slug'=>'events','href'=>'/admin/events.php','en'=>'Events','am'=>'ዝግጅቶች','svg'=>'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01"/>'],
     ['slug'=>'posts','href'=>'/admin/posts.php','en'=>'Posts','am'=>'ጽሑፎች','svg'=>'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'],
+    ['slug'=>'videos','href'=>'/admin/videos.php','en'=>'Videos','am'=>'ቪዲዮዎች','svg'=>'<path d="M23 7l-7 5 7 5V7zM1 5h15v14H1z"/>'],
   ]],
 ];
 ?>

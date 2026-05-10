@@ -33,6 +33,7 @@ $year = date('Y');
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script src="/assets/js/ec-date.js"></script>
+  <script src="/assets/js/video-embed.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -536,6 +537,32 @@ $year = date('Y');
       <div id="livePostsGrid" class="grid md:grid-cols-3 gap-5"></div>
     </section>
 
+    <!-- ============ LATEST ON TIKTOK ============ -->
+    <section id="tiktokSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 hidden">
+      <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
+        <div>
+          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Social" data-am="ማኅበራዊ">Social</span><span class="rule-gold-tiny"></span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Latest on TikTok." data-am="በቲክቶክ ላይ የቅርብ ጊዜ።">Latest on TikTok.</h2>
+        </div>
+        <a href="https://www.tiktok.com/@mekaneselamm" target="_blank" rel="noopener" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary">
+          <span data-en="Follow on TikTok" data-am="በቲክቶክ ይከተሉ">Follow on TikTok</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div id="tiktokGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- ============ LATEST ON YOUTUBE ============ -->
+    <section id="youtubeSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 hidden">
+      <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
+        <div>
+          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Watch" data-am="ይመልከቱ">Watch</span><span class="rule-gold-tiny"></span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Latest on YouTube." data-am="በዩቲዩብ ላይ የቅርብ ጊዜ።">Latest on YouTube.</h2>
+        </div>
+      </div>
+      <div id="youtubeGrid" class="max-w-3xl mx-auto"></div>
+    </section>
+
     <!-- ============ FINAL CTA ============ -->
     <section id="enroll" class="bg-surface-low border-y border-outline-soft/40">
       <div class="max-w-3xl mx-auto px-6 lg:px-8 py-20 text-center">
@@ -663,6 +690,31 @@ $year = date('Y');
       '</a>';
     }
 
+    function tiktokCardHtml(v) {
+      var meta = window.VideoEmbed ? VideoEmbed.buildEmbedUrl(v.video_url) : null;
+      if (!meta) return '';
+      var caption = v.caption ? '<p class="text-sm text-ink-soft mt-3">'+escHtml(v.caption)+'</p>' : '';
+      var title = v.title ? '<p class="font-display text-base text-ink mt-3">'+escHtml(v.title)+'</p>' : '';
+      return '<article class="bg-surface rounded-lg border border-outline-soft/40 overflow-hidden">' +
+        '<div class="relative bg-black" style="aspect-ratio:9/16;">' +
+          '<iframe src="'+escHtml(meta.embedUrl)+'" class="absolute inset-0 w-full h-full" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>' +
+        '</div>' +
+        (title || caption ? '<div class="p-4 pt-0">'+title+caption+'</div>' : '') +
+      '</article>';
+    }
+
+    function youtubeCardHtml(v) {
+      var meta = window.VideoEmbed ? VideoEmbed.buildEmbedUrl(v.video_url) : null;
+      if (!meta) return '';
+      var caption = v.caption ? '<p class="text-sm text-ink-soft mt-4 text-center">'+escHtml(v.caption)+'</p>' : '';
+      return '<div>' +
+        '<div class="relative bg-black rounded-lg overflow-hidden border border-outline-soft/40" style="aspect-ratio:16/9;">' +
+          '<iframe src="'+escHtml(meta.embedUrl)+'" class="absolute inset-0 w-full h-full" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>' +
+        '</div>' +
+        caption +
+      '</div>';
+    }
+
     function loadLiveContent() {
       fetch('/api/events/index.php?limit=8').then(function (r) { return r.json(); }).then(function (d) {
         var grid = document.getElementById('liveEventsGrid');
@@ -688,6 +740,24 @@ $year = date('Y');
         if (!rows.length) return;
         document.getElementById('livePostsSection').classList.remove('hidden');
         document.getElementById('livePostsGrid').innerHTML = rows.map(postCardHtml).join('');
+      }).catch(function () {});
+
+      fetch('/api/videos/index.php?section=tiktok_latest&limit=3').then(function (r) { return r.json(); }).then(function (d) {
+        var rows = (d && d.data) || [];
+        if (!rows.length) return;
+        var html = rows.map(tiktokCardHtml).filter(Boolean).join('');
+        if (!html) return;
+        document.getElementById('tiktokSection').classList.remove('hidden');
+        document.getElementById('tiktokGrid').innerHTML = html;
+      }).catch(function () {});
+
+      fetch('/api/videos/index.php?section=youtube_latest&limit=1').then(function (r) { return r.json(); }).then(function (d) {
+        var rows = (d && d.data) || [];
+        if (!rows.length) return;
+        var html = rows.map(youtubeCardHtml).filter(Boolean).join('');
+        if (!html) return;
+        document.getElementById('youtubeSection').classList.remove('hidden');
+        document.getElementById('youtubeGrid').innerHTML = html;
       }).catch(function () {});
     }
 
