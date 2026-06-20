@@ -5,9 +5,9 @@
 return [
     'db' => [
         'host' => getenv('APP_DB_HOST') ?: 'localhost',
-        'name' => getenv('APP_DB_NAME') ?: 'eagleerq_gebriel',
-        'user' => getenv('APP_DB_USER') ?: 'eagleerq_gebriel',
-        'pass' => getenv('APP_DB_PASS') ?: 'gebrieldbpw',
+        'name' => getenv('APP_DB_NAME') ?: 'mekanefh_RealDb',
+        'user' => getenv('APP_DB_USER') ?: 'mekanefh_gebriel',
+        'pass' => getenv('APP_DB_PASS') ?: 'Panda2022!!',
         'charset' => 'utf8mb4',
     ],
     'app' => [
