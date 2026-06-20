@@ -29,8 +29,12 @@ require __DIR__ . '/_partials/page-shell.php';
   <form id="entityForm" class="p-6 grid grid-cols-1 gap-4">
     <input type="hidden" id="f_id" />
     <div>
-      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Subject name</label>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Subject name (English)" data-am="የትምህርት ስም (እንግሊዝኛ)">Subject name (English)</label>
       <input id="f_name" class="input-field" required />
+    </div>
+    <div>
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Subject name (Amharic)" data-am="የትምህርት ስም (አማርኛ)">Subject name (Amharic)</label>
+      <input id="f_name_am" class="input-field ethiopic" placeholder="ለምሳሌ ነገረ ሃይማኖት" />
     </div>
     <div>
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Description</label>
@@ -50,8 +54,8 @@ require __DIR__ . '/_partials/page-shell.php';
   </header>
   <div class="table-wrap">
     <table class="data">
-      <thead><tr><th>Name</th><th>Description</th><th>Status</th><th class="text-right">&nbsp;</th></tr></thead>
-      <tbody id="tbody"><tr><td colspan="4" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
+      <thead><tr><th data-en="Name" data-am="ስም">Name</th><th data-en="Amharic" data-am="አማርኛ">Amharic</th><th>Description</th><th>Status</th><th class="text-right">&nbsp;</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="5" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -67,6 +71,7 @@ require __DIR__ . '/_partials/page-shell.php';
     msg.classList.add('hidden');
     document.getElementById('f_id').value = item ? item.id : '';
     document.getElementById('f_name').value = item ? item.name : '';
+    document.getElementById('f_name_am').value = item && item.name_am ? item.name_am : '';
     document.getElementById('f_desc').value = item && item.description ? item.description : '';
     formTitle.textContent = item ? 'Edit Subject' : 'New Subject';
     formPanel.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -81,11 +86,12 @@ require __DIR__ . '/_partials/page-shell.php';
   function render() {
     document.getElementById('rowCount').textContent = all.length + ' total';
     var tbody = document.getElementById('tbody');
-    if (!all.length) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-ink-soft py-16">No subjects yet.</td></tr>'; return; }
+    if (!all.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-ink-soft py-16">No subjects yet.</td></tr>'; return; }
     tbody.innerHTML = all.map(function (s) {
       var pill = s.is_archived == 1 ? '<span class="pill pill-archived">Archived</span>' : '<span class="pill pill-active">Active</span>';
       return '<tr>' +
         '<td class="font-medium">'+escHtml(s.name)+'</td>' +
+        '<td class="text-ink-soft ethiopic">'+escHtml(s.name_am||'—')+'</td>' +
         '<td class="text-ink-soft text-sm">'+escHtml(s.description||'—')+'</td>' +
         '<td>'+pill+'</td>' +
         '<td class="text-right"><div class="inline-flex items-center gap-1">' +
@@ -106,7 +112,7 @@ require __DIR__ . '/_partials/page-shell.php';
     e.preventDefault();
     msg.classList.add('hidden');
     var id = document.getElementById('f_id').value;
-    var body = { name: document.getElementById('f_name').value.trim(), description: document.getElementById('f_desc').value.trim() };
+    var body = { name: document.getElementById('f_name').value.trim(), name_am: document.getElementById('f_name_am').value.trim(), description: document.getElementById('f_desc').value.trim() };
     if (!body.name) return;
     try {
       if (id) { body.id = parseInt(id,10); await gs.api('/api/admin/subjects/index.php', { method:'PUT', body: JSON.stringify(body) }); }

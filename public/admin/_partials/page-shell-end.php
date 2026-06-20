@@ -37,56 +37,9 @@
     applyLang(saved);
   })();
 
-  // === CSRF + auth helpers (shared) ===
-  window.gs = window.gs || {};
-
-  // Lang-aware date formatter. Uses Ethiopian calendar in Amharic mode.
-  // style: 'short' | 'long' | 'datetime' (default).
-  gs.fmtDate = function (input, style) {
-    if (window.EC && typeof EC.fmtDate === 'function') return EC.fmtDate(input, style);
-    if (!input) return '—';
-    var d = new Date(String(input).replace(' ', 'T'));
-    return isNaN(d) ? String(input) : d.toLocaleString();
-  };
-
-  gs.ensureCsrf = async function () {
-    var t = sessionStorage.getItem('csrf_token');
-    if (!t) {
-      var r = await fetch('/api/auth/csrf.php');
-      var d = await r.json();
-      t = d.csrf_token;
-      sessionStorage.setItem('csrf_token', t);
-    }
-    return t;
-  };
-
-  gs.api = async function (url, opts) {
-    opts = opts || {};
-    opts.headers = opts.headers || {};
-    if (opts.body && !opts.headers['Content-Type']) opts.headers['Content-Type'] = 'application/json';
-    if (['POST','PUT','PATCH','DELETE'].indexOf((opts.method||'GET').toUpperCase()) >= 0) {
-      opts.headers['X-CSRF-Token'] = await gs.ensureCsrf();
-    }
-    var res = await fetch(url, opts);
-    var data;
-    try { data = await res.json(); } catch (e) { data = {}; }
-    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
-    return data;
-  };
-
-  gs.toast = function (msg, type) {
-    type = type || 'info';
-    var bg = { info: '#384700', error: '#ba1a1a', success: '#384700' }[type] || '#384700';
-    var t = document.createElement('div');
-    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:'+bg+';color:#fff;padding:14px 20px;border-radius:6px;z-index:9999;box-shadow:0 8px 24px -8px rgba(0,0,0,0.3);font-size:14px;max-width:340px;';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(function () { t.style.opacity = '0'; t.style.transition = 'opacity 300ms'; setTimeout(function () { t.remove(); }, 300); }, 3000);
-  };
-
-  gs.confirm = function (msg) {
-    return Promise.resolve(window.confirm(msg));
-  };
+  // === CSRF + auth helpers (gs.api, gs.ensureCsrf, gs.fmtDate, gs.toast,
+  //     gs.confirm) are now defined in <head> via page-shell.php so that page
+  //     scripts can use them during initial load. ===
 
   // === Logout ===
   document.getElementById('logoutBtn').addEventListener('click', async function () {

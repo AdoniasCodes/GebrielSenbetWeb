@@ -11,6 +11,10 @@ $year = date('Y');
 $nav = $active_nav ?? '';
 
 $nav_groups = [
+  ['label_en' => 'Community', 'label_am' => 'ማህበረሰብ', 'items' => [
+    ['slug'=>'people','href'=>'/admin/people.php','en'=>'People','am'=>'አባላት','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'],
+    ['slug'=>'departments','href'=>'/admin/departments.php','en'=>'Departments','am'=>'ክፍሎች','svg'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
+  ]],
   ['label_en' => 'Registry', 'label_am' => 'መዝገብ', 'items' => [
     ['slug'=>'students','href'=>'/admin/students.php','en'=>'Students','am'=>'ተማሪዎች','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>'],
     ['slug'=>'teachers','href'=>'/admin/teachers.php','en'=>'Teachers','am'=>'መምህራን','svg'=>'<path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 11l-3-3m3 3l-3 3m3-3h-7"/>'],
@@ -27,6 +31,11 @@ $nav_groups = [
   ['label_en' => 'Records', 'label_am' => 'መዝገቦች', 'items' => [
     ['slug'=>'payments','href'=>'/admin/payments.php','en'=>'Payments','am'=>'ክፍያዎች','svg'=>'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>'],
     ['slug'=>'grades','href'=>'/admin/grades.php','en'=>'Grades','am'=>'ውጤቶች','svg'=>'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>'],
+    ['slug'=>'attendance','href'=>'/admin/attendance.php','en'=>'Attendance','am'=>'መገኘት','svg'=>'<path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'],
+  ]],
+  ['label_en' => 'Calendar', 'label_am' => 'የቀን መቁጠሪያ', 'items' => [
+    ['slug'=>'holidays','href'=>'/admin/holidays.php','en'=>'Holidays & Serving','am'=>'በዓላትና አገልግሎት','svg'=>'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M12 14l1.5 3 3 .3-2.2 2 .7 3-3-1.6-3 1.6.7-3-2.2-2 3-.3z"/>'],
+    ['slug'=>'eligibility','href'=>'/admin/eligibility.php','en'=>'Serving Eligibility','am'=>'የአገልግሎት ብቁነት','svg'=>'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/>'],
   ]],
   ['label_en' => 'Resources', 'label_am' => 'መርጃዎች', 'items' => [
     ['slug'=>'announcements','href'=>'/admin/announcements.php','en'=>'Announcements','am'=>'ማስታወቂያዎች','svg'=>'<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>'],
@@ -68,6 +77,57 @@ $nav_groups = [
         letterSpacing: { widestest: '0.18em' },
       }}
     };
+  </script>
+
+  <script>
+    // === CSRF + auth helpers (shared) — defined in <head> so page scripts can
+    // call gs.api() during initial load (they run before page-shell-end.php). ===
+    window.gs = window.gs || {};
+
+    // Lang-aware date formatter. Uses Ethiopian calendar in Amharic mode.
+    gs.fmtDate = function (input, style) {
+      if (window.EC && typeof EC.fmtDate === 'function') return EC.fmtDate(input, style);
+      if (!input) return '—';
+      var d = new Date(String(input).replace(' ', 'T'));
+      return isNaN(d) ? String(input) : d.toLocaleString();
+    };
+
+    gs.ensureCsrf = async function () {
+      var t = sessionStorage.getItem('csrf_token');
+      if (!t) {
+        var r = await fetch('/api/auth/csrf.php');
+        var d = await r.json();
+        t = d.csrf_token;
+        sessionStorage.setItem('csrf_token', t);
+      }
+      return t;
+    };
+
+    gs.api = async function (url, opts) {
+      opts = opts || {};
+      opts.headers = opts.headers || {};
+      if (opts.body && !opts.headers['Content-Type']) opts.headers['Content-Type'] = 'application/json';
+      if (['POST','PUT','PATCH','DELETE'].indexOf((opts.method||'GET').toUpperCase()) >= 0) {
+        opts.headers['X-CSRF-Token'] = await gs.ensureCsrf();
+      }
+      var res = await fetch(url, opts);
+      var data;
+      try { data = await res.json(); } catch (e) { data = {}; }
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      return data;
+    };
+
+    gs.toast = function (msg, type) {
+      type = type || 'info';
+      var bg = { info: '#384700', error: '#ba1a1a', success: '#384700' }[type] || '#384700';
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:'+bg+';color:#fff;padding:14px 20px;border-radius:6px;z-index:9999;box-shadow:0 8px 24px -8px rgba(0,0,0,0.3);font-size:14px;max-width:340px;';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.style.opacity = '0'; t.style.transition = 'opacity 300ms'; setTimeout(function () { t.remove(); }, 300); }, 3000);
+    };
+
+    gs.confirm = function (msg) { return Promise.resolve(window.confirm(msg)); };
   </script>
 
   <style>

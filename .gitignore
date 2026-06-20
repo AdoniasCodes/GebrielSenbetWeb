@@ -20,3 +20,6 @@ node_modules/
 # Credentials (we are using config.php; keep sensitive info out of commits)
 .env
 .env.*
+
+# Claude Code local settings
+.claude/

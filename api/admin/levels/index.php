@@ -17,7 +17,8 @@ if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
     $trackId = isset($_GET['track_id']) ? (int)$_GET['track_id'] : 0;
     $params = [];
-    $sql = 'SELECT l.id, l.track_id, l.name, l.sort_order, l.is_archived, l.archived_at, l.created_at, l.updated_at, t.name AS track_name
+    $sql = 'SELECT l.id, l.track_id, l.name, l.name_am, l.alias, l.sort_order, l.is_archived, l.archived_at, l.created_at, l.updated_at, t.name AS track_name,
+                   (SELECT COUNT(*) FROM grade_subjects gs WHERE gs.level_id = l.id AND gs.is_archived = 0) AS subject_count
             FROM class_levels l JOIN education_tracks t ON t.id = l.track_id';
     $where = [];
     if ($trackId > 0) { $where[] = 'l.track_id = ?'; $params[] = $trackId; }
@@ -33,11 +34,13 @@ if ($method === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true) ?: [];
     $trackId = (int)($input['track_id'] ?? 0);
     $name = trim($input['name'] ?? '');
+    $nameAm = isset($input['name_am']) && $input['name_am'] !== '' ? trim((string)$input['name_am']) : null;
+    $alias = isset($input['alias']) && $input['alias'] !== '' ? trim((string)$input['alias']) : null;
     $sort = (int)($input['sort_order'] ?? 0);
     if ($trackId <= 0 || $name === '') { Response::error('track_id and name are required', 422); }
     try {
-        $stmt = $pdo->prepare('INSERT INTO class_levels (track_id, name, sort_order) VALUES (?, ?, ?)');
-        $stmt->execute([$trackId, $name, $sort]);
+        $stmt = $pdo->prepare('INSERT INTO class_levels (track_id, name, name_am, alias, sort_order) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$trackId, $name, $nameAm, $alias, $sort]);
         Response::json(['message' => 'Level created', 'id' => (int)$pdo->lastInsertId()], 201);
     } catch (\PDOException $e) {
         if ((int)$e->getCode() === 23000) { Response::error('Level already exists for this track', 409); }
@@ -50,10 +53,12 @@ if ($method === 'PUT') {
     $id = (int)($input['id'] ?? 0);
     $name = isset($input['name']) ? trim((string)$input['name']) : null;
     $sort = isset($input['sort_order']) ? (int)$input['sort_order'] : null;
-    if ($id <= 0 || ($name === null && $sort === null)) { Response::error('id and at least one of name/sort_order are required', 422); }
+    if ($id <= 0) { Response::error('id is required', 422); }
     $fields = [];
     $params = [];
     if ($name !== null && $name !== '') { $fields[] = 'name = ?'; $params[] = $name; }
+    if (array_key_exists('name_am', $input)) { $fields[] = 'name_am = ?'; $params[] = $input['name_am'] !== '' ? trim((string)$input['name_am']) : null; }
+    if (array_key_exists('alias', $input)) { $fields[] = 'alias = ?'; $params[] = $input['alias'] !== '' ? trim((string)$input['alias']) : null; }
     if ($sort !== null) { $fields[] = 'sort_order = ?'; $params[] = $sort; }
     if (!$fields) { Response::error('No changes provided', 422); }
     $params[] = $id;
