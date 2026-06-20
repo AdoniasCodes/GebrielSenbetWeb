@@ -1,0 +1,20 @@
+# Root router for cPanel hosting where the primary domain's document root is
+# locked to /public_html. The app's real web root is the public/ subfolder, so
+# this transparently rewrites every request into public/. Files that live one
+# level up (config/, api/, db/, src/, bootstrap.php) are never served directly:
+# a request like /config/config.php rewrites to /public/config/config.php,
+# which does not exist, and 404s.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Already inside public/ — serve as-is, prevents an infinite rewrite loop.
+    RewriteRule ^public/ - [L]
+
+    # Everything else: prefix with public/ (root "/" -> public/ -> index.php).
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Never serve dotfiles from this level (e.g. this .htaccess, .git remnants).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
