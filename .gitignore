@@ -26,3 +26,6 @@ node_modules/
 
 # Local image originals (pre-webp backup)
 /public/images/_orig_backup/
+
+# Uploaded resource files (user content)
+/public/uploads/resources/

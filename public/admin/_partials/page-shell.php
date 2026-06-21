@@ -14,6 +14,7 @@ $nav_groups = [
   ['label_en' => 'Community', 'label_am' => 'ማህበረሰብ', 'items' => [
     ['slug'=>'people','href'=>'/admin/people.php','en'=>'People','am'=>'አባላት','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'],
     ['slug'=>'departments','href'=>'/admin/departments.php','en'=>'Departments','am'=>'ክፍሎች','svg'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
+    ['slug'=>'resources','href'=>'/admin/resources.php','en'=>'Resources','am'=>'መርጃዎች','svg'=>'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'],
   ]],
   ['label_en' => 'Registry', 'label_am' => 'መዝገብ', 'items' => [
     ['slug'=>'students','href'=>'/admin/students.php','en'=>'Students','am'=>'ተማሪዎች','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>'],
