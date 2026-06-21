@@ -185,65 +185,54 @@ $year = date('Y');
   <main>
 
     <!-- ============ HERO ============ -->
-    <section class="paper relative overflow-hidden">
-      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-28 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div class="lg:col-span-7">
-          <div class="inline-flex items-center gap-2 rounded-full bg-surface-mid border border-outline-soft/60 px-3 py-1 mb-7">
-            <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-            <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold" data-en="Enrollment open · <?= $year ?>" data-am="ምዝገባ ክፍት ነው · <?= $year ?>">Enrollment open · <?= $year ?></span>
+    <section class="relative overflow-hidden">
+      <!-- full-bleed feast-day choir photo + readability gradients -->
+      <div class="absolute inset-0">
+        <img src="/images/photo_2026-06-14-17.28.07.webp" width="1280" height="853" fetchpriority="high" decoding="async"
+             alt="The Mekane Selam Senbet School choir gathered in blue and white robes on a feast day"
+             class="w-full h-full object-cover object-[50%_30%]" />
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/75 to-primary/35"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/25"></div>
+      </div>
+
+      <div class="relative max-w-[1280px] mx-auto px-6 lg:px-8 py-24 lg:py-36">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 rounded-full bg-surface/15 border border-surface/25 px-3 py-1 mb-7 backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-gold-warm animate-pulse"></span>
+            <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold-warm" data-en="Enrollment open · <?= $year ?>" data-am="ምዝገባ ክፍት ነው · <?= $year ?>">Enrollment open · <?= $year ?></span>
           </div>
 
-          <h1 class="font-display text-[44px] lg:text-[60px] leading-[1.05] tracking-tight text-primary font-semibold" data-en="A modern home for our<br/>Sabbath school." data-am="ለሰንበት ት/ቤታችን<br/>ዘመናዊ ቤት።">A modern home for our<br/>Sabbath school.</h1>
+          <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.04] tracking-tight text-surface font-semibold drop-shadow-sm" data-en="A modern home for our<br/>Sabbath school." data-am="ለሰንበት ት/ቤታችን<br/>ዘመናዊ ቤት።">A modern home for our<br/>Sabbath school.</h1>
 
           <div class="mt-5 flex items-center gap-4">
-            <span class="rule-gold-short"></span>
-            <p class="ethiopic text-xl text-ink-soft" data-en="ለሰንበት ት/ቤታችን ዘመናዊ ቤት" data-am="መካነ ሰላም ሰንበት ት/ቤት">ለሰንበት ት/ቤታችን ዘመናዊ ቤት</p>
+            <span class="h-px w-12 bg-gold-warm"></span>
+            <p class="ethiopic text-xl text-surface/90">መካነ ሰላም ሰንበት ት/ቤት</p>
           </div>
 
-          <p class="mt-7 text-lg leading-relaxed text-ink-soft max-w-xl" data-en="Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የመካነ ሰላም ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
+          <p class="mt-7 text-lg leading-relaxed text-surface/85 max-w-xl" data-en="Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የመካነ ሰላም ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
             Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind.
           </p>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3">
             <?php if ($dashboard_href): ?>
-              <a href="<?= htmlspecialchars($dashboard_href) ?>" class="inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+              <a href="<?= htmlspecialchars($dashboard_href) ?>" class="inline-flex justify-center items-center gap-2 bg-surface text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface-mid transition-colors">
                 <span data-en="<?= htmlspecialchars($dashboard_label_en) ?>" data-am="<?= htmlspecialchars($dashboard_label_am) ?>"><?= htmlspecialchars($dashboard_label_en) ?></span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
               </a>
             <?php else: ?>
-              <a href="/login.html" class="inline-flex justify-center items-center gap-2 bg-primary text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+              <a href="/login.html" class="inline-flex justify-center items-center gap-2 bg-surface text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface-mid transition-colors">
                 <span data-en="Sign in" data-am="ግባ">Sign in</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
               </a>
             <?php endif; ?>
-            <a href="#enroll" class="inline-flex justify-center items-center gap-2 border border-outline text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface-mid transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
+            <a href="#enroll" class="inline-flex justify-center items-center gap-2 border border-surface/40 text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface/10 transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
           </div>
 
-          <div class="mt-10 flex items-center gap-6 text-sm text-outline">
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold"></span><span data-en="Two tracks" data-am="ሁለት ኮርሶች">Two tracks</span></div>
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold"></span><span data-en="13 levels" data-am="13 ደረጃዎች">13 levels</span></div>
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold"></span><span data-en="One faith" data-am="አንድ እምነት">One faith</span></div>
+          <div class="mt-10 flex items-center gap-6 text-sm text-surface/75">
+            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="Two tracks" data-am="ሁለት ኮርሶች">Two tracks</span></div>
+            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="13 levels" data-am="13 ደረጃዎች">13 levels</span></div>
+            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="One faith" data-am="አንድ እምነት">One faith</span></div>
           </div>
-        </div>
-
-        <div class="lg:col-span-5">
-          <figure class="manuscript relative rounded-lg aspect-[4/5] overflow-hidden shadow-sm p-0">
-            <span class="corner-tr z-20"></span>
-            <span class="corner-bl z-20"></span>
-
-            <img src="/images/img_7755.webp" width="1280" height="1920" fetchpriority="high" decoding="async"
-                 alt="Mekane Selam Senbet School choir in procession with traditional prayer staffs on a feast day"
-                 class="absolute inset-0 w-full h-full object-cover object-[50%_30%]" />
-
-            <!-- warm liturgical wash so the caption reads and the photo ties to the palette -->
-            <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/15 to-transparent"></div>
-            <div class="absolute inset-0 ring-1 ring-inset ring-gold/25 rounded-lg pointer-events-none"></div>
-
-            <figcaption class="absolute inset-x-0 bottom-0 p-7">
-              <p class="eyebrow text-gold-warm mb-3"><span class="rule-gold-tiny"></span><span data-en="Mekane Selam · Mekane Selam" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam · Mekane Selam</span></p>
-              <p class="ethiopic font-display text-2xl text-surface leading-snug" data-en="Our choir, on a feast day." data-am="መዘምራኑ፣ በበዓል ቀን።">Our choir, on a feast day.</p>
-            </figcaption>
-          </figure>
         </div>
       </div>
     </section>
@@ -273,21 +262,14 @@ $year = date('Y');
         <div class="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 [&_figure]:break-inside-avoid">
           <?php
             $gallery = [
-              ['photo_2026-06-14-17.28.06.w800.webp', 534, 'The Sabbath school choir gathered on a feast day'],
-              ['img_7799.w800.webp', 534, 'A young chorister singing during the celebration'],
-              ['img_7758.w800.webp', 1200, 'Choir members in procession with traditional vestments'],
-              ['photo_2026-06-14-17.28.07.w800.webp', 534, 'Students of the Sabbath school in blue and white robes'],
-              ['photo_2026-06-14-17.28.16.w800.webp', 512, 'The parish community gathered together'],
-              ['img_6443.w800.webp', 534, 'A moment of worship at the parish'],
-              ['photo_2026-06-14-17.28.10.w800.webp', 534, 'Children of the Sabbath school choir'],
-              ['photo_2026-06-14-17.28.26.w800.webp', 450, 'The congregation during a feast'],
-              ['img_7795.w800.webp', 1200, 'A chorister holding a prayer staff'],
-              ['photo_2026-06-14-17.28.08.w800.webp', 534, 'The choir in their ceremonial robes'],
-              ['photo_2026-06-14-17.28.12.w800.webp', 534, 'Sabbath school members in worship'],
-              ['photo_2026-06-14-17.28.15-1.w800.webp', 450, 'A gathering of the parish youth'],
-              ['photo_2026-06-14-17.28.13.w800.webp', 534, 'Young members of the choir'],
-              ['photo_2026-06-14-17.28.11.w800.webp', 534, 'The Sabbath school community'],
-              ['photo_2026-06-14-17.28.14.w800.webp', 534, 'Choristers during the celebration'],
+              ['photo-2026-06-21-09-51-04.w800.webp', 533, 'Choristers playing sistrums and holding prayer staffs against the sky'],
+              ['dsc-1619.w800.webp', 1200, 'A soloist singing into the microphone in a red and gold cape'],
+              ['dsc-1689.w800.webp', 533, 'A row of choir members singing in patterned robes and caps'],
+              ['img-7791.w800.webp', 533, 'Young women of the choir singing with hands raised in praise'],
+              ['dsc-1634.w800.webp', 1200, 'Choir members standing in prayer during the celebration'],
+              ['img_7758.w800.webp', 1200, 'The choir in procession with prayer staffs and festival flags'],
+              ['img_7799.w800.webp', 534, 'A young chorister singing during the feast'],
+              ['img_7755.w800.webp', 533, 'Choir members in procession seen from behind beneath the flags'],
             ];
             foreach ($gallery as $g):
           ?>
@@ -381,9 +363,12 @@ $year = date('Y');
 
         <div class="grid md:grid-cols-2 gap-6">
           <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group">
-            <div class="pattern-children h-40 relative">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-              <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold" data-en="Track 01" data-am="ኮርስ 01">Track 01</span>
+            <div class="h-48 relative overflow-hidden">
+              <img src="/images/track-children.w800.webp" width="800" height="533" loading="lazy" decoding="async"
+                   alt="Children of the Sunday school in blue capes and patterned caps"
+                   class="absolute inset-0 w-full h-full object-cover object-[50%_35%] transition-transform duration-700 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent"></div>
+              <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 01" data-am="ኮርስ 01">Track 01</span>
             </div>
             <div class="p-7">
               <h3 class="font-display text-2xl text-primary mb-1" data-en="Children's Track" data-am="የልጆች ኮርስ">Children's Track</h3>
@@ -407,9 +392,12 @@ $year = date('Y');
           </article>
 
           <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group">
-            <div class="pattern-adult h-40 relative">
-              <div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
-              <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold" data-en="Track 02" data-am="ኮርስ 02">Track 02</span>
+            <div class="h-48 relative overflow-hidden">
+              <img src="/images/track-youth.w800.webp" width="800" height="533" loading="lazy" decoding="async"
+                   alt="Young men of the choir playing kebero drums during a celebration"
+                   class="absolute inset-0 w-full h-full object-cover object-[50%_40%] transition-transform duration-700 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent"></div>
+              <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 02" data-am="ኮርስ 02">Track 02</span>
             </div>
             <div class="p-7">
               <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth &amp; Adult Track" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adult Track</h3>
