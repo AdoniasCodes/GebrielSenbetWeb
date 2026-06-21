@@ -227,27 +227,23 @@ $year = date('Y');
         </div>
 
         <div class="lg:col-span-5">
-          <div class="manuscript rounded-lg aspect-[4/5] flex flex-col items-center justify-center px-8 py-12 text-center shadow-sm">
-            <span class="corner-tr"></span>
-            <span class="corner-bl"></span>
+          <figure class="manuscript relative rounded-lg aspect-[4/5] overflow-hidden shadow-sm p-0">
+            <span class="corner-tr z-20"></span>
+            <span class="corner-bl z-20"></span>
 
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9a14a" stroke-width="1.4" stroke-linecap="round" class="mb-6">
-              <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-              <circle cx="12" cy="12" r="2" fill="#c9a14a" stroke="none"/>
-            </svg>
+            <img src="/images/img_7755.webp" width="1280" height="1920" fetchpriority="high" decoding="async"
+                 alt="Saint Gabriel Sabbath School choir in procession with traditional prayer staffs on a feast day"
+                 class="absolute inset-0 w-full h-full object-cover object-[50%_30%]" />
 
-            <p class="eyebrow text-gold mb-5"><span class="rule-gold-tiny"></span><span data-en="Sanctified Curriculum" data-am="ቅዱስ ሥርዓተ ትምህርት">Sanctified Curriculum</span><span class="rule-gold-tiny"></span></p>
+            <!-- warm liturgical wash so the caption reads and the photo ties to the palette -->
+            <div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/15 to-transparent"></div>
+            <div class="absolute inset-0 ring-1 ring-inset ring-gold/25 rounded-lg pointer-events-none"></div>
 
-            <div class="font-display ethiopic text-[140px] lg:text-[160px] leading-none text-primary font-bold mb-2" style="font-family: 'Noto Serif Ethiopic', 'Noto Sans Ethiopic', serif;">ገ</div>
-
-            <p class="ethiopic text-2xl text-primary-soft mb-1">ገብርኤል ሰንበት</p>
-            <p class="ethiopic text-sm text-outline">ት/ቤት</p>
-
-            <div class="mt-8 w-full">
-              <div class="rule-gold mb-4"></div>
-              <p class="text-xs uppercase tracking-widestest text-outline" data-en="Est. Saint Gabriel Parish" data-am="የቅዱስ ገብርኤል ቤተ ክርስቲያን">Est. Saint Gabriel Parish</p>
-            </div>
-          </div>
+            <figcaption class="absolute inset-x-0 bottom-0 p-7">
+              <p class="eyebrow text-gold-warm mb-3"><span class="rule-gold-tiny"></span><span data-en="Mekane Selam · Saint Gabriel" data-am="መካነ ሰላም · ቅዱስ ገብርኤል">Mekane Selam · Saint Gabriel</span></p>
+              <p class="ethiopic font-display text-2xl text-surface leading-snug" data-en="Our choir, on a feast day." data-am="መዘምራኑ፣ በበዓል ቀን።">Our choir, on a feast day.</p>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -262,6 +258,46 @@ $year = date('Y');
         <p class="text-lg text-ink-soft leading-relaxed" data-en="For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it." data-am="ለበርካታ አሥርት ዓመታት፣ የሰንበት ት/ቤታችን የብዙ ትውልዶችን እምነት እና ምሁርነት ቀርጿል። ዛሬ ለዚያ ቅርስ የምናከብረው የሥራውን ክብደት — እና ሥራውን የሚሠሩ ሰዎችን — በሚያከብሩ መሣሪያዎች ነው።">
           For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it.
         </p>
+      </div>
+    </section>
+
+    <!-- ============ GALLERY / LIFE TOGETHER ============ -->
+    <section id="life" class="bg-surface border-b border-outline-soft/40">
+      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
+        <div class="max-w-2xl mb-12">
+          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Life Together" data-am="በአንድነት">Life Together</span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="Our community, in worship." data-am="ማኅበረሰባችን፣ በአምልኮ።">Our community, in worship.</h2>
+          <p class="mt-4 text-lg text-ink-soft leading-relaxed" data-en="Feast days, processions, and the voices of our choir — moments from the life of the parish." data-am="የበዓል ቀናት፣ ሰልፎች እና የመዘምራኑ ድምፅ — ከቤተ ክርስቲያኒቱ ሕይወት የተወሰዱ ቅጽበቶች።">Feast days, processions, and the voices of our choir — moments from the life of the parish.</p>
+        </div>
+
+        <div class="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 [&_figure]:break-inside-avoid">
+          <?php
+            $gallery = [
+              ['photo_2026-06-14-17.28.06.w800.webp', 534, 'The Sabbath school choir gathered on a feast day'],
+              ['img_7799.w800.webp', 534, 'A young chorister singing during the celebration'],
+              ['img_7758.w800.webp', 1200, 'Choir members in procession with traditional vestments'],
+              ['photo_2026-06-14-17.28.07.w800.webp', 534, 'Students of the Sabbath school in blue and white robes'],
+              ['photo_2026-06-14-17.28.16.w800.webp', 512, 'The parish community gathered together'],
+              ['img_6443.w800.webp', 534, 'A moment of worship at the parish'],
+              ['photo_2026-06-14-17.28.10.w800.webp', 534, 'Children of the Sabbath school choir'],
+              ['photo_2026-06-14-17.28.26.w800.webp', 450, 'The congregation during a feast'],
+              ['img_7795.w800.webp', 1200, 'A chorister holding a prayer staff'],
+              ['photo_2026-06-14-17.28.08.w800.webp', 534, 'The choir in their ceremonial robes'],
+              ['photo_2026-06-14-17.28.12.w800.webp', 534, 'Sabbath school members in worship'],
+              ['photo_2026-06-14-17.28.15-1.w800.webp', 450, 'A gathering of the parish youth'],
+              ['photo_2026-06-14-17.28.13.w800.webp', 534, 'Young members of the choir'],
+              ['photo_2026-06-14-17.28.11.w800.webp', 534, 'The Sabbath school community'],
+              ['photo_2026-06-14-17.28.14.w800.webp', 534, 'Choristers during the celebration'],
+            ];
+            foreach ($gallery as $g):
+          ?>
+            <figure class="mb-3 lg:mb-4 overflow-hidden rounded-lg border border-outline-soft/40 bg-surface-mid">
+              <img src="/images/<?= $g[0] ?>" width="800" height="<?= $g[1] ?>" loading="lazy" decoding="async"
+                   alt="<?= htmlspecialchars($g[2]) ?>"
+                   class="w-full h-auto block transition-transform duration-700 ease-out hover:scale-[1.04]" />
+            </figure>
+          <?php endforeach; ?>
+        </div>
       </div>
     </section>
 
