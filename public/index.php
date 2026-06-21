@@ -336,27 +336,29 @@ $year = date('Y');
           <p class="mt-4 text-lg text-ink-soft leading-relaxed" data-en="Feast days, processions, and the voices of our choir — moments from the life of the parish." data-am="የበዓል ቀናት፣ ሰልፎች እና የመዘምራኑ ድምፅ — ከቤተ ክርስቲያኒቱ ሕይወት የተወሰዱ ቅጽበቶች።">Feast days, processions, and the voices of our choir — moments from the life of the parish.</p>
         </div>
 
-        <div class="columns-2 md:columns-3 lg:columns-4 gap-3 lg:gap-4 [&_figure]:break-inside-avoid">
+        <!-- Mosaic: a flush rectangle on desktop (4×4 tiled), tiles vary in size; 2-col stack on mobile -->
+        <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4 lg:[grid-auto-rows:11rem]">
           <?php
+            // [thumb, caption, lg grid-area: row-start/col-start/row-end/col-end]
             $gallery = [
-              ['photo-2026-06-21-09-51-04.w800.webp', 533, 'Choristers playing sistrums and holding prayer staffs against the sky'],
-              ['dsc-1619.w800.webp', 1200, 'A soloist singing into the microphone in a red and gold cape'],
-              ['dsc-1689.w800.webp', 533, 'A row of choir members singing in patterned robes and caps'],
-              ['img-7791.w800.webp', 533, 'Young women of the choir singing with hands raised in praise'],
-              ['dsc-1634.w800.webp', 1200, 'Choir members standing in prayer during the celebration'],
-              ['img_7758.w800.webp', 1200, 'The choir in procession with prayer staffs and festival flags'],
-              ['img_7799.w800.webp', 534, 'A young chorister singing during the feast'],
-              ['img_7755.w800.webp', 533, 'Choir members in procession seen from behind beneath the flags'],
+              ['photo-2026-06-21-09-51-04.w800.webp', 'Choristers playing sistrums and holding prayer staffs against the sky', 'lg:[grid-area:1/1/3/3]'],
+              ['img_7799.w800.webp', 'A young chorister singing during the feast', 'lg:[grid-area:1/3/2/4]'],
+              ['img_6443.w800.webp', 'A moment of worship at the parish', 'lg:[grid-area:1/4/2/5]'],
+              ['dsc-1689.w800.webp', 'A row of choir members singing in patterned robes and caps', 'lg:[grid-area:2/3/3/5]'],
+              ['dsc-1619.w800.webp', 'A soloist singing into the microphone in a red and gold cape', 'lg:[grid-area:3/1/5/2]'],
+              ['img-7791.w800.webp', 'Young women of the choir singing with hands raised in praise', 'lg:[grid-area:3/2/4/4]'],
+              ['dsc-1634.w800.webp', 'Choir members standing in prayer during the celebration', 'lg:[grid-area:3/4/4/5]'],
+              ['img_7755.w800.webp', 'Choir members in procession seen from behind beneath the flags', 'lg:[grid-area:4/2/5/3]'],
+              ['img_7758.w800.webp', 'The choir in procession with prayer staffs and festival flags', 'lg:[grid-area:4/3/5/4]'],
+              ['img_7795.w800.webp', 'A chorister holding a prayer staff', 'lg:[grid-area:4/4/5/5]'],
             ];
             foreach ($gallery as $g):
           ?>
-            <figure class="mb-3 lg:mb-4 overflow-hidden rounded-lg border border-outline-soft/40 bg-surface-mid">
-              <button type="button" class="block w-full group/ph" data-full="/images/<?= str_replace('.w800', '', $g[0]) ?>" data-caption="<?= htmlspecialchars($g[2]) ?>" aria-label="<?= htmlspecialchars($g[2]) ?>">
-                <img src="/images/<?= $g[0] ?>" width="800" height="<?= $g[1] ?>" loading="lazy" decoding="async"
-                     alt="<?= htmlspecialchars($g[2]) ?>"
-                     class="w-full h-auto block cursor-zoom-in transition-transform duration-700 ease-out group-hover/ph:scale-[1.04]" />
-              </button>
-            </figure>
+            <button type="button" class="group/ph overflow-hidden rounded-lg border border-outline-soft/40 bg-surface-mid <?= $g[2] ?>"
+                    data-full="/images/<?= str_replace('.w800', '', $g[0]) ?>" data-caption="<?= htmlspecialchars($g[1]) ?>" aria-label="<?= htmlspecialchars($g[1]) ?>">
+              <img src="/images/<?= $g[0] ?>" loading="lazy" decoding="async" alt="<?= htmlspecialchars($g[1]) ?>"
+                   class="w-full object-cover aspect-[4/3] lg:aspect-auto lg:h-full cursor-zoom-in transition-transform duration-700 ease-out group-hover/ph:scale-[1.05]" />
+            </button>
           <?php endforeach; ?>
         </div>
       </div>
