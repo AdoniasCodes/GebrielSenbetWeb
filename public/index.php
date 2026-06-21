@@ -138,6 +138,18 @@ $year = date('Y');
     :where(a, button, input, select, textarea):focus-visible {
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
     }
+
+    /* Paschal greeting — a typed call-and-response between two Christians */
+    #paschalGreeting { min-height: 7.5rem; }
+    .pg-line { opacity: 0; transition: opacity .5s ease, transform .5s ease; }
+    .pg-l { transform: translateX(-22px); }
+    .pg-r { transform: translateX(22px); text-align: right; }
+    .pg-line.pg-show { opacity: 1; transform: translateX(0); }
+    .pg-l .pg-text { color: #fed175; }            /* speaker A — gold */
+    .pg-r .pg-text { color: #fffdf8; }            /* speaker B — light */
+    .pg-text::after { content: '▏'; color: #c9a14a; opacity: .8; }
+    .pg-line.pg-done .pg-text::after { content: ''; }
+    @media (prefers-reduced-motion: reduce) { .pg-line { transition: none; } }
   </style>
 </head>
 <body class="bg-surface text-ink font-body antialiased">
@@ -157,6 +169,7 @@ $year = date('Y');
 
       <nav class="hidden md:flex items-center gap-8 text-[15px] text-ink-soft">
         <a class="hover:text-primary transition-colors" href="#about" data-en="About" data-am="ስለ እኛ">About</a>
+        <a class="text-primary font-semibold hover:text-primary-soft transition-colors" href="#build" data-en="Our Building" data-am="ሕንፃችን">Our Building</a>
         <a class="hover:text-primary transition-colors" href="#programs" data-en="Programs" data-am="ፕሮግራሞች">Programs</a>
         <a class="hover:text-primary transition-colors" href="#calendar" data-en="Calendar" data-am="የቀን መቁጠሪያ">Calendar</a>
         <a class="hover:text-primary transition-colors" href="/blog.php" data-en="Blog" data-am="ብሎግ">Blog</a>
@@ -204,10 +217,7 @@ $year = date('Y');
 
           <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.04] tracking-tight text-surface font-semibold drop-shadow-sm" data-en="A modern home for our<br/>Sabbath school." data-am="ለሰንበት ት/ቤታችን<br/>ዘመናዊ ቤት።">A modern home for our<br/>Sabbath school.</h1>
 
-          <div class="mt-5 flex items-center gap-4">
-            <span class="h-px w-12 bg-gold-warm"></span>
-            <p class="ethiopic text-xl text-surface/90">መካነ ሰላም ሰንበት ት/ቤት</p>
-          </div>
+          <div id="paschalGreeting" class="mt-6 max-w-md font-display ethiopic text-lg lg:text-xl leading-relaxed" aria-label="Paschal greeting — ክርስቶስ ተንሥአ እሙታን"></div>
 
           <p class="mt-7 text-lg leading-relaxed text-surface/85 max-w-xl" data-en="Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የመካነ ሰላም ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
             Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind.
@@ -247,6 +257,73 @@ $year = date('Y');
         <p class="text-lg text-ink-soft leading-relaxed" data-en="For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it." data-am="ለበርካታ አሥርት ዓመታት፣ የሰንበት ት/ቤታችን የብዙ ትውልዶችን እምነት እና ምሁርነት ቀርጿል። ዛሬ ለዚያ ቅርስ የምናከብረው የሥራውን ክብደት — እና ሥራውን የሚሠሩ ሰዎችን — በሚያከብሩ መሣሪያዎች ነው።">
           For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it.
         </p>
+      </div>
+    </section>
+
+    <!-- ============ BUILDING CAMPAIGN ============ -->
+    <section id="build" class="scripture relative overflow-hidden">
+      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-24">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+
+          <!-- story -->
+          <div>
+            <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="49 years · one home left to finish" data-am="49 ዓመታት · የቀረን አንድ ቤት">49 years · one home left to finish</span></p>
+            <h2 class="ethiopic font-display text-3xl lg:text-5xl text-surface mt-5 leading-tight">የጀመርነውን እንጨርሰው።</h2>
+            <p class="mt-3 text-gold-warm text-lg font-medium" data-en="Let's finish what we started." data-am="የጀመርነውን እንጨርሰው።">Let's finish what we started.</p>
+
+            <p class="mt-7 text-surface/85 leading-relaxed" data-en="For 49 years — as one of the oldest Sabbath schools in Addis Ababa — we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more — designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains — gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary." data-am="ለ49 ዓመታት — በአዲስ አበባ ካሉት ጥንታዊ ሰንበት ት/ቤቶች አንዱ ሆነን — የራሳችን ቤት ሳይኖረን አስተምረናል፣ አገልግለናል። ለአንድ አስርት ዓመት የራሳችንን እየገነባን ነው፦ በመማሪያ ክፍሎች፣ ባለ ሁለት ፎቅ አዳራሽና በሌሎችም የተሟላ ዘመናዊ ጂ+2 ሕንፃ — በራሳችን አባላት ተነድፎ በህንፃ አሰሪ ኮሚቴያችን እየተመራ። ለዓመታት ከቆመ በኋላ ሥራው የመጨረሻ ደረጃ ላይ ደርሷል፤ የቀረው የማጠናቀቂያ ሥራ ብቻ ነው — ጂፕሰም፣ ቀለም፣ ተከላዎች፣ የውስጥ ዲዛይንና ፈርኒቸር። ለ50ኛ ዓመት ኢዮቤልዩ ለማጠናቀቅ ቆርጠናል።">
+              For 49 years — as one of the oldest Sabbath schools in Addis Ababa — we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more — designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains — gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary.
+            </p>
+
+            <div class="mt-9 grid grid-cols-3 gap-4 max-w-md">
+              <div><p class="font-display text-3xl lg:text-4xl text-gold-warm">49</p><p class="text-[11px] uppercase tracking-widestest text-surface/60 mt-1" data-en="Years" data-am="ዓመታት">Years</p></div>
+              <div><p class="font-display text-3xl lg:text-4xl text-gold-warm">G+2</p><p class="text-[11px] uppercase tracking-widestest text-surface/60 mt-1" data-en="Building" data-am="ሕንፃ">Building</p></div>
+              <div><p class="font-display text-3xl lg:text-4xl text-gold-warm">1000+</p><p class="text-[11px] uppercase tracking-widestest text-surface/60 mt-1" data-en="Daily givers" data-am="የቀን ለጋሾች">Daily givers</p></div>
+            </div>
+
+            <blockquote class="mt-8 border-l-2 border-gold-warm/60 pl-5">
+              <p class="ethiopic text-surface/90 text-lg leading-relaxed">“የምንማርበትን፣ የምናድገበትን፣ የምናገለግልበትን፣ የምንኖርበትን ሰንበት ት/ቤታችን ጨርሱልን”</p>
+              <footer class="mt-2 text-xs uppercase tracking-widestest text-surface/50" data-en="— our children" data-am="— ልጆቻችን">— our children</footer>
+            </blockquote>
+          </div>
+
+          <!-- donate card -->
+          <div class="lg:pt-4">
+            <div class="rounded-lg bg-surface p-7 lg:p-8 shadow-2xl border-t-4 border-gold">
+              <p class="eyebrow text-gold"><span class="rule-gold-tiny"></span><span data-en="Contribute to the build" data-am="ለሕንፃው አስተዋፅኦ ያድርጉ">Contribute to the build</span></p>
+              <h3 class="font-display text-2xl text-primary mt-3">Commercial Bank of Ethiopia</h3>
+              <p class="ethiopic text-sm text-ink-soft mb-5">የመካነ ሰላም ሰ/ት/ቤት የሕንፃ አሰሪ ኮሚቴ የገቢ ማሰባሰቢያ</p>
+
+              <div class="rounded bg-surface-mid border border-outline-soft/50 p-4 flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                  <p class="text-[10px] uppercase tracking-widestest text-outline" data-en="Account number" data-am="የሂሳብ ቁጥር">Account number</p>
+                  <p class="font-display text-xl lg:text-2xl text-primary tracking-wide">1000469573382</p>
+                  <p class="text-sm text-ink-soft mt-1">Adamu Henok Daniel</p>
+                </div>
+                <button type="button"
+                  onclick="(function(b){if(navigator.clipboard){navigator.clipboard.writeText('1000469573382').then(function(){var o=b.getAttribute('data-en')||'Copy';b.textContent='Copied ✓';setTimeout(function(){b.textContent=o;},1600);});}})(this)"
+                  data-en="Copy" data-am="ቅዳ"
+                  class="shrink-0 text-xs font-semibold uppercase tracking-widestest text-primary border border-outline-soft px-3 py-2 rounded hover:bg-surface transition-colors">Copy</button>
+              </div>
+
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="ethiopic text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-outline-soft/50">አስራቴን ለሰንበት ት/ቤቴ</span>
+                <span class="ethiopic text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-outline-soft/50">ቁርሴን ለሰንበቴ</span>
+              </div>
+
+              <div class="mt-6 pt-5 border-t border-outline-soft/40">
+                <p class="text-[10px] uppercase tracking-widestest text-outline mb-2" data-en="For more information" data-am="ለበለጠ መረጃ">For more information</p>
+                <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
+                  <a href="tel:+251960262777" class="text-primary hover:text-primary-soft font-medium">0960 262 777</a>
+                  <a href="tel:+251910030756" class="text-primary hover:text-primary-soft font-medium">0910 030 756</a>
+                  <a href="tel:+251911101364" class="text-primary hover:text-primary-soft font-medium">0911 101 364</a>
+                  <a href="tel:+251988727374" class="text-primary hover:text-primary-soft font-medium">0988 727 374</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -844,6 +921,7 @@ $year = date('Y');
         try { localStorage.setItem('gs_lang', lang); } catch (e) {}
       }
       window._applyLang = applyLang;
+      // (paschal greeting animation is set up separately below)
 
       document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
         btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
@@ -853,6 +931,45 @@ $year = date('Y');
       try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
       applyLang(saved);
       loadLiveContent();
+    })();
+  </script>
+
+  <script>
+    // Paschal greeting: a typed call-and-response between two Christians.
+    // Speaker A (gold) types in from the left, speaker B (light) from the right.
+    (function () {
+      var host = document.getElementById('paschalGreeting');
+      if (!host) return;
+      var lines = [
+        'ክርስቶስ ተንሥአ እሙታን', 'በዓቢይ ኃይል ወሥልጣን',
+        'አሠሮ ለሰይጣን', 'አግዓዞ ለአዳም',
+        'ሰላም', 'እምይዕዜሰ', 'ኮነ', 'ፍሥሐ ወሰላም ! !'
+      ];
+      var nodes = lines.map(function (t, i) {
+        var d = document.createElement('div');
+        d.className = 'pg-line ' + (i % 2 === 0 ? 'pg-l' : 'pg-r');
+        d.innerHTML = '<span class="pg-text"></span>';
+        d.dataset.t = t;
+        host.appendChild(d);
+        return d;
+      });
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) {
+        nodes.forEach(function (n) { n.classList.add('pg-show', 'pg-done'); n.querySelector('.pg-text').textContent = n.dataset.t; });
+        return;
+      }
+      var li = 0;
+      function typeLine() {
+        if (li >= nodes.length) return;
+        var node = nodes[li], span = node.querySelector('.pg-text'), txt = node.dataset.t, ci = 0;
+        node.classList.add('pg-show');
+        setTimeout(function step() {
+          span.textContent = txt.slice(0, ci);
+          if (ci++ < txt.length) { setTimeout(step, 55); }
+          else { node.classList.add('pg-done'); li++; setTimeout(typeLine, 320); }
+        }, 260); // let the slide-in settle before typing
+      }
+      typeLine();
     })();
   </script>
 </body>
