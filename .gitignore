@@ -25,4 +25,4 @@ node_modules/
 .claude/
 
 # Local image originals (pre-webp backup)
-/images/_orig_backup/
+/public/images/_orig_backup/
