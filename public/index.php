@@ -24,8 +24,8 @@ $year = date('Y');
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gebriel Senbet — Sabbath School</title>
-  <meta name="description" content="Saint Gabriel Sabbath School. A modern home for our Sunday school: curriculum, grading, payments, and community announcements in one reverent place." />
+  <title>Mekane Selam Senbet School — Sabbath School</title>
+  <meta name="description" content="Mekane Selam Senbet School. A modern home for our Sunday school: curriculum, grading, payments, and community announcements in one reverent place." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -152,7 +152,7 @@ $year = date('Y');
             <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
           </svg>
         </span>
-        <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</span>
+        <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
       </a>
 
       <nav class="hidden md:flex items-center gap-8 text-[15px] text-ink-soft">
@@ -197,11 +197,11 @@ $year = date('Y');
 
           <div class="mt-5 flex items-center gap-4">
             <span class="rule-gold-short"></span>
-            <p class="ethiopic text-xl text-ink-soft" data-en="ለሰንበት ት/ቤታችን ዘመናዊ ቤት" data-am="ቅዱስ ገብርኤል ሰንበት ት/ቤት">ለሰንበት ት/ቤታችን ዘመናዊ ቤት</p>
+            <p class="ethiopic text-xl text-ink-soft" data-en="ለሰንበት ት/ቤታችን ዘመናዊ ቤት" data-am="መካነ ሰላም ሰንበት ት/ቤት">ለሰንበት ት/ቤታችን ዘመናዊ ቤት</p>
           </div>
 
-          <p class="mt-7 text-lg leading-relaxed text-ink-soft max-w-xl" data-en="Saint Gabriel Sabbath School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የቅዱስ ገብርኤል ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
-            Saint Gabriel Sabbath School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind.
+          <p class="mt-7 text-lg leading-relaxed text-ink-soft max-w-xl" data-en="Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የመካነ ሰላም ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
+            Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind.
           </p>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3">
@@ -232,7 +232,7 @@ $year = date('Y');
             <span class="corner-bl z-20"></span>
 
             <img src="/images/img_7755.webp" width="1280" height="1920" fetchpriority="high" decoding="async"
-                 alt="Saint Gabriel Sabbath School choir in procession with traditional prayer staffs on a feast day"
+                 alt="Mekane Selam Senbet School choir in procession with traditional prayer staffs on a feast day"
                  class="absolute inset-0 w-full h-full object-cover object-[50%_30%]" />
 
             <!-- warm liturgical wash so the caption reads and the photo ties to the palette -->
@@ -240,7 +240,7 @@ $year = date('Y');
             <div class="absolute inset-0 ring-1 ring-inset ring-gold/25 rounded-lg pointer-events-none"></div>
 
             <figcaption class="absolute inset-x-0 bottom-0 p-7">
-              <p class="eyebrow text-gold-warm mb-3"><span class="rule-gold-tiny"></span><span data-en="Mekane Selam · Saint Gabriel" data-am="መካነ ሰላም · ቅዱስ ገብርኤል">Mekane Selam · Saint Gabriel</span></p>
+              <p class="eyebrow text-gold-warm mb-3"><span class="rule-gold-tiny"></span><span data-en="Mekane Selam · Mekane Selam" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam · Mekane Selam</span></p>
               <p class="ethiopic font-display text-2xl text-surface leading-snug" data-en="Our choir, on a feast day." data-am="መዘምራኑ፣ በበዓል ቀን።">Our choir, on a feast day.</p>
             </figcaption>
           </figure>
@@ -292,14 +292,49 @@ $year = date('Y');
             foreach ($gallery as $g):
           ?>
             <figure class="mb-3 lg:mb-4 overflow-hidden rounded-lg border border-outline-soft/40 bg-surface-mid">
-              <img src="/images/<?= $g[0] ?>" width="800" height="<?= $g[1] ?>" loading="lazy" decoding="async"
-                   alt="<?= htmlspecialchars($g[2]) ?>"
-                   class="w-full h-auto block transition-transform duration-700 ease-out hover:scale-[1.04]" />
+              <button type="button" class="block w-full group/ph" data-full="/images/<?= str_replace('.w800', '', $g[0]) ?>" data-caption="<?= htmlspecialchars($g[2]) ?>" aria-label="<?= htmlspecialchars($g[2]) ?>">
+                <img src="/images/<?= $g[0] ?>" width="800" height="<?= $g[1] ?>" loading="lazy" decoding="async"
+                     alt="<?= htmlspecialchars($g[2]) ?>"
+                     class="w-full h-auto block cursor-zoom-in transition-transform duration-700 ease-out group-hover/ph:scale-[1.04]" />
+              </button>
             </figure>
           <?php endforeach; ?>
         </div>
       </div>
     </section>
+
+    <!-- ============ LIGHTBOX ============ -->
+    <div id="lightbox" class="fixed inset-0 z-[60] hidden items-center justify-center bg-ink/90 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-label="Photo viewer">
+      <button id="lbClose" class="absolute top-4 right-4 text-surface/80 hover:text-surface p-2" aria-label="Close">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button id="lbPrev" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 text-surface/80 hover:text-surface p-2" aria-label="Previous photo">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button id="lbNext" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-surface/80 hover:text-surface p-2" aria-label="Next photo">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <figure class="flex flex-col items-center">
+        <img id="lbImg" src="" alt="" class="max-w-[92vw] max-h-[80vh] object-contain rounded shadow-2xl" />
+        <figcaption id="lbCap" class="mt-3 text-sm text-surface/80 text-center max-w-[80vw]"></figcaption>
+      </figure>
+    </div>
+    <script>
+    (function(){
+      var triggers = Array.prototype.slice.call(document.querySelectorAll('#life [data-full]'));
+      if(!triggers.length) return;
+      var lb=document.getElementById('lightbox'), img=document.getElementById('lbImg'), cap=document.getElementById('lbCap'), idx=0;
+      function show(i){ idx=(i+triggers.length)%triggers.length; var t=triggers[idx]; img.src=t.getAttribute('data-full'); var c=t.getAttribute('data-caption')||''; img.alt=c; cap.textContent=c; }
+      function open(i){ show(i); lb.classList.remove('hidden'); lb.classList.add('flex'); document.body.style.overflow='hidden'; }
+      function close(){ lb.classList.add('hidden'); lb.classList.remove('flex'); document.body.style.overflow=''; img.src=''; }
+      triggers.forEach(function(t,i){ t.addEventListener('click', function(){ open(i); }); });
+      document.getElementById('lbClose').addEventListener('click', close);
+      document.getElementById('lbNext').addEventListener('click', function(){ show(idx+1); });
+      document.getElementById('lbPrev').addEventListener('click', function(){ show(idx-1); });
+      lb.addEventListener('click', function(e){ if(e.target===lb) close(); });
+      document.addEventListener('keydown', function(e){ if(lb.classList.contains('hidden')) return; if(e.key==='Escape') close(); else if(e.key==='ArrowRight') show(idx+1); else if(e.key==='ArrowLeft') show(idx-1); });
+    })();
+    </script>
 
     <!-- ============ PILLARS ============ -->
     <section class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
@@ -628,10 +663,10 @@ $year = date('Y');
                 <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
               </svg>
             </span>
-            <span class="font-display text-lg font-semibold text-primary" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</span>
+            <span class="font-display text-lg font-semibold text-primary" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
           </div>
-          <p class="text-sm text-ink-soft leading-relaxed mb-4" data-en="Saint Gabriel Sabbath School. A modern home for our community of faith and learning." data-am="ቅዱስ ገብርኤል ሰንበት ት/ቤት። ለእምነት እና ለትምህርት ማኅበረሰባችን ዘመናዊ ቤት።">Saint Gabriel Sabbath School. A modern home for our community of faith and learning.</p>
-          <p class="ethiopic text-sm text-outline">ገብርኤል ሰንበት ት/ቤት</p>
+          <p class="text-sm text-ink-soft leading-relaxed mb-4" data-en="Mekane Selam Senbet School. A modern home for our community of faith and learning." data-am="መካነ ሰላም ሰንበት ት/ቤት። ለእምነት እና ለትምህርት ማኅበረሰባችን ዘመናዊ ቤት።">Mekane Selam Senbet School. A modern home for our community of faith and learning.</p>
+          <p class="ethiopic text-sm text-outline">መካነ ሰላም ሰንበት ት/ቤት</p>
         </div>
 
         <div>
@@ -657,7 +692,7 @@ $year = date('Y');
         <div>
           <h4 class="text-[11px] font-semibold uppercase tracking-widestest text-gold mb-4" data-en="Parish" data-am="ቤተ ክርስቲያን">Parish</h4>
           <ul class="space-y-2.5 text-sm text-ink-soft">
-            <li data-en="Saint Gabriel Church" data-am="የቅዱስ ገብርኤል ቤተ ክርስቲያን">Saint Gabriel Church</li>
+            <li data-en="Mekane Selam Church" data-am="የመካነ ሰላም ቤተ ክርስቲያን">Mekane Selam Church</li>
             <li data-en="Addis Ababa, Ethiopia" data-am="አዲስ አበባ፣ ኢትዮጵያ">Addis Ababa, Ethiopia</li>
             <li><a href="mailto:hello@gebriel.eagleeyebgp.com" class="hover:text-primary transition-colors">hello@gebriel.eagleeyebgp.com</a></li>
           </ul>
@@ -667,7 +702,7 @@ $year = date('Y');
       <div class="rule-gold mb-6"></div>
 
       <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-outline">
-        <p class="uppercase tracking-widestest" data-en="© <?= $year ?> Gebriel Senbet · Made with reverence in Addis Ababa" data-am="© <?= $year ?> ገብርኤል ሰንበት · በአዲስ አበባ በክብር የተሠራ">© <?= $year ?> Gebriel Senbet · Made with reverence in Addis Ababa</p>
+        <p class="uppercase tracking-widestest" data-en="© <?= $year ?> Mekane Selam Senbet School · Made with reverence in Addis Ababa" data-am="© <?= $year ?> መካነ ሰላም ሰንበት ት/ቤት · በአዲስ አበባ በክብር የተሠራ">© <?= $year ?> Mekane Selam Senbet School · Made with reverence in Addis Ababa</p>
         <div data-lang-toggle class="flex items-center bg-surface rounded-full p-0.5 border border-outline-soft/50">
           <button data-lang="en" class="seg-active px-3 py-1 text-xs font-semibold rounded-full">EN</button>
           <button data-lang="am" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft hover:text-primary ethiopic">አማ</button>

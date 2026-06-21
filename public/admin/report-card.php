@@ -121,8 +121,8 @@ $studentName = trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'
 <div class="sheet">
   <div class="header">
     <div class="crown">✦</div>
-    <p class="eyebrow">Saint Gabriel Sabbath School</p>
-    <p class="ethiopic" style="font-size:14px; color:#897172; margin-top:4px;">ቅዱስ ገብርኤል ሰንበት ት/ቤት</p>
+    <p class="eyebrow">Mekane Selam Senbet School</p>
+    <p class="ethiopic" style="font-size:14px; color:#897172; margin-top:4px;">መካነ ሰላም ሰንበት ት/ቤት</p>
     <h1>Term Report Card</h1>
     <p class="ethiopic" style="font-size:14px; color:#5b0617;">የወቅት ሪፖርት ካርድ</p>
   </div>

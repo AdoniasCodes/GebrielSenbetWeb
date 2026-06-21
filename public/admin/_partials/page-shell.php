@@ -50,7 +50,7 @@ $nav_groups = [
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?= htmlspecialchars($page_title ?? 'Admin') ?> · Gebriel Senbet</title>
+  <title><?= htmlspecialchars($page_title ?? 'Admin') ?> · Mekane Selam Senbet School</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -202,7 +202,7 @@ $nav_groups = [
         </svg>
       </span>
       <div class="flex flex-col">
-        <span class="font-display text-lg font-semibold text-primary leading-none" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</span>
+        <span class="font-display text-lg font-semibold text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
         <span class="text-[10px] font-semibold uppercase tracking-widestest text-gold mt-1" data-en="Sacred Administration" data-am="ቅዱስ አስተዳደር">Sacred Administration</span>
       </div>
     </a>

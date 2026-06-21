@@ -9,8 +9,8 @@ $year = date('Y');
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blog · Gebriel Senbet</title>
-  <meta name="description" content="Posts and announcements from Saint Gabriel Sabbath School." />
+  <title>Blog · Mekane Selam Senbet School</title>
+  <meta name="description" content="Posts and announcements from Mekane Selam Senbet School." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -60,7 +60,7 @@ $year = date('Y');
             <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
           </svg>
         </span>
-        <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Gebriel Senbet" data-am="ገብርኤል ሰንበት">Gebriel Senbet</span>
+        <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
       </a>
       <nav class="hidden md:flex items-center gap-8 text-[15px] text-ink-soft">
         <a class="hover:text-primary" href="/#about" data-en="About" data-am="ስለ እኛ">About</a>
@@ -95,7 +95,7 @@ $year = date('Y');
 
   <footer class="bg-surface-mid border-t border-outline-soft/40 mt-16">
     <div class="max-w-[1024px] mx-auto px-6 lg:px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-outline">
-      <p class="uppercase tracking-widestest" data-en="© <?= $year ?> Gebriel Senbet · Made with reverence in Addis Ababa" data-am="© <?= $year ?> ገብርኤል ሰንበት · በአዲስ አበባ በክብር የተሠራ">© <?= $year ?> Gebriel Senbet · Made with reverence in Addis Ababa</p>
+      <p class="uppercase tracking-widestest" data-en="© <?= $year ?> Mekane Selam Senbet School · Made with reverence in Addis Ababa" data-am="© <?= $year ?> መካነ ሰላም ሰንበት ት/ቤት · በአዲስ አበባ በክብር የተሠራ">© <?= $year ?> Mekane Selam Senbet School · Made with reverence in Addis Ababa</p>
       <a href="/" class="hover:text-primary" data-en="← Back to home" data-am="← ወደ መነሻ ተመለስ">← Back to home</a>
     </div>
   </footer>
