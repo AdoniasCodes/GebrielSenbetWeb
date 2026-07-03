@@ -40,6 +40,14 @@ try {
     $role = $ridStmt->fetch();
     if (!$role) { Response::error('Roles not seeded', 500); }
 
+    // First-run lockout: once any active admin exists, this endpoint is inert.
+    // Prevents anyone who later obtains the setup token from minting new admins.
+    $adminCount = (int)$pdo->query("SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE r.name='admin' AND u.is_archived=0")->fetchColumn();
+    if ($adminCount > 0) {
+        $pdo->rollBack();
+        Response::error('Setup already completed', 403);
+    }
+
     // Check if user exists
     $uStmt = $pdo->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
     $uStmt->execute([$email]);

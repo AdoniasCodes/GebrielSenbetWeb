@@ -12,6 +12,8 @@ class Csrf
             session_start([
                 'cookie_httponly' => true,
                 'cookie_samesite' => 'Lax',
+                // Secure on HTTPS (prod) but not plain-HTTP local dev.
+                'cookie_secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
             ]);
         }
     }

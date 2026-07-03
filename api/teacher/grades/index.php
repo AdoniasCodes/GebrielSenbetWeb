@@ -70,6 +70,13 @@ if ($method === 'POST') {
     $chk->execute([$teacherId, $classId, $subjectId]);
     if (!$chk->fetch()) { Response::error('Not assigned to this class/subject', 403); }
 
+    // Ensure the target student is actually enrolled in this class (the FK only
+    // requires the student to exist, so without this a teacher could write a
+    // grade for any student id into a class they teach).
+    $enr = $pdo->prepare("SELECT 1 FROM student_class_assignments WHERE student_id=? AND class_id=? AND is_archived=0 LIMIT 1");
+    $enr->execute([$studentId, $classId]);
+    if (!$enr->fetch()) { Response::error('Student is not enrolled in this class', 422); }
+
     try {
         $stmt = $pdo->prepare('INSERT INTO grades (student_id, subject_id, class_id, term_id, score, remarks) VALUES (?, ?, ?, ?, ?, ?)');
         $stmt->execute([$studentId, $subjectId, $classId, $termId, $score, $remarks]);

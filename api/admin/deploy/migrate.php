@@ -45,6 +45,13 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '008_seed_demo_content.sql'        => "SELECT 1 FROM events WHERE title='Sabbath Morning Service' LIMIT 1",
         '009_parents.sql'                  => "SELECT 1 FROM roles WHERE name='parent' LIMIT 1",
         '010_video_embeds.sql'             => "SHOW TABLES LIKE 'video_embeds'",
+        '011_churches_and_people.sql'      => "SHOW TABLES LIKE 'people'",
+        '012_departments.sql'              => "SHOW TABLES LIKE 'departments'",
+        '013_academic_grades_1_11.sql'     => "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='class_levels' AND column_name='name_am' LIMIT 1",
+        '014_staff_role.sql'               => "SELECT 1 FROM roles WHERE name='staff' LIMIT 1",
+        '015_attendance_holidays.sql'      => "SHOW TABLES LIKE 'attendance_sessions'",
+        '016_app_settings.sql'             => "SHOW TABLES LIKE 'app_settings'",
+        '017_resources.sql'                => "SHOW TABLES LIKE 'resources'",
     ];
     if (!isset($checks[$filename])) return null;
     try {

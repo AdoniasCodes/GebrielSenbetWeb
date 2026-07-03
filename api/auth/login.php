@@ -36,7 +36,11 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
-if (!$user || !password_verify($password, $user['password_hash']) || (int)$user['is_archived'] === 1) {
+// Always run a bcrypt verification — even when the email doesn't exist — so the
+// response time can't be used to enumerate which emails have accounts.
+$hashToCheck = $user['password_hash'] ?? '$2y$10$usesomesillystringforsaltusesomesillystringforsalti1uGpe';
+$passwordOk = password_verify($password, $hashToCheck);
+if (!$user || !$passwordOk || (int)$user['is_archived'] === 1) {
     Response::error('Invalid credentials', 401);
 }
 

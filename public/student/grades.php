@@ -56,6 +56,7 @@ if (($_SESSION['role_name'] ?? null) !== 'student') {
     const sel = document.getElementById('termSel'); sel.innerHTML='';
     d.data.forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=`${t.academic_year} - ${t.name}`; sel.appendChild(o); });
   }
+  function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
   async function loadGrades(){
     const term_id = parseInt(document.getElementById('termSel').value,10) || 0;
     const url = term_id? `/api/student/grades/index.php?term_id=${term_id}` : '/api/student/grades/index.php';
@@ -63,7 +64,7 @@ if (($_SESSION['role_name'] ?? null) !== 'student') {
     const body = document.getElementById('gradesBody'); body.innerHTML='';
     (d.data||[]).forEach(g=>{
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${g.subject_name}</td><td>${g.score}</td><td>${g.remarks??''}</td>`;
+      tr.innerHTML = `<td>${escHtml(g.subject_name)}</td><td>${escHtml(g.score)}</td><td>${escHtml(g.remarks??'')}</td>`;
       body.appendChild(tr);
     });
   }

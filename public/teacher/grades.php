@@ -60,6 +60,7 @@ if (($_SESSION['role_name'] ?? null) !== 'teacher') {
   </div>
 </main>
 <script>
+  function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);}
   async function ensureCsrf(){
     let t = sessionStorage.getItem('csrf_token');
     if(!t){ const r = await fetch('/api/auth/csrf.php'); const d = await r.json(); t = d.csrf_token; sessionStorage.setItem('csrf_token', t); }
@@ -112,12 +113,12 @@ if (($_SESSION['role_name'] ?? null) !== 'teacher') {
       const g = grades[st.id];
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${st.first_name} ${st.last_name}</td>
-        <td><input type="number" step="0.01" class="scoreInput" value="${g?g.score:''}"></td>
-        <td><input type="text" class="remarksInput" value="${g? (g.remarks||'') : ''}"></td>
+        <td>${escHtml(st.first_name)} ${escHtml(st.last_name)}</td>
+        <td><input type="number" step="0.01" class="scoreInput" value="${g?escHtml(g.score):''}"></td>
+        <td><input type="text" class="remarksInput" value="${g? escHtml(g.remarks||'') : ''}"></td>
         <td>
-          ${g ? `<button class="saveGrade" data-id="${g.id}" data-student-id="${st.id}">Update</button>`
-               : `<button class="createGrade" data-student-id="${st.id}">Create</button>`}
+          ${g ? `<button class="saveGrade" data-id="${escHtml(g.id)}" data-student-id="${escHtml(st.id)}">Update</button>`
+               : `<button class="createGrade" data-student-id="${escHtml(st.id)}">Create</button>`}
         </td>`;
       tr.dataset.studentId = st.id;
       tr.dataset.classId = class_id;
