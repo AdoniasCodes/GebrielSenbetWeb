@@ -95,3 +95,33 @@ Deterministic pre-checks: delegate parity `api/**` vs `public/api/**` is CLEAN b
   green-light + the YouTube channel URL.
 - **Next model resumes at:** whichever phase the user greenlights in PHASE3_PLAN.md. Local dev + test
   harness (`scratchpad/test_teacher_portal.py`) are proven working.
+
+---
+
+## Session 2 (2026-07-03 PM) — Reset tool + demo logins + dashboards
+
+**Root cause of "logins don't work":** `DEMO_LOGINS.md` was stale — student accounts were actually
+`student8..23@demo.gebriel` (auto-increment drift), and ALL `@demo.gebriel` accounts were local-only,
+never on prod. Fixed by replacing ad-hoc seeds with a deterministic reset tool.
+
+**Built (commit `583315f`, orchestrated via subagents — 3 audits on Sonnet/Haiku, dashboard fixes on
+Haiku; the two large writes flaked on API errors so Fable wrote the reset engine + menu directly):**
+- `api/admin/reset-data/index.php` (+ delegate): admin+CSRF+password(`Panda2022`) gated.
+  `load_demo` = wipe operational data (keep operator admin by id + reference tables) + 1 wired dummy
+  per role with RANDOM passwords returned once. `wipe_clean` = same wipe, no dummies (go-live).
+  FK-safe via `SET FOREIGN_KEY_CHECKS=0` in try/finally. GET returns row counts.
+- `public/admin/reset-data.php` + new "System" nav group (page-shell.php).
+- Dashboard fixes: homepage staff link (public/index.php); orphan teacher/student grades.php →
+  redirects; api/staff/people.php scoped to headed depts; **api/student/dashboard.php guard-path bug
+  fixed** (`/../_guard.php`→`/_guard.php`) — it was 500ing for every student; caught by the reset test.
+- `DEMO_LOGINS.md` rewritten (no passwords in git); local creds → gitignored `DEMO_LOGINS.local.md`.
+
+**Verified:** 42/42 end-to-end (`scratchpad/test_reset.py`) — wipe counts, all 4 dummy logins, every
+dashboard returns data, dept-scoping, clean-wipe leaves admin+reference only, admin survives.
+
+**State:** local DB is now in the reset state (admin + 4 dummies). Fixed emails:
+test-{teacher,student,parent,staff}@mekaneselamss.com. Passwords random per reset (in local file).
+
+**PENDING:** commit `583315f` is UNPUSHED — awaiting user OK to push + deploy (deploying a wipe tool
+to prod is significant). After deploy, user runs the reset from the admin UI on prod. Open question:
+keep dummy passwords random-per-reset (secure) or make them fixed for convenience (user's call).
