@@ -103,7 +103,8 @@ if ($method === 'PUT') {
     $params[] = $id;
     $stmt = $pdo->prepare('UPDATE grades SET ' . implode(', ', $fields) . ' WHERE id = ?');
     $stmt->execute($params);
-    if ($stmt->rowCount() === 0) { Response::error('No change or grade not found', 404); }
+    // NOTE: don't 404 on rowCount()===0 — MySQL reports 0 affected rows when the
+    // values are unchanged, and existence was already verified above. Idempotent = OK.
     Response::json(['message' => 'Grade updated']);
 }
 
