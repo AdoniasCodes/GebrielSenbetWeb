@@ -56,13 +56,42 @@ User approves → `git push` → user deploys via cPanel (Update from Remote + D
 
 ---
 
-## TASK 2 — Codebase bug hunt (fan-out + adversarial verification) — IN PROGRESS
+## TASK 2 — Codebase bug hunt — DONE. See `FABLE_BUG_REPORT.md`.
 
-Pre-checks already done inline (deterministic):
-- **Delegate parity `api/**` vs `public/api/**`: CLEAN in both directions** as of `361bb2e`
-  (checked with `comm` over sorted find lists, excluding `_guard.php`-style includes).
-- **`api/admin/deploy/migrate.php` artifact probes: only 001–010 exist. Migrations 011–017 have
-  NO probes** — confirmed lead handed to the workflow (impact depends on the runner's
-  bootstrap/prune logic; verifier must read the code).
+5 parallel reviewers + 1 adversarial verifier each. **11 findings, all confirmed, 0 refuted.**
 
-Findings report will land in `FABLE_BUG_REPORT.md`.
+**9 fixed & committed** (`464a4af`, not pushed): 2 XSS (student/teacher grades pages), migrate.php
+probes 011–017, teacher-grades enrollment check, create_admin first-run lockout, Secure cookie,
+login timing side-channel, deleted public/test/index.php. All lint-clean; teacher suite still 20/20.
+
+**2 proposed, NOT applied — need user decision:** findings #1/#5 = `demo_logins.php` seeds a
+permanent **admin** login with the public password `demo1234`. Fixing it changes the prod demo, so
+it's held for the user. ALSO needs an operational check: verify/rotate `demo@mekaneselamss.com` on
+the live host (can't see prod DB from here).
+
+Deterministic pre-checks: delegate parity `api/**` vs `public/api/**` is CLEAN both directions.
+
+### Where things stand for the next model
+- **Two local commits on `main` awaiting push:** `361bb2e` (teacher portal) + `464a4af` (security).
+  User must approve `git push`, then deploy (cPanel Update from Remote + Deploy HEAD Commit), then
+  re-run the demo_logins endpoint on prod.
+- **Task 3 (remaining phases) NOT started** — next up: audit + phased plan for (1) Resources in
+  student/staff portals, (2) Choir/Phase C, (3) finance→communion→dept dashboards, + YouTube RSS
+  auto-fetch. Per the rules: audit → propose phases → get green-light BEFORE building.
+- Open decision blocking a clean close: the demo_logins admin-password tradeoff (see report).
+
+---
+
+## Session close (2026-07-03)
+
+- **Pushed** both commits to `origin/main` (`361bb2e` teacher portal, `464a4af` security). User must
+  now deploy (cPanel Update from Remote + Deploy HEAD Commit) and after deploy re-run
+  `POST /api/setup/demo_logins.php` (header `X-Setup-Token`) to wire the prod demo teacher/student.
+- **Finding #1/#5 (demo admin password):** user chose to **manage manually** — no code change; user
+  will archive/rotate `demo@mekaneselamss.com` on the host. Still documented in FABLE_BUG_REPORT.md.
+- **Task 3:** audit complete, phased plan written to `PHASE3_PLAN.md`. NOT started building (per the
+  audit-then-phase rule). Proposed order: 3.0 Resources-in-portals → 3.1 YouTube RSS → Phase C choir
+  (C1 catalog → C2 advancement, then review) → Phase D finance/communion/dashboards. Awaiting user's
+  green-light + the YouTube channel URL.
+- **Next model resumes at:** whichever phase the user greenlights in PHASE3_PLAN.md. Local dev + test
+  harness (`scratchpad/test_teacher_portal.py`) are proven working.
