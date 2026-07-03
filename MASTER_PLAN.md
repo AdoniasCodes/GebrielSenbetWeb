@@ -103,6 +103,47 @@ build agents (strong model for schema/security, cheap for CRUD/UI) own non-overl
 I integrate, test on the disposable local DB, gate deploy on you. Token-lean by default (the user
 explicitly wants minimal token spend — small phases, reuse existing tables like `resources`).
 
+## 4b. Captured 2026-07-03 eve — fold into the plan tomorrow (NOT yet designed)
+Raw requirements from the user, to be turned into real phases once the per-department specs land.
+
+### Data migration — Excel import with column mapping (NEW capability)
+- Admin (and maybe dept heads) upload an **Excel file** from their existing system; we present a
+  **column-mapping UI** (their columns → our fields) and import (students, members, teachers, etc.).
+- Eases the transition off their current Excel workflow. Goes beyond the existing simple CSV student
+  import. New phase (call it **M1**). Needs a light spreadsheet parser (xlsx) — feasible in PHP.
+
+### Teacher sharing model — files, announcements, events (extends R1 + T1/T3)
+Precondition: **a teacher is assigned to department(s)** (F2/D1). Then, when sharing anything, the
+teacher **selects the target scope**: department(s) / class(es) / grade(s) (incl. multiple grades) /
+groups / specific students.
+- **File sharing**: R1 exists (grade + dept). Extend the scope PICKER so a teacher chooses among
+  their departments/classes/grades (multi-select) when sharing. → extends resources scope to class +
+  multi-grade (T2).
+- **Announcements**: teacher can post announcements scoped the same way (grade(s)/class(es)/topics).
+- **Events with dept-head APPROVAL**: teachers can *propose* events; the **department head approves**
+  (or the head creates events directly). Teachers can't unilaterally publish events. → events need a
+  `status` (proposed/approved) + `created_by` + `department_id` + approval action. (User: "put the
+  feature in; if it's not worth it we remove it later.")
+- Open Q for tomorrow: do **announcements** also need dept-head approval, or only events?
+
+### Teacher creation & multi-department assignment (the permissions model — extends F2/D1)
+- **teacher ↔ department is many-to-many** (a teacher can serve several departments).
+- **Admin = full CRUD** on everything (classes, courses, departments, …) AND can create a teacher and
+  **assign them to multiple departments at once**. Every assigned department sees that person on its
+  dashboard.
+- **Dept head = scoped**: can **create a teacher (auto-assigned to their own department)** and
+  **assign existing teachers to their own department ONLY** — never to other departments.
+- A dept-head-created teacher can *also* be assigned to other departments (by admin / other heads
+  pulling them in), but the creating head only controls their own dept membership.
+- **Teacher gets a dashboard notification** telling them which department(s) they've been assigned to.
+- → this refines F2 (`teacher↔department` link = many-to-many with created_by/assigned_by) and D1
+  (scoped teacher creation + assignment), plus a teacher-facing notification.
+
+### Where these slot (provisional)
+`M1` Excel import → standalone, can come early. Teacher sharing/announcements/events + the
+permissions model all depend on **F2** (dept↔teacher link) and **D1** (dept console), so they get
+designed together once specs arrive.
+
 ## 5. The only decisions still open (rest is settled by the specs)
 1. **Start R1 (resources per grade/dept) now?** It's small, reuses existing code, high value. — I recommend yes.
 2. **F2 linchpin:** confirm `classes.department_id` (academic classes → ትምህርት ክፍል) so departments
