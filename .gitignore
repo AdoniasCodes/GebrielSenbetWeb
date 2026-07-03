@@ -29,3 +29,6 @@ node_modules/
 
 # Uploaded resource files (user content)
 /public/uploads/resources/
+
+# Local-only demo credentials (never commit)
+DEMO_LOGINS.local.md

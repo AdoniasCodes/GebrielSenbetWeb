@@ -16,6 +16,7 @@ if ($role === 'admin')   { $dashboard_href = '/admin/index.php';   $dashboard_la
 elseif ($role === 'teacher') { $dashboard_href = '/teacher/index.php'; $dashboard_label_en = 'Teacher portal'; $dashboard_label_am = 'የመምህር ፖርታል'; }
 elseif ($role === 'student') { $dashboard_href = '/student/index.php'; $dashboard_label_en = 'Student portal'; $dashboard_label_am = 'የተማሪ ፖርታል'; }
 elseif ($role === 'parent')  { $dashboard_href = '/parent/index.php';  $dashboard_label_en = 'Parent portal';  $dashboard_label_am = 'የወላጅ ፖርታል'; }
+elseif ($role === 'staff')   { $dashboard_href = '/staff/index.php';   $dashboard_label_en = 'Staff dashboard';   $dashboard_label_am = 'የሠራተኞች ዳሽቦርድ'; }
 
 $year = date('Y');
 ?>

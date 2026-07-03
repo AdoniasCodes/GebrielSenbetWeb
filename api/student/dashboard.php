@@ -4,7 +4,7 @@
 use App\Database;
 use App\Utils\Response;
 
-require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/_guard.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') Response::error('Method not allowed', 405);
 
