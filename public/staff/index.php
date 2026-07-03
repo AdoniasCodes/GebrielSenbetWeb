@@ -101,6 +101,25 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         </div>
 
         <div class="panel">
+          <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Resources" data-am="ግብዓቶች">Resources</span> · <span id="resCount" class="text-ink-soft text-sm">—</span></h3></header>
+          <div class="p-4">
+            <div id="resList" class="space-y-2 mb-3"></div>
+            <div class="flex flex-wrap gap-3">
+              <form id="resUploadForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30 flex-1 min-w-[260px]">
+                <div class="flex-1 min-w-[120px]"><label class="lbl" data-en="Title (optional)" data-am="ርዕስ (አማራጭ)">Title (optional)</label><input id="res_title" class="input-field" /></div>
+                <div class="flex-1 min-w-[160px]"><label class="lbl" data-en="File" data-am="ፋይል">File</label><input id="res_file" type="file" class="input-field" /></div>
+                <button type="submit" class="btn-primary" data-en="Upload" data-am="ስቀል">Upload</button>
+              </form>
+              <form id="resLinkForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30 flex-1 min-w-[260px]">
+                <div class="flex-1 min-w-[120px]"><label class="lbl" data-en="Title" data-am="ርዕስ">Title</label><input id="reslink_title" class="input-field" /></div>
+                <div class="flex-1 min-w-[160px]"><label class="lbl" data-en="Link (https://…)" data-am="አገናኝ (https://…)">Link (https://…)</label><input id="reslink_url" class="input-field" placeholder="https://" /></div>
+                <button type="submit" class="btn-ghost" data-en="Add link" data-am="አገናኝ ጨምር">Add link</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
           <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Members" data-am="አባላት">Members</span> · <span id="memCount" class="text-ink-soft text-sm">—</span></h3></header>
           <div class="p-4">
             <form id="addMemberForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30 mb-4">
@@ -123,7 +142,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
 <style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;margin-bottom:6px;}</style>
 
 <script>
-  var depts=[], people=[], current=null, levels=[], roster=[];
+  var depts=[], people=[], current=null, levels=[], roster=[], resources=[];
   function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
   function curLang(){ return document.documentElement.getAttribute('data-lang')||'en'; }
   function dlabel(d){ return curLang()==='am'?(d.name_am||d.name):(d.name||d.name_am); }
@@ -132,7 +151,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   function applyLang(lang){ if(lang!=='en'&&lang!=='am')lang='en'; document.documentElement.setAttribute('data-lang',lang);
     document.querySelectorAll('[data-en],[data-am]').forEach(function(el){ var t=el.getAttribute('data-'+lang); if(t!==null)el.innerHTML=t; });
     document.querySelectorAll('[data-lang]').forEach(function(b){ if(b.tagName==='BUTTON'){ b.classList.toggle('seg-active',b.dataset.lang===lang); } });
-    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); }
+    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); renderResources(); }
   }
   document.querySelectorAll('header [data-lang]').forEach(function(b){ b.addEventListener('click',function(){applyLang(b.dataset.lang);}); });
 
@@ -147,7 +166,19 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     v('empty').classList.add('hidden'); v('detail').classList.remove('hidden');
     v('detName').textContent=dlabel(current); v('detSub').textContent=current.description||'';
     renderDeptList();
-    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id)]);
+    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id)]);
+  }
+
+  async function loadResources(id){ try{ var r=await gs.api('/api/staff/resources.php?department_id='+id); resources=r.data||[]; renderResources(); }catch(e){ resources=[]; renderResources(); } }
+  function renderResources(){
+    var w=v('resList'); if(!w) return;
+    v('resCount').textContent=resources.length;
+    if(!resources.length){ w.innerHTML='<p class="text-sm text-ink-soft" data-en="No resources yet." data-am="እስካሁን ግብዓት የለም።">No resources yet.</p>'; return; }
+    w.innerHTML=resources.map(function(r){
+      return '<div class="flex items-center justify-between gap-2 bg-surface-low rounded px-3 py-2 border border-outline-soft/30">'+
+        '<a href="'+escHtml(r.url)+'" target="_blank" rel="noopener" class="text-sm text-primary hover:underline">'+escHtml(r.title)+'</a>'+
+        '<button class="btn-icon danger" data-delres="'+r.id+'" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+    }).join('');
   }
 
   var eligibility=null;
@@ -198,8 +229,32 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     try{ await gs.api('/api/staff/members.php',{method:'POST',body:JSON.stringify(body)}); v('am_person').value='';v('am_level').value='';v('am_title').value=''; await loadRoster(current.id); reloadDepts(current.id); gs.toast('Added','success'); }catch(err){gs.toast(err.message,'error');}
   });
 
+  v('resUploadForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var fileInput=v('res_file'); if(!fileInput.files||!fileInput.files.length){gs.toast('Choose a file','error');return;}
+    var fd=new FormData(); fd.append('scope_id',current.id); fd.append('title',v('res_title').value.trim()); fd.append('file',fileInput.files[0]);
+    try{
+      var csrf=await gs.ensureCsrf();
+      var res=await fetch('/api/staff/resources.php',{method:'POST',headers:{'X-CSRF-Token':csrf},body:fd});
+      var d; try{d=await res.json();}catch(err){d={};}
+      if(!res.ok) throw new Error(d.error||('HTTP '+res.status));
+      v('res_title').value=''; fileInput.value='';
+      await loadResources(current.id); gs.toast('Uploaded','success');
+    }catch(err){gs.toast(err.message,'error');}
+  });
+
+  v('resLinkForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var title=v('reslink_title').value.trim(), url=v('reslink_url').value.trim();
+    if(!title||!url){gs.toast('Title and link are required','error');return;}
+    try{
+      await gs.api('/api/staff/resources.php',{method:'POST',body:JSON.stringify({scope_id:current.id,title:title,url:url})});
+      v('reslink_title').value=''; v('reslink_url').value='';
+      await loadResources(current.id); gs.toast('Added','success');
+    }catch(err){gs.toast(err.message,'error');}
+  });
+
   document.addEventListener('click', async function(e){
     var d=e.target.closest('[data-dept]'); if(d){ selectDept(parseInt(d.dataset.dept,10)); return; }
+    var dr=e.target.closest('[data-delres]'); if(dr){ if(!await gs.confirm(curLang()==='am'?'ይህን ግብዓት ያስወግዱ?':'Remove this resource?'))return; try{await gs.api('/api/staff/resources.php',{method:'DELETE',body:JSON.stringify({id:parseInt(dr.dataset.delres,10)})});await loadResources(current.id);}catch(err){gs.toast(err.message,'error');} return; }
     var rm=e.target.closest('[data-delmem]'); if(rm){ if(!await gs.confirm(curLang()==='am'?'ከክፍሉ ያስወግዱ?':'Remove from department?'))return; try{await gs.api('/api/staff/members.php',{method:'DELETE',body:JSON.stringify({id:parseInt(rm.dataset.delmem,10)})});await loadRoster(current.id);reloadDepts(current.id);}catch(err){gs.toast(err.message,'error');} return; }
     var rl=e.target.closest('[data-dellevel]'); if(rl){ if(!await gs.confirm(curLang()==='am'?'ይህን ደረጃ ያስወግዱ?':'Remove this level?'))return; try{await gs.api('/api/staff/levels.php',{method:'DELETE',body:JSON.stringify({id:parseInt(rl.dataset.dellevel,10)})});await loadLevels(current.id);await loadRoster(current.id);}catch(err){gs.toast(err.message,'error');} return; }
   });

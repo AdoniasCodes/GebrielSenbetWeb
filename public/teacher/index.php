@@ -127,6 +127,40 @@ $email = $_SESSION['user_email'] ?? '';
         </div>
       </div>
     </section>
+
+    <!-- Resources -->
+    <section id="resWrap" class="panel">
+      <header class="px-6 py-5 border-b border-outline-soft/40">
+        <h2 class="font-display text-lg text-ink" data-en="Resources" data-am="ግብዓቶች">Resources</h2>
+        <p class="text-xs text-outline mt-0.5" data-en="Files and links shared with the grades you teach." data-am="ለሚያስተምሩት ክፍል የተጋሩ ፋይሎችና አገናኞች።">Files and links shared with the grades you teach.</p>
+      </header>
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4 flex-wrap">
+          <label class="text-xs font-semibold uppercase tracking-widestest text-outline" data-en="Grade" data-am="ክፍል">Grade</label>
+          <select id="resGradeSel" class="input-sm"></select>
+        </div>
+        <ul id="resList" class="divide-y divide-outline-soft/20 mb-6">
+          <li class="py-8 text-center text-ink-soft text-sm" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</li>
+        </ul>
+
+        <div class="grid sm:grid-cols-2 gap-6 border-t border-outline-soft/30 pt-5">
+          <form id="resUploadForm" class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-widestest text-outline" data-en="Upload a file" data-am="ፋይል ስቀል">Upload a file</p>
+            <input id="resFileTitle" type="text" class="input-sm w-full" placeholder="Title (optional)" />
+            <input id="resFile" type="file" class="input-sm w-full" required />
+            <button type="submit" class="bg-primary text-surface px-5 py-2.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors" data-en="Upload" data-am="ስቀል">Upload</button>
+            <span id="resUploadMsg" class="text-sm block"></span>
+          </form>
+          <form id="resLinkForm" class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-widestest text-outline" data-en="Add a link" data-am="አገናኝ ጨምር">Add a link</p>
+            <input id="resLinkTitle" type="text" class="input-sm w-full" placeholder="Title" required />
+            <input id="resLinkUrl" type="url" class="input-sm w-full" placeholder="https://…" required />
+            <button type="submit" class="bg-primary text-surface px-5 py-2.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors" data-en="Add link" data-am="አገናኝ ጨምር">Add link</button>
+            <span id="resLinkMsg" class="text-sm block"></span>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
 
 <script>
@@ -305,6 +339,7 @@ $email = $_SESSION['user_email'] ?? '';
       // re-render dynamic bits in the new language
       loadClasses();
       if(CURRENT){ if(!document.getElementById('paneGrades').classList.contains('hidden')) loadRoster(); else renderAtt(); }
+      if(RES_GRADES.length){ renderResGradeOptions(); renderResources(); }
     }
     document.querySelectorAll('[data-lang-toggle] button').forEach(function(btn){ btn.addEventListener('click',function(){ applyLang(btn.dataset.lang); }); });
     var saved='en'; try{ saved=localStorage.getItem('gs_lang')||'en'; }catch(e){}
@@ -317,7 +352,100 @@ $email = $_SESSION['user_email'] ?? '';
     try{ await api('/api/auth/logout.php',{method:'POST'}); window.location.href='/'; }catch(e){ alert(e.message); }
   });
 
+  // ---- Resources ----
+  var RES_GRADES=[], RES_DATA=[];
+  function resKind(k){ return k==='file'?(isAm()?'ፋይል':'file'):(isAm()?'አገናኝ':'link'); }
+
+  function renderResGradeOptions(){
+    var sel=document.getElementById('resGradeSel');
+    var prev=sel.value;
+    sel.innerHTML=RES_GRADES.map(function(g){
+      var label=isAm()&&g.name_am?g.name_am:g.name;
+      return '<option value="'+g.id+'">'+escHtml(label)+'</option>';
+    }).join('');
+    if(prev && RES_GRADES.some(function(g){return String(g.id)===prev;})) sel.value=prev;
+  }
+
+  async function loadResources(){
+    var ul=document.getElementById('resList');
+    ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+(isAm()?'በመጫን ላይ…':'Loading…')+'</li>';
+    try{
+      var d=await api('/api/teacher/resources.php');
+      RES_GRADES=d.grades||[];
+      RES_DATA=d.data||[];
+      renderResGradeOptions();
+      renderResources();
+    }catch(e){ ul.innerHTML='<li class="py-8 text-center text-error text-sm">'+escHtml(e.message)+'</li>'; }
+  }
+
+  function renderResources(){
+    var ul=document.getElementById('resList');
+    var sel=document.getElementById('resGradeSel');
+    if(!RES_GRADES.length){ ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm" data-en="No grades assigned to you yet." data-am="ገና ምንም ክፍል አልተመደበልዎትም።">'+(isAm()?'ገና ምንም ክፍል አልተመደበልዎትም።':'No grades assigned to you yet.')+'</li>'; return; }
+    var gid=parseInt(sel.value,10);
+    var rows=RES_DATA.filter(function(r){ return parseInt(r.scope_id,10)===gid; });
+    if(!rows.length){ ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+(isAm()?'ምንም ግብዓት የለም።':'No resources yet.')+'</li>'; return; }
+    ul.innerHTML=rows.map(function(r){
+      return '<li class="py-3 flex items-center justify-between gap-4" data-id="'+r.id+'">'+
+        '<a href="'+escHtml(r.url)+'" target="_blank" rel="noopener" class="font-medium text-primary hover:underline">'+escHtml(r.title)+'</a>'+
+        '<div class="flex items-center gap-3">'+
+          '<span class="text-[10px] uppercase tracking-widestest text-outline">'+resKind(r.kind)+'</span>'+
+          '<button class="js-res-remove text-xs font-semibold text-error hover:underline" data-id="'+r.id+'">'+(isAm()?'አስወግድ':'Remove')+'</button>'+
+        '</div>'+
+      '</li>';
+    }).join('');
+  }
+
+  document.getElementById('resGradeSel').addEventListener('change', renderResources);
+
+  document.getElementById('resList').addEventListener('click', async function(e){
+    var b=e.target.closest('.js-res-remove'); if(!b) return;
+    if(!confirm(isAm()?'ይህን ግብዓት ማስወገድ ይፈልጋሉ?':'Remove this resource?')) return;
+    try{
+      await api('/api/teacher/resources.php',{method:'DELETE',body:JSON.stringify({id:parseInt(b.dataset.id,10)})});
+      loadResources();
+    }catch(e){ alert(e.message); }
+  });
+
+  document.getElementById('resUploadForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var msg=document.getElementById('resUploadMsg'); msg.className='text-sm block text-ink-soft'; msg.textContent=isAm()?'በመስቀል ላይ…':'Uploading…';
+    var fileEl=document.getElementById('resFile');
+    var gid=document.getElementById('resGradeSel').value;
+    if(!fileEl.files.length || !gid){ msg.className='text-sm block text-error'; msg.textContent=isAm()?'ፋይል እና ክፍል ያስፈልጋል':'A file and a grade are required'; return; }
+    var fd=new FormData();
+    fd.append('file', fileEl.files[0]);
+    fd.append('scope_id', gid);
+    var title=document.getElementById('resFileTitle').value.trim();
+    if(title) fd.append('title', title);
+    try{
+      var token=await ensureCsrf();
+      var res=await fetch('/api/teacher/resources.php',{method:'POST',headers:{'X-CSRF-Token':token},body:fd});
+      var data; try{ data=await res.json(); }catch(_){ data={}; }
+      if(!res.ok) throw new Error(data.error||('HTTP '+res.status));
+      msg.className='text-sm block text-olive'; msg.textContent=isAm()?'ተስቀሏል':'Uploaded';
+      document.getElementById('resUploadForm').reset();
+      loadResources();
+    }catch(err){ msg.className='text-sm block text-error'; msg.textContent=err.message; }
+  });
+
+  document.getElementById('resLinkForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var msg=document.getElementById('resLinkMsg'); msg.className='text-sm block text-ink-soft'; msg.textContent=isAm()?'በመጨመር ላይ…':'Adding…';
+    var gid=document.getElementById('resGradeSel').value;
+    var title=document.getElementById('resLinkTitle').value.trim();
+    var url=document.getElementById('resLinkUrl').value.trim();
+    if(!gid || !title || !url){ msg.className='text-sm block text-error'; msg.textContent=isAm()?'ርዕስ፣ አገናኝ እና ክፍል ያስፈልጋል':'Title, link and a grade are required'; return; }
+    try{
+      await api('/api/teacher/resources.php',{method:'POST',body:JSON.stringify({scope_id:parseInt(gid,10),title:title,url:url})});
+      msg.className='text-sm block text-olive'; msg.textContent=isAm()?'ተጨምሯል':'Added';
+      document.getElementById('resLinkForm').reset();
+      loadResources();
+    }catch(err){ msg.className='text-sm block text-error'; msg.textContent=err.message; }
+  });
+
   loadClasses();
+  loadResources();
 </script>
 </body>
 </html>

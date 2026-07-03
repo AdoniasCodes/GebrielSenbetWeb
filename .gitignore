@@ -32,3 +32,7 @@ node_modules/
 
 # Local-only demo credentials (never commit)
 DEMO_LOGINS.local.md
+
+# Uploaded resource files (not source)
+public/uploads/resources/*
+!public/uploads/resources/.gitkeep

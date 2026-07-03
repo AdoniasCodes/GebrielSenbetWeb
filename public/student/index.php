@@ -126,6 +126,15 @@ $email = $_SESSION['user_email'] ?? '';
         </ul>
       </section>
     </div>
+
+    <section class="panel">
+      <header class="px-6 py-5 border-b border-outline-soft/40">
+        <h2 class="font-display text-lg text-ink" data-en="Resources / ግብዓቶች" data-am="Resources / ግብዓቶች">Resources / ግብዓቶች</h2>
+      </header>
+      <ul id="resourcesWrap" class="divide-y divide-outline-soft/20">
+        <li class="px-6 py-10 text-center text-ink-soft text-sm" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</li>
+      </ul>
+    </section>
   </main>
 
 <script>
@@ -223,12 +232,36 @@ $email = $_SESSION['user_email'] ?? '';
         '</li>';
       }).join('');
     }
+
+    var rw = document.getElementById('resourcesWrap');
+    var res = STATE.resources || [];
+    if (!res.length){
+      rw.innerHTML = '<li class="px-6 py-10 text-center text-ink-soft text-sm">' + (am ? 'ገና ግብዓት የለም።' : 'No resources yet.') + '</li>';
+    } else {
+      rw.innerHTML = res.map(function(r){
+        var hint = '';
+        if (r.kind === 'file') {
+          var sizeKb = (Number(r.size_bytes||0) / 1024).toFixed(1);
+          hint = ' <span class="text-xs text-outline">' + escHtml(r.file_name) + ' · ' + sizeKb + ' KB</span>';
+        }
+        return '<li class="px-6 py-4">' +
+          '<a href="' + escHtml(r.url) + '" target="_blank" rel="noopener" class="font-medium text-primary hover:underline">' + escHtml(r.title) + '</a>' + hint +
+        '</li>';
+      }).join('');
+    }
+
     if (window.EC) EC.rerenderIsoNodes();
   }
 
   async function load(){
     try {
       STATE = await api('/api/student/dashboard.php');
+      try {
+        var resData = await api('/api/student/resources.php');
+        STATE.resources = resData.data || [];
+      } catch(e) {
+        STATE.resources = [];
+      }
       render();
     } catch(e){
       document.getElementById('welcomeName').textContent = 'Error';
