@@ -11,6 +11,9 @@ require_once __DIR__ . '/../_guard.php';
 require_csrf_for_write();
 
 const RESET_PASSWORD = 'Panda2022';
+// Fixed password for the generated test accounts (convenience — these are wiped
+// before real launch via "Wipe to clean slate").
+const DEMO_ACCOUNT_PASSWORD = 'demo1234';
 
 $config = app_config();
 $pdo = (new Database($config['db']))->pdo();
@@ -112,7 +115,7 @@ try {
 
     $accounts = [];
     $mkUser = function (string $email, int $roleId) use ($pdo): array {
-        $pw = bin2hex(random_bytes(6));
+        $pw = DEMO_ACCOUNT_PASSWORD;
         $pdo->prepare('INSERT INTO users (email, password_hash, role_id) VALUES (?,?,?)')
             ->execute([$email, password_hash($pw, PASSWORD_DEFAULT), $roleId]);
         return ['id' => (int)$pdo->lastInsertId(), 'pw' => $pw];

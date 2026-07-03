@@ -15,13 +15,13 @@ This wipes all operational data, keeps your admin + reference scaffolding (roles
 churches, departments, grades, subjects), and creates the accounts below wired with
 sample data so every dashboard shows something.
 
-## The test accounts (fixed emails, random password each reset)
-| Role | Email | Dashboard |
-|---|---|---|
-| Teacher | `test-teacher@mekaneselamss.com` | `/teacher/` — a class with Grades + Attendance |
-| Student | `test-student@mekaneselamss.com` | `/student/` — grade, attendance, payment balance |
-| Parent  | `test-parent@mekaneselamss.com`  | `/parent/`  — one linked child |
-| Dept-head (staff) | `test-staff@mekaneselamss.com` | `/staff/` — heads the Choir (መዝሙር) dept only |
+## The test accounts (fixed emails, password `demo1234`)
+| Role | Email | Password | Dashboard |
+|---|---|---|---|
+| Teacher | `test-teacher@mekaneselamss.com` | `demo1234` | `/teacher/` — a class with Grades + Attendance |
+| Student | `test-student@mekaneselamss.com` | `demo1234` | `/student/` — grade, attendance, payment balance |
+| Parent  | `test-parent@mekaneselamss.com`  | `demo1234` | `/parent/`  — one linked child |
+| Dept-head (staff) | `test-staff@mekaneselamss.com` | `demo1234` | `/staff/` — heads the Choir (መዝሙር) dept only |
 
 ## Going live (clean slate)
 Admin → Reset / Data → **"Wipe to clean slate"** (pw `Panda2022`) deletes all operational
