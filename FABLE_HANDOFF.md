@@ -122,6 +122,31 @@ dashboard returns data, dept-scoping, clean-wipe leaves admin+reference only, ad
 **State:** local DB is now in the reset state (admin + 4 dummies). Fixed emails:
 test-{teacher,student,parent,staff}@mekaneselamss.com. Passwords random per reset (in local file).
 
-**PENDING:** commit `583315f` is UNPUSHED — awaiting user OK to push + deploy (deploying a wipe tool
-to prod is significant). After deploy, user runs the reset from the admin UI on prod. Open question:
-keep dummy passwords random-per-reset (secure) or make them fixed for convenience (user's call).
+**RESOLVED:** reset tool pushed (`6c9ef5b`); dummy password fixed to `demo1234` per user. Test accounts:
+test-{teacher,student,parent,staff}@mekaneselamss.com / demo1234.
+
+---
+
+## Session 3 (2026-07-03 eve) — big architecture direction + R1 shipped
+
+**Direction change (see `MASTER_PLAN.md` v2 + updated [[project_domain_model]]):** SINGLE church for
+structure — all grades/classes/departments are at Gebriel; Mariam is only a serving/event location
+(choir/charity). So NO multi-church tenancy (deleted from plan). Real work = departments as
+self-running sub-orgs + richer teacher role + per-grade/dept files.
+
+**Decisions locked:** (1) classes will get `department_id` (academic → ትምህርት ክፍል) at phase F2;
+(2) dept heads will be able to CREATE new teacher logins + assign existing (phase D1). Not built yet.
+
+**R1 SHIPPED (commit `645d72b`, pushed? see below):** per-grade & per-department Resources in
+student/teacher/staff portals. New `api/resources_lib.php` (scoped list/upload/link/archive — caller
+passes allowed scope ids, lib never widens). Student = read-only grade view; teacher = grade scope
+(view/upload/remove); staff = headed-department scope. Reuses existing `resources` table (no schema
+change). Verified 23/23 + real multipart upload served byte-identical. Orchestrated via 3 subagents
+(Haiku student, Sonnet teacher+staff); Fable wrote the lib and fixed 2 fan-out path bugs (delegate
+depth + guard include depth — resources.php sits shallower than the classes/ subdir siblings).
+
+**Roadmap (MASTER_PLAN.md):** R1 ✅ → F2 (dept↔class↔teacher join) → D1/D2 dept consoles → D3
+per-dept dashboards (spec-driven, specs ~2026-07-04) → Phase C choir → teacher enrichment (T1–T4)
+→ communion/finance/reporting.
+
+**PENDING:** R1 commit `645d72b` unpushed — awaiting user OK to push.
