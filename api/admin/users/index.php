@@ -5,6 +5,7 @@ use App\Utils\Response;
 use App\Utils\Password;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../person_accounts_lib.php';
 require_csrf_for_write();
 
 // Keep people.first_name/last_name in sync with a teacher/student rename, but
@@ -61,55 +62,50 @@ if ($method === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true) ?: [];
     $roleName = trim($input['role'] ?? '');
     $email = trim($input['email'] ?? '');
-    $password = isset($input['password']) && $input['password'] !== '' ? (string)$input['password'] : Password::generate(12);
     if ($roleName === '' || $email === '') { Response::error('role and email are required', 422); }
+
+    // Optional: assign a teacher/student to one or more departments at creation.
+    $deptIds = [];
+    if (isset($input['department_ids']) && is_array($input['department_ids'])) {
+        foreach ($input['department_ids'] as $d) { $d = (int)$d; if ($d > 0) $deptIds[$d] = $d; }
+        $deptIds = array_values($deptIds);
+    }
+    $adminUserId = (int)($_SESSION['user_id'] ?? 0);
+    $adminRoleId = (int)($_SESSION['role_id'] ?? 0);
 
     try {
         $pdo->beginTransaction();
-        $roleStmt = $pdo->prepare('SELECT id FROM roles WHERE name = ? LIMIT 1');
-        $roleStmt->execute([$roleName]);
-        $role = $roleStmt->fetch();
-        if (!$role) { $pdo->rollBack(); Response::error('Invalid role', 422); }
+        // create_person_account() creates users (+ people + role profile for
+        // teacher/student). Shared with the dept-head flow via person_accounts_lib.
+        $acct = create_person_account($pdo, $input); // throws PersonAccountError
+        $userId   = (int)$acct['user_id'];
+        $personId = $acct['person_id'] !== null ? (int)$acct['person_id'] : null;
+        $password = $acct['password'];
 
-        $check = $pdo->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
-        $check->execute([$email]);
-        if ($check->fetch()) { $pdo->rollBack(); Response::error('Email already exists', 409); }
-
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $ins = $pdo->prepare('INSERT INTO users (email, password_hash, role_id) VALUES (?, ?, ?)');
-        $ins->execute([$email, $hash, (int)$role['id']]);
-        $userId = (int)$pdo->lastInsertId();
-
-        if ($roleName === 'student') {
-            $first = trim($input['first_name'] ?? '');
-            $last = trim($input['last_name'] ?? '');
-            $guardian = trim($input['guardian_name'] ?? '');
-            $phone = trim($input['phone'] ?? '');
-            $address = trim($input['address'] ?? '');
-            if ($first === '' || $last === '') { $pdo->rollBack(); Response::error('first_name and last_name required for student', 422); }
-            // Unify with the people-first flow: every student is also a canonical person.
-            $ip = $pdo->prepare('INSERT INTO people (user_id, first_name, last_name) VALUES (?, ?, ?)');
-            $ip->execute([$userId, $first, $last]);
-            $personId = (int)$pdo->lastInsertId();
-            $is = $pdo->prepare('INSERT INTO students (user_id, person_id, first_name, last_name, guardian_name, phone, address) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $is->execute([$userId, $personId, $first, $last, $guardian, $phone, $address]);
-        } elseif ($roleName === 'teacher') {
-            $first = trim($input['first_name'] ?? '');
-            $last = trim($input['last_name'] ?? '');
-            $phone = trim($input['phone'] ?? '');
-            $bio = isset($input['bio']) ? (string)$input['bio'] : null;
-            if ($first === '' || $last === '') { $pdo->rollBack(); Response::error('first_name and last_name required for teacher', 422); }
-            // Unify with the people-first flow: every teacher is also a canonical person.
-            $ip = $pdo->prepare('INSERT INTO people (user_id, first_name, last_name) VALUES (?, ?, ?)');
-            $ip->execute([$userId, $first, $last]);
-            $personId = (int)$pdo->lastInsertId();
-            $it = $pdo->prepare('INSERT INTO teachers (user_id, person_id, first_name, last_name, phone, bio) VALUES (?, ?, ?, ?, ?, ?)');
-            $it->execute([$userId, $personId, $first, $last, $phone, $bio]);
+        // Attach departments (memberships) + notify the person if a teacher.
+        $assignedLabels = [];
+        if ($deptIds && $personId !== null) {
+            $dsel = $pdo->prepare('SELECT id, name, name_am FROM departments WHERE id = ? AND is_archived = 0');
+            $mins = $pdo->prepare('INSERT INTO department_memberships (person_id, department_id, assigned_by_user_id, is_head, joined_at) VALUES (?,?,?,0,NULL)');
+            foreach ($deptIds as $did) {
+                $dsel->execute([$did]);
+                $drow = $dsel->fetch();
+                if (!$drow) { throw new PersonAccountError('Department not found: ' . $did, 422); }
+                $mins->execute([$personId, $did, $adminUserId ?: null]);
+                $assignedLabels[] = department_display_name($drow);
+            }
+            // Notification is teacher-only (per product rule).
+            if ($roleName === 'teacher' && $assignedLabels) {
+                notify_department_assignment($pdo, $userId, $assignedLabels, $adminUserId, $adminRoleId);
+            }
         }
 
         $pdo->commit();
-        \App\Audit::log('user.create', 'user', $userId, ['role' => $roleName, 'email' => $email]);
-        Response::json(['message' => 'User created', 'user_id' => $userId, 'generated_password' => $password], 201);
+        \App\Audit::log('user.create', 'user', $userId, ['role' => $roleName, 'email' => $email, 'department_ids' => $deptIds]);
+        Response::json(['message' => 'User created', 'user_id' => $userId, 'generated_password' => $password, 'department_ids' => $deptIds], 201);
+    } catch (PersonAccountError $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        Response::error($e->getMessage(), $e->status);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         Response::error('Failed to create user', 500);

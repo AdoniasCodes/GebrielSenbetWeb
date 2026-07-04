@@ -26,11 +26,15 @@ require __DIR__ . '/_partials/page-shell.php';
     <h2 id="formTitle" class="font-display text-lg text-ink">New Class</h2>
     <button type="button" id="cancelBtn" class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
   </header>
-  <form id="entityForm" class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+  <form id="entityForm" class="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
     <input type="hidden" id="f_id" />
     <div class="md:col-span-1">
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Level</label>
       <select id="f_level" class="input-field" required></select>
+    </div>
+    <div class="md:col-span-1">
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Department</label>
+      <select id="f_department" class="input-field"><option value="">— none —</option></select>
     </div>
     <div>
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Academic year</label>
@@ -40,7 +44,7 @@ require __DIR__ . '/_partials/page-shell.php';
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Class name / section</label>
       <input id="f_name" class="input-field" required placeholder="A" />
     </div>
-    <div class="md:col-span-3 flex items-center gap-3">
+    <div class="md:col-span-4 flex items-center gap-3">
       <button type="submit" class="btn-primary">Save</button>
       <button type="button" id="cancelBtn2" class="btn-ghost">Cancel</button>
       <p id="formMsg" class="text-sm text-error hidden"></p>
@@ -54,8 +58,8 @@ require __DIR__ . '/_partials/page-shell.php';
   </header>
   <div class="table-wrap">
     <table class="data">
-      <thead><tr><th>Track</th><th>Level</th><th>Year</th><th>Section</th><th>Status</th><th class="text-right">&nbsp;</th></tr></thead>
-      <tbody id="tbody"><tr><td colspan="6" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
+      <thead><tr><th>Track</th><th>Level</th><th>Department</th><th>Year</th><th>Section</th><th>Status</th><th class="text-right">&nbsp;</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="7" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -66,12 +70,14 @@ require __DIR__ . '/_partials/page-shell.php';
   var msg = document.getElementById('formMsg');
   var all = [];
   var levels = [];
+  var departments = [];
 
   function showForm(item) {
     formPanel.classList.remove('hidden');
     msg.classList.add('hidden');
     document.getElementById('f_id').value = item ? item.id : '';
     document.getElementById('f_level').value = item ? item.level_id : '';
+    document.getElementById('f_department').value = item && item.department_id ? item.department_id : '';
     document.getElementById('f_year').value = item ? item.academic_year : '';
     document.getElementById('f_name').value = item ? item.name : '';
     formTitle.textContent = item ? 'Edit Class' : 'New Class';
@@ -87,12 +93,13 @@ require __DIR__ . '/_partials/page-shell.php';
   function render() {
     document.getElementById('rowCount').textContent = all.length + ' total';
     var tbody = document.getElementById('tbody');
-    if (!all.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-ink-soft py-16">No classes yet.</td></tr>'; return; }
+    if (!all.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-center text-ink-soft py-16">No classes yet.</td></tr>'; return; }
     tbody.innerHTML = all.map(function (c) {
       var pill = c.is_archived == 1 ? '<span class="pill pill-archived">Archived</span>' : '<span class="pill pill-active">Active</span>';
       return '<tr>' +
         '<td class="text-ink-soft">'+escHtml(c.track_name||'—')+'</td>' +
         '<td>'+escHtml(c.level_name)+'</td>' +
+        '<td class="text-ink-soft">'+escHtml(c.department_name||'—')+'</td>' +
         '<td class="text-ink-soft">'+escHtml(c.academic_year)+'</td>' +
         '<td class="font-medium">'+escHtml(c.name)+'</td>' +
         '<td>'+pill+'</td>' +
@@ -112,9 +119,17 @@ require __DIR__ . '/_partials/page-shell.php';
     }).join('');
   }
 
+  function fillDepartmentSelect() {
+    var sel = document.getElementById('f_department');
+    sel.innerHTML = '<option value="">— none —</option>' + departments.map(function (d) {
+      return '<option value="'+d.id+'">'+escHtml(d.name || d.name_am || ('#'+d.id))+'</option>';
+    }).join('');
+  }
+
   async function load() {
     try {
       var l = await gs.api('/api/admin/levels/index.php'); levels = l.data || []; fillLevelSelect();
+      try { var dd = await gs.api('/api/admin/departments/index.php'); departments = dd.data || []; fillDepartmentSelect(); } catch (e) {}
       var d = await gs.api('/api/admin/classes/index.php'); all = d.data || []; render();
     } catch (e) { gs.toast(e.message,'error'); }
   }
@@ -123,8 +138,10 @@ require __DIR__ . '/_partials/page-shell.php';
     e.preventDefault();
     msg.classList.add('hidden');
     var id = document.getElementById('f_id').value;
+    var deptVal = document.getElementById('f_department').value;
     var body = {
       level_id: parseInt(document.getElementById('f_level').value, 10),
+      department_id: deptVal ? parseInt(deptVal, 10) : null,
       academic_year: document.getElementById('f_year').value.trim(),
       name: document.getElementById('f_name').value.trim(),
     };

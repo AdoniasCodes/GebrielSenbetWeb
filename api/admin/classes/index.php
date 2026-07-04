@@ -19,11 +19,13 @@ if ($method === 'GET') {
     $year = isset($_GET['academic_year']) ? trim((string)$_GET['academic_year']) : '';
     $params = [];
     $where = [];
-    $sql = 'SELECT c.id, c.level_id, c.academic_year, c.name, c.is_archived, c.archived_at, c.created_at, c.updated_at,
-                   l.name AS level_name, t.name AS track_name
+    $sql = 'SELECT c.id, c.level_id, c.department_id, c.academic_year, c.name, c.is_archived, c.archived_at, c.created_at, c.updated_at,
+                   l.name AS level_name, t.name AS track_name,
+                   d.name AS department_name, d.name_am AS department_name_am
             FROM classes c
             JOIN class_levels l ON l.id = c.level_id
-            JOIN education_tracks t ON t.id = l.track_id';
+            JOIN education_tracks t ON t.id = l.track_id
+            LEFT JOIN departments d ON d.id = c.department_id';
     if ($levelId > 0) { $where[] = 'c.level_id = ?'; $params[] = $levelId; }
     if ($year !== '') { $where[] = 'c.academic_year = ?'; $params[] = $year; }
     if (!$includeArchived) { $where[] = 'c.is_archived = 0'; }
@@ -42,9 +44,15 @@ if ($method === 'POST') {
     if ($levelId <= 0 || $year === '' || $name === '') {
         Response::error('level_id, academic_year, and name are required', 422);
     }
+    $deptId = (int)($input['department_id'] ?? 0) ?: null;
+    if ($deptId) {
+        $dc = $pdo->prepare('SELECT id FROM departments WHERE id=? AND is_archived=0');
+        $dc->execute([$deptId]);
+        if (!$dc->fetch()) Response::error('Department not found', 422);
+    }
     try {
-        $stmt = $pdo->prepare('INSERT INTO classes (level_id, academic_year, name) VALUES (?, ?, ?)');
-        $stmt->execute([$levelId, $year, $name]);
+        $stmt = $pdo->prepare('INSERT INTO classes (level_id, department_id, academic_year, name) VALUES (?, ?, ?, ?)');
+        $stmt->execute([$levelId, $deptId, $year, $name]);
         Response::json(['message' => 'Class created', 'id' => (int)$pdo->lastInsertId()], 201);
     } catch (\PDOException $e) {
         if ((int)$e->getCode() === 23000) { Response::error('Class already exists for level and year', 409); }
@@ -58,13 +66,23 @@ if ($method === 'PUT') {
     $id = (int)($input['id'] ?? 0);
     $year = isset($input['academic_year']) ? trim((string)$input['academic_year']) : null;
     $name = isset($input['name']) ? trim((string)$input['name']) : null;
-    if ($id <= 0 || ($year === null && $name === null)) {
-        Response::error('id and at least one of academic_year/name required', 422);
+    $hasDept = array_key_exists('department_id', $input);
+    if ($id <= 0 || ($year === null && $name === null && !$hasDept)) {
+        Response::error('id and at least one of academic_year/name/department_id required', 422);
     }
     $fields = [];
     $params = [];
     if ($year !== null && $year !== '') { $fields[] = 'academic_year = ?'; $params[] = $year; }
     if ($name !== null && $name !== '') { $fields[] = 'name = ?'; $params[] = $name; }
+    if ($hasDept) {
+        $deptId = (int)($input['department_id'] ?? 0) ?: null;
+        if ($deptId) {
+            $dc = $pdo->prepare('SELECT id FROM departments WHERE id=? AND is_archived=0');
+            $dc->execute([$deptId]);
+            if (!$dc->fetch()) Response::error('Department not found', 422);
+        }
+        $fields[] = 'department_id = ?'; $params[] = $deptId;
+    }
     if (!$fields) { Response::error('No changes provided', 422); }
     $params[] = $id;
     try {

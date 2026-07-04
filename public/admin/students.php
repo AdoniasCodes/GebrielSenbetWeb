@@ -80,6 +80,11 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
       <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Address" data-am="አድራሻ">Address</label>
       <input name="address" id="f_address" class="input-field" />
     </div>
+    <div id="deptPickerWrap" class="md:col-span-2">
+      <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Assign to departments" data-am="ወደ ክፍሎች መድብ">Assign to departments</label>
+      <div id="deptPicker" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-1"></div>
+      <p class="text-[11px] text-ink-soft mt-1" data-en="Optional." data-am="አማራጭ።">Optional.</p>
+    </div>
     <div class="md:col-span-2 flex items-center gap-3 pt-2">
       <button type="submit" id="saveBtn" class="btn-primary"><span data-en="Save" data-am="አስቀምጥ">Save</span></button>
       <button type="button" id="cancelBtn2" class="btn-ghost"><span data-en="Cancel" data-am="ሰርዝ">Cancel</span></button>
@@ -121,6 +126,17 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
   var saveBtn = document.getElementById('saveBtn');
   var allStudents = [];
   var allAssignments = [];
+  var departments = [];
+
+  function renderDeptPicker() {
+    var w = document.getElementById('deptPicker');
+    if (!departments.length) { w.innerHTML = '<span class="text-[11px] text-ink-soft">No departments.</span>'; return; }
+    w.innerHTML = departments.map(function (d) {
+      var label = escHtml(d.name || d.name_am || ('#'+d.id));
+      return '<label class="inline-flex items-center gap-2 text-sm bg-surface-low border border-outline-soft/40 rounded px-2 py-1 cursor-pointer">' +
+        '<input type="checkbox" class="dept-cb" value="'+d.id+'" /> '+label+'</label>';
+    }).join('');
+  }
 
   function showForm(student) {
     formPanel.classList.remove('hidden');
@@ -135,6 +151,8 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
     document.getElementById('f_address').value = student ? (student.address || '') : '';
     formTitle.textContent = student ? 'Edit Student' : 'New Student';
     document.getElementById('f_email').readOnly = !!student;
+    document.getElementById('deptPickerWrap').style.display = student ? 'none' : '';
+    document.querySelectorAll('#deptPicker .dept-cb').forEach(function (cb) { cb.checked = false; });
     formPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   function hideForm() { formPanel.classList.add('hidden'); }
@@ -187,6 +205,7 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
 
   async function load() {
     try {
+      try { var dd = await gs.api('/api/admin/departments/index.php'); departments = dd.data || []; renderDeptPicker(); } catch (e) {}
       var d = await gs.api('/api/admin/users/index.php?role=student&include_archived=1');
       allStudents = d.data || [];
       // Index assignments by student_id so the table can show current class
@@ -224,6 +243,8 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
         body.id = parseInt(id, 10);
         res = await gs.api('/api/admin/users/index.php', { method: 'PUT', body: JSON.stringify(body) });
       } else {
+        var deptIds = Array.prototype.slice.call(document.querySelectorAll('#deptPicker .dept-cb:checked')).map(function (cb) { return parseInt(cb.value, 10); });
+        if (deptIds.length) body.department_ids = deptIds;
         res = await gs.api('/api/admin/users/index.php', { method: 'POST', body: JSON.stringify(body) });
         if (res.generated_password) {
           credMsg.textContent = 'Created. Generated password: ' + res.generated_password + ' — share this with the student now (it will not be shown again).';

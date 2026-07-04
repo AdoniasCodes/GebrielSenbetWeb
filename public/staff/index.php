@@ -122,12 +122,36 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         <div class="panel">
           <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Members" data-am="አባላት">Members</span> · <span id="memCount" class="text-ink-soft text-sm">—</span></h3></header>
           <div class="p-4">
-            <form id="addMemberForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30 mb-4">
-              <div class="flex-1 min-w-[180px]"><label class="lbl" data-en="Add person" data-am="ሰው ጨምር">Add person</label><select id="am_person" class="input-field"><option value="">—</option></select></div>
-              <div class="min-w-[130px]"><label class="lbl" data-en="Level" data-am="ደረጃ">Level</label><select id="am_level" class="input-field"><option value="">—</option></select></div>
-              <div class="min-w-[110px]"><label class="lbl" data-en="Title" data-am="ሚና">Title</label><input id="am_title" class="input-field" /></div>
-              <button type="submit" class="btn-primary" data-en="Add" data-am="ጨምር">Add</button>
-            </form>
+            <div class="mb-4 space-y-3">
+              <div class="flex items-center gap-1 bg-surface-mid rounded-full p-0.5 w-max border border-outline-soft/50">
+                <button type="button" id="modeExisting" class="seg-active px-3 py-1 text-xs font-semibold rounded-full" data-en="Add existing" data-am="ነባር ጨምር">Add existing</button>
+                <button type="button" id="modeNew" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft" data-en="Create new" data-am="አዲስ ፍጠር">Create new</button>
+              </div>
+
+              <form id="addExistingForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30">
+                <div class="min-w-[110px]"><label class="lbl" data-en="Type" data-am="ዓይነት">Type</label>
+                  <select id="ax_type" class="input-field"><option value="teacher" data-en="Teacher" data-am="መምህር">Teacher</option><option value="student" data-en="Student" data-am="ተማሪ">Student</option><option value="" data-en="Anyone" data-am="ማንኛውም">Anyone</option></select></div>
+                <div class="flex-1 min-w-[200px]"><label class="lbl" data-en="Search person" data-am="ሰው ፈልግ">Search person</label>
+                  <input id="ax_search" class="input-field" placeholder="Name or phone…" autocomplete="off" />
+                  <select id="ax_person" class="input-field mt-2"><option value="">—</option></select></div>
+                <div class="min-w-[120px]"><label class="lbl" data-en="Level" data-am="ደረጃ">Level</label><select id="ax_level" class="input-field"><option value="">—</option></select></div>
+                <div class="min-w-[100px]"><label class="lbl" data-en="Title" data-am="ሚና">Title</label><input id="ax_title" class="input-field" /></div>
+                <button type="submit" class="btn-primary" data-en="Add" data-am="ጨምር">Add</button>
+              </form>
+
+              <form id="createNewForm" class="flex flex-wrap items-end gap-2 bg-surface-low rounded p-3 border border-outline-soft/30" style="display:none">
+                <div class="min-w-[110px]"><label class="lbl" data-en="Role" data-am="ሚና">Role</label><select id="cn_role" class="input-field"><option value="teacher" data-en="Teacher" data-am="መምህር">Teacher</option><option value="student" data-en="Student" data-am="ተማሪ">Student</option></select></div>
+                <div class="min-w-[110px]"><label class="lbl" data-en="First name" data-am="ስም">First name</label><input id="cn_first" class="input-field" /></div>
+                <div class="min-w-[110px]"><label class="lbl" data-en="Last name" data-am="የአባት ስም">Last name</label><input id="cn_last" class="input-field" /></div>
+                <div class="flex-1 min-w-[160px]"><label class="lbl" data-en="Email" data-am="ኢሜይል">Email</label><input id="cn_email" type="email" class="input-field" /></div>
+                <div class="min-w-[110px]"><label class="lbl" data-en="Phone" data-am="ስልክ">Phone</label><input id="cn_phone" class="input-field" /></div>
+                <div class="min-w-[130px]"><label class="lbl" data-en="Password (optional)" data-am="የይለፍ ቃል (አማራጭ)">Password (optional)</label><input id="cn_password" class="input-field" /></div>
+                <div class="min-w-[110px]"><label class="lbl" data-en="Level" data-am="ደረጃ">Level</label><select id="cn_level" class="input-field"><option value="">—</option></select></div>
+                <button type="submit" class="btn-primary" data-en="Create &amp; add" data-am="ፍጠርና ጨምር">Create &amp; add</button>
+              </form>
+
+              <div id="credBox" class="hidden text-sm bg-olive/10 text-olive rounded p-3 border border-olive/30"></div>
+            </div>
             <div style="overflow-x:auto"><table class="data">
               <thead><tr><th data-en="Name" data-am="ስም">Name</th><th data-en="Level" data-am="ደረጃ">Level</th><th data-en="Title" data-am="ሚና">Title</th><th class="text-right">&nbsp;</th></tr></thead>
               <tbody id="memBody"><tr><td colspan="4" class="text-center text-ink-soft py-8" data-en="No members yet." data-am="አባል የለም።">No members yet.</td></tr></tbody>
@@ -167,6 +191,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     v('detName').textContent=dlabel(current); v('detSub').textContent=current.description||'';
     renderDeptList();
     await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id)]);
+    setMode('existing');
   }
 
   async function loadResources(id){ try{ var r=await gs.api('/api/staff/resources.php?department_id='+id); resources=r.data||[]; renderResources(); }catch(e){ resources=[]; renderResources(); } }
@@ -205,9 +230,12 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     if(!levels.length){ w.innerHTML='<p class="text-sm text-ink-soft" data-en="No levels." data-am="ደረጃ የለም።">No levels.</p>'; return; }
     w.innerHTML=levels.map(function(l){ return '<div class="flex items-center justify-between gap-2 bg-surface-low rounded px-3 py-2 border border-outline-soft/30"><span class="text-sm '+(curLang()==='am'?'ethiopic':'')+'">#'+l.rank+' '+escHtml(curLang()==='am'?(l.name_am||l.name):l.name)+' <span class="text-xs text-ink-soft">('+l.member_count+')</span></span><button class="btn-icon danger" data-dellevel="'+l.id+'" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>'; }).join('');
   }
-  function fillLevelSelect(){ v('am_level').innerHTML='<option value="">'+(curLang()==='am'?'— ደረጃ የለም':'— No level')+'</option>'+levels.map(function(l){return '<option value="'+l.id+'">'+escHtml(curLang()==='am'?(l.name_am||l.name):l.name)+'</option>';}).join(''); }
+  function fillLevelSelect(){
+    var opts='<option value="">'+(curLang()==='am'?'— ደረጃ የለም':'— No level')+'</option>'+levels.map(function(l){return '<option value="'+l.id+'">'+escHtml(curLang()==='am'?(l.name_am||l.name):l.name)+'</option>';}).join('');
+    ['ax_level','cn_level'].forEach(function(id){ var el=v(id); if(el){ var cur=el.value; el.innerHTML=opts; el.value=cur; } });
+  }
 
-  async function loadRoster(id){ try{ var r=await gs.api('/api/staff/members.php?department_id='+id); roster=r.data||[]; renderRoster(); fillPersonSelect(); }catch(e){gs.toast(e.message,'error');} }
+  async function loadRoster(id){ try{ var r=await gs.api('/api/staff/members.php?department_id='+id); roster=r.data||[]; renderRoster(); }catch(e){gs.toast(e.message,'error');} }
   function renderRoster(){ v('memCount').textContent=roster.length; var b=v('memBody');
     if(!roster.length){ b.innerHTML='<tr><td colspan="4" class="text-center text-ink-soft py-8" data-en="No members yet." data-am="አባል የለም።">No members yet.</td></tr>'; return; }
     b.innerHTML=roster.map(function(m){ var lo='<option value="">—</option>'+levels.map(function(l){return '<option value="'+l.id+'" '+(m.level_id===l.id?'selected':'')+'>'+escHtml(curLang()==='am'?(l.name_am||l.name):l.name)+'</option>';}).join('');
@@ -216,17 +244,62 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         '<td><input class="input-field" style="padding:5px 8px;max-width:130px" value="'+escHtml(m.title||'')+'" data-settitle="'+m.id+'" /></td>'+
         '<td class="text-right"><button class="btn-icon danger" data-delmem="'+m.id+'" title="Remove"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></td></tr>'; }).join('');
   }
-  function fillPersonSelect(){ var inR=roster.map(function(m){return m.person_id;}); v('am_person').innerHTML='<option value="">—</option>'+people.filter(function(p){return inR.indexOf(p.id)<0;}).map(function(p){return '<option value="'+p.id+'">'+escHtml(p.first_name+' '+p.last_name)+(p.phone?(' · '+escHtml(p.phone)):'')+'</option>';}).join(''); }
+  // Live people search for the "Add existing" picker.
+  var axSearchTimer=null;
+  async function axSearch(){
+    if(!current) return;
+    var q=v('ax_search').value.trim(), type=v('ax_type').value;
+    var url='/api/staff/people.php?exclude_dept_id='+current.id+(type?('&type='+type):'')+(q?('&q='+encodeURIComponent(q)):'');
+    try{
+      var r=await gs.api(url); var list=r.data||[];
+      var sel=v('ax_person');
+      sel.innerHTML='<option value="">'+(curLang()==='am'?'— ምረጥ':'— Select')+'</option>'+list.map(function(p){
+        var tag=p.type==='teacher'?(curLang()==='am'?' · መምህር':' · teacher'):(p.type==='student'?(curLang()==='am'?' · ተማሪ':' · student'):'');
+        return '<option value="'+p.id+'">'+escHtml(p.first_name+' '+p.last_name)+(p.phone?(' · '+escHtml(p.phone)):'')+tag+'</option>';
+      }).join('');
+    }catch(e){ /* silent */ }
+  }
+  function setMode(mode){
+    var ex=mode!=='new';
+    v('addExistingForm').style.display=ex?'flex':'none';
+    v('createNewForm').style.display=ex?'none':'flex';
+    v('modeExisting').classList.toggle('seg-active',ex); v('modeExisting').classList.toggle('text-ink-soft',!ex);
+    v('modeNew').classList.toggle('seg-active',!ex); v('modeNew').classList.toggle('text-ink-soft',ex);
+    v('credBox').classList.add('hidden');
+    if(ex) axSearch();
+  }
 
   v('levelForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
     var body={department_id:current.id,name:v('lvl_name').value.trim(),name_am:v('lvl_name_am').value.trim(),rank:parseInt(v('lvl_rank').value||'0',10)};
     if(!body.name){gs.toast('Name required','error');return;}
     try{ await gs.api('/api/staff/levels.php',{method:'POST',body:JSON.stringify(body)}); v('lvl_name').value='';v('lvl_name_am').value='';v('lvl_rank').value='0'; await loadLevels(current.id); reloadDepts(current.id); }catch(err){gs.toast(err.message,'error');}
   });
-  v('addMemberForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
-    var pid=v('am_person').value; if(!pid){gs.toast('Pick a person','error');return;}
-    var body={person_id:parseInt(pid,10),department_id:current.id,level_id:v('am_level').value?parseInt(v('am_level').value,10):null,title:v('am_title').value.trim()};
-    try{ await gs.api('/api/staff/members.php',{method:'POST',body:JSON.stringify(body)}); v('am_person').value='';v('am_level').value='';v('am_title').value=''; await loadRoster(current.id); reloadDepts(current.id); gs.toast('Added','success'); }catch(err){gs.toast(err.message,'error');}
+  v('modeExisting').addEventListener('click',function(){setMode('existing');});
+  v('modeNew').addEventListener('click',function(){setMode('new');});
+  v('ax_type').addEventListener('change',axSearch);
+  v('ax_search').addEventListener('input',function(){ clearTimeout(axSearchTimer); axSearchTimer=setTimeout(axSearch,250); });
+
+  v('addExistingForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var pid=v('ax_person').value; if(!pid){gs.toast(curLang()==='am'?'ሰው ይምረጡ':'Pick a person','error');return;}
+    var body={action:'add_existing',department_id:current.id,person_id:parseInt(pid,10),level_id:v('ax_level').value?parseInt(v('ax_level').value,10):null,title:v('ax_title').value.trim()};
+    try{ await gs.api('/api/staff/roster.php',{method:'POST',body:JSON.stringify(body)}); v('ax_search').value='';v('ax_person').innerHTML='<option value="">—</option>';v('ax_level').value='';v('ax_title').value=''; await loadRoster(current.id); reloadDepts(current.id); gs.toast(curLang()==='am'?'ተጨመረ':'Added','success'); }catch(err){gs.toast(err.message,'error');}
+  });
+
+  v('createNewForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var body={action:'create_new',department_id:current.id,role:v('cn_role').value,
+      first_name:v('cn_first').value.trim(),last_name:v('cn_last').value.trim(),email:v('cn_email').value.trim(),
+      phone:v('cn_phone').value.trim(),password:v('cn_password').value,
+      level_id:v('cn_level').value?parseInt(v('cn_level').value,10):null};
+    if(!body.first_name||!body.last_name||!body.email){gs.toast(curLang()==='am'?'ስም እና ኢሜይል ያስፈልጋሉ':'Name and email are required','error');return;}
+    try{
+      var r=await gs.api('/api/staff/roster.php',{method:'POST',body:JSON.stringify(body)});
+      v('cn_first').value='';v('cn_last').value='';v('cn_email').value='';v('cn_phone').value='';v('cn_password').value='';v('cn_level').value='';
+      if(r.generated_password){
+        var cb=v('credBox'); cb.classList.remove('hidden');
+        cb.textContent=(curLang()==='am'?'ተፈጠረ። የይለፍ ቃል፡ ':'Created. Password: ')+r.generated_password+(curLang()==='am'?' — አሁን ያጋሩት (እንደገና አይታይም)።':' — share it now (it will not be shown again).');
+      } else { gs.toast(curLang()==='am'?'ተፈጠረ':'Created','success'); }
+      await loadRoster(current.id); reloadDepts(current.id);
+    }catch(err){gs.toast(err.message,'error');}
   });
 
   v('resUploadForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
@@ -271,8 +344,8 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
 
   (async function(){
     try{
-      var [d,p]=await Promise.all([ gs.api('/api/staff/departments.php'), gs.api('/api/staff/people.php') ]);
-      depts=d.data||[]; people=p.data||[]; renderDeptList();
+      var d=await gs.api('/api/staff/departments.php');
+      depts=d.data||[]; renderDeptList();
     }catch(e){ gs.toast(e.message,'error'); }
   })();
   applyLang('en');
