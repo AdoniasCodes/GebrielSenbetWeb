@@ -23,9 +23,9 @@ $email = $_SESSION['user_email'] ?? '';
   <script>
     tailwind.config = { theme: { extend: {
       colors: {
-        surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7',
-        ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-        primary:'#5b0617','primary-soft':'#7a1f2b',
+        surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7',
+        ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+        primary:'#16357e','primary-soft':'#2f52a6',
         gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
         olive:'#384700','olive-soft':'#a2b665',error:'#9b1c1c',
       },
@@ -34,12 +34,12 @@ $email = $_SESSION['user_email'] ?? '';
     }}};
   </script>
   <style>
-    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#fcf9f2;color:#1c1c18;}
+    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#f4f7fc;color:#141824;}
     .panel{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;}
-    .seg-active{background:#fed175;color:#5b0617;}
-    .input-sm{border:1px solid #dcc0c0;border-radius:6px;padding:6px 10px;font-size:14px;background:#fff;}
+    .seg-active{background:#fed175;color:#16357e;}
+    .input-sm{border:1px solid #c4d0e4;border-radius:6px;padding:6px 10px;font-size:14px;background:#fff;}
     .input-sm:focus{outline:2px solid #c9a14a;outline-offset:1px;}
-    .stat-btn{padding:5px 10px;font-size:12px;font-weight:600;border-radius:5px;color:#564242;}
+    .stat-btn{padding:5px 10px;font-size:12px;font-weight:600;border-radius:5px;color:#3f4658;}
   </style>
 </head>
 <body>
@@ -280,7 +280,7 @@ $email = $_SESSION['user_email'] ?? '';
   });
 
   // ---- Attendance ----
-  var ATT_STATUSES=[['present','Present','የተገኘ','#384700'],['late','Late','የዘገየ','#795901'],['absent','Absent','ቀሪ','#9b1c1c'],['excused','Excused','በፍቃድ','#564242']];
+  var ATT_STATUSES=[['present','Present','የተገኘ','#384700'],['late','Late','የዘገየ','#795901'],['absent','Absent','ቀሪ','#9b1c1c'],['excused','Excused','በፍቃድ','#3f4658']];
   function statusLabel(s){ var f=ATT_STATUSES.find(function(x){return x[0]===s;}); return f?(isAm()?f[2]:f[1]):s; }
 
   async function loadAttendance(){

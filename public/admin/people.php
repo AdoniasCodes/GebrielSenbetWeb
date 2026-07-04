@@ -141,7 +141,7 @@ require __DIR__ . '/_partials/page-shell.php';
   </div>
 </section>
 
-<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;margin-bottom:8px;}</style>
+<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#3f4658;margin-bottom:8px;}</style>
 
 <script>
   var all = [], churches = [], depts = [];

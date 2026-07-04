@@ -18,7 +18,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script>
     tailwind.config = { theme: { extend: {
-      colors: { surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7','surface-high':'#ebe8e1', ink:'#1c1c18','ink-soft':'#564242', outline:'#897172','outline-soft':'#dcc0c0', primary:'#5b0617','primary-soft':'#7a1f2b', gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175', olive:'#384700','olive-soft':'#a2b665', error:'#ba1a1a' },
+      colors: { surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7','surface-high':'#ebe8e1', ink:'#141824','ink-soft':'#3f4658', outline:'#6b7690','outline-soft':'#c4d0e4', primary:'#16357e','primary-soft':'#2f52a6', gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175', olive:'#384700','olive-soft':'#a2b665', error:'#ba1a1a' },
       fontFamily: { display:['Newsreader','"Noto Serif Ethiopic"','serif'], body:['"Plus Jakarta Sans"','"Noto Sans Ethiopic"','system-ui','sans-serif'], ethiopic:['"Noto Sans Ethiopic"','serif'] },
       letterSpacing:{ widestest:'0.18em' } } } };
   </script>
@@ -31,21 +31,21 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     gs.confirm = function(m){ return Promise.resolve(window.confirm(m)); };
   </script>
   <style>
-    html,body{background:#fcf9f2;} .font-display{font-family:'Newsreader','Noto Serif Ethiopic',serif;} .ethiopic{font-family:'Noto Sans Ethiopic',serif;}
-    .seg-active{background:#fed175;color:#5b0617;}
+    html,body{background:#f4f7fc;} .font-display{font-family:'Newsreader','Noto Serif Ethiopic',serif;} .ethiopic{font-family:'Noto Sans Ethiopic',serif;}
+    .seg-active{background:#fed175;color:#16357e;}
     .panel{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;}
     .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:9999px;font-size:11px;font-weight:600;}
-    .pill-active{background:rgba(56,71,0,0.10);color:#384700;} .pill-archived{background:rgba(137,113,114,0.15);color:#564242;}
-    .input-field{width:100%;padding:9px 12px;background:#fff;border:1px solid rgba(137,113,114,0.25);border-radius:4px;font-size:14px;color:#1c1c18;}
+    .pill-active{background:rgba(56,71,0,0.10);color:#384700;} .pill-archived{background:rgba(137,113,114,0.15);color:#3f4658;}
+    .input-field{width:100%;padding:9px 12px;background:#fff;border:1px solid rgba(137,113,114,0.25);border-radius:4px;font-size:14px;color:#141824;}
     .input-field:focus{outline:none;border-color:#c9a14a;box-shadow:0 0 0 3px rgba(201,161,74,0.12);}
-    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#5b0617;color:#fcf9f2;padding:9px 16px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;cursor:pointer;}
-    .btn-primary:hover{background:#7a1f2b;}
-    .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#f0eee7;color:#5b0617;padding:9px 16px;border:1px solid rgba(220,192,192,0.5);border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;cursor:pointer;}
-    .btn-icon{width:30px;height:30px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#564242;}
-    .btn-icon:hover{background:#f0eee7;color:#5b0617;} .btn-icon.danger:hover{background:rgba(186,26,26,0.1);color:#ba1a1a;}
-    .nav-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:4px;color:#564242;font-size:14px;cursor:pointer;width:100%;text-align:left;}
-    .nav-item:hover{background:rgba(91,6,23,0.04);color:#5b0617;} .nav-item.active{color:#5b0617;font-weight:600;background:rgba(91,6,23,0.06);}
-    table.data{width:100%;border-collapse:collapse;font-size:14px;} table.data thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;border-bottom:1px solid rgba(220,192,192,0.4);background:#f6f3ec;}
+    .btn-primary{display:inline-flex;align-items:center;gap:8px;background:#16357e;color:#f4f7fc;padding:9px 16px;border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;cursor:pointer;}
+    .btn-primary:hover{background:#2f52a6;}
+    .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#e5ecf7;color:#16357e;padding:9px 16px;border:1px solid rgba(220,192,192,0.5);border-radius:4px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;cursor:pointer;}
+    .btn-icon{width:30px;height:30px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;color:#3f4658;}
+    .btn-icon:hover{background:#e5ecf7;color:#16357e;} .btn-icon.danger:hover{background:rgba(186,26,26,0.1);color:#ba1a1a;}
+    .nav-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:4px;color:#3f4658;font-size:14px;cursor:pointer;width:100%;text-align:left;}
+    .nav-item:hover{background:rgba(91,6,23,0.04);color:#16357e;} .nav-item.active{color:#16357e;font-weight:600;background:rgba(91,6,23,0.06);}
+    table.data{width:100%;border-collapse:collapse;font-size:14px;} table.data thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#3f4658;border-bottom:1px solid rgba(220,192,192,0.4);background:#eef2fa;}
     table.data tbody td{padding:12px 16px;border-bottom:1px solid rgba(220,192,192,0.3);}
   </style>
 </head>
@@ -139,7 +139,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   </div>
 </div>
 
-<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;margin-bottom:6px;}</style>
+<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#3f4658;margin-bottom:6px;}</style>
 
 <script>
   var depts=[], people=[], current=null, levels=[], roster=[], resources=[];

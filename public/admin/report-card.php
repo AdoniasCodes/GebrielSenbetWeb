@@ -75,7 +75,7 @@ $studentName = trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color:#1c1c18; background:#fcf9f2; margin:0; }
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color:#141824; background:#f4f7fc; margin:0; }
     .sheet { max-width: 780px; margin: 32px auto; background: #fff; border: 1px solid #c9a14a; padding: 56px 56px 48px; box-shadow: 0 1px 0 rgba(91,6,23,0.04), 0 12px 32px -16px rgba(91,6,23,0.18); position: relative; }
     .sheet::before, .sheet::after { content:''; position:absolute; width:32px; height:32px; border:1px solid #c9a14a; }
     .sheet::before { top:14px; left:14px; border-right:none; border-bottom:none; }
@@ -86,23 +86,23 @@ $studentName = trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'
     .ethiopic { font-family: 'Noto Sans Ethiopic', serif; }
     .eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: #795901; }
     .gold-rule { height: 1px; background: linear-gradient(to right, transparent, #c9a14a 20%, #c9a14a 80%, transparent); margin: 18px 0; }
-    h1 { font-family:'Newsreader', serif; font-size: 30px; color:#5b0617; margin: 6px 0; }
+    h1 { font-family:'Newsreader', serif; font-size: 30px; color:#16357e; margin: 6px 0; }
     .meta { display:grid; grid-template-columns: 1fr 1fr; gap: 16px 32px; margin: 24px 0; font-size: 14px; }
-    .meta dt { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #897172; margin-bottom: 4px; }
+    .meta dt { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #6b7690; margin-bottom: 4px; }
     table { width:100%; border-collapse: collapse; margin: 16px 0; }
-    table th { text-align:left; padding: 10px 14px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #564242; border-bottom: 1px solid #dcc0c0; }
+    table th { text-align:left; padding: 10px 14px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: #3f4658; border-bottom: 1px solid #c4d0e4; }
     table td { padding: 14px; border-bottom: 1px solid rgba(220,192,192,0.4); font-size: 14px; }
-    .score { font-family:'Newsreader', serif; font-size: 22px; color:#5b0617; }
+    .score { font-family:'Newsreader', serif; font-size: 22px; color:#16357e; }
     .summary { display:flex; align-items:center; justify-content: space-between; padding: 16px 0 8px; }
-    .avg { font-family:'Newsreader', serif; font-size: 36px; color:#5b0617; }
+    .avg { font-family:'Newsreader', serif; font-size: 36px; color:#16357e; }
     .footer { margin-top: 36px; display:flex; justify-content: space-between; gap: 32px; }
-    .sig { flex:1; padding-top: 40px; border-top: 1px solid #897172; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #897172; }
+    .sig { flex:1; padding-top: 40px; border-top: 1px solid #6b7690; font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: #6b7690; }
 
     .toolbar { max-width: 780px; margin: 16px auto -16px; display:flex; justify-content: flex-end; gap: 8px; }
-    .btn { display:inline-flex; align-items:center; gap:6px; padding: 8px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; border-radius: 4px; border: 1px solid #dcc0c0; background: #fff; color: #1c1c18; text-decoration: none; cursor: pointer; }
-    .btn:hover { background: #f0eee7; }
-    .btn-primary { background: #5b0617; color: #fcf9f2; border-color: #5b0617; }
-    .btn-primary:hover { background: #7a1f2b; }
+    .btn { display:inline-flex; align-items:center; gap:6px; padding: 8px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; border-radius: 4px; border: 1px solid #c4d0e4; background: #fff; color: #141824; text-decoration: none; cursor: pointer; }
+    .btn:hover { background: #e5ecf7; }
+    .btn-primary { background: #16357e; color: #f4f7fc; border-color: #16357e; }
+    .btn-primary:hover { background: #2f52a6; }
 
     @media print {
       .toolbar { display: none !important; }
@@ -122,17 +122,17 @@ $studentName = trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'
   <div class="header">
     <div class="crown">✦</div>
     <p class="eyebrow">Mekane Selam Senbet School</p>
-    <p class="ethiopic" style="font-size:14px; color:#897172; margin-top:4px;">መካነ ሰላም ሰንበት ት/ቤት</p>
+    <p class="ethiopic" style="font-size:14px; color:#6b7690; margin-top:4px;">መካነ ሰላም ሰንበት ት/ቤት</p>
     <h1>Term Report Card</h1>
-    <p class="ethiopic" style="font-size:14px; color:#5b0617;">የወቅት ሪፖርት ካርድ</p>
+    <p class="ethiopic" style="font-size:14px; color:#16357e;">የወቅት ሪፖርት ካርድ</p>
   </div>
 
   <div class="gold-rule"></div>
 
   <dl class="meta">
-    <div><dt>Student</dt><dd style="font-family:'Newsreader',serif;font-size:18px;color:#5b0617;"><?= htmlspecialchars($studentName) ?></dd></div>
+    <div><dt>Student</dt><dd style="font-family:'Newsreader',serif;font-size:18px;color:#16357e;"><?= htmlspecialchars($studentName) ?></dd></div>
     <div><dt>Term</dt><dd><?= htmlspecialchars($term['academic_year']) ?> · <?= htmlspecialchars($term['name']) ?></dd></div>
-    <div><dt>Class</dt><dd><?= htmlspecialchars($class['class_name'] ?? ($class['name'] ?? '—')) ?> <span style="color:#897172"><?= $class ? '(' . htmlspecialchars($class['level_name']) . ')' : '' ?></span></dd></div>
+    <div><dt>Class</dt><dd><?= htmlspecialchars($class['class_name'] ?? ($class['name'] ?? '—')) ?> <span style="color:#6b7690"><?= $class ? '(' . htmlspecialchars($class['level_name']) . ')' : '' ?></span></dd></div>
     <div><dt>Track</dt><dd><?= htmlspecialchars($class['track_name'] ?? '—') ?></dd></div>
     <div><dt>Term dates</dt><dd><?= htmlspecialchars($term['start_date']) ?> → <?= htmlspecialchars($term['end_date']) ?></dd></div>
     <div><dt>Issued</dt><dd><?= date('Y-m-d') ?></dd></div>
@@ -142,12 +142,12 @@ $studentName = trim(($student['first_name'] ?? '') . ' ' . ($student['last_name'
     <thead><tr><th>Subject</th><th>Score</th><th>Remarks</th></tr></thead>
     <tbody>
       <?php if (!$grades): ?>
-        <tr><td colspan="3" style="text-align:center; padding:32px; color:#897172;">No grades recorded for this term.</td></tr>
+        <tr><td colspan="3" style="text-align:center; padding:32px; color:#6b7690;">No grades recorded for this term.</td></tr>
       <?php else: foreach ($grades as $g): ?>
         <tr>
           <td><?= htmlspecialchars($g['subject_name']) ?></td>
           <td><span class="score"><?= htmlspecialchars($g['score']) ?></span></td>
-          <td style="color:#564242;"><?= htmlspecialchars($g['remarks'] ?? '') ?></td>
+          <td style="color:#3f4658;"><?= htmlspecialchars($g['remarks'] ?? '') ?></td>
         </tr>
       <?php endforeach; endif; ?>
     </tbody>

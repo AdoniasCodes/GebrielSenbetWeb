@@ -22,9 +22,9 @@ $year = date('Y');
     tailwind.config = {
       theme: { extend: {
         colors: {
-          surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7',
-          ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-          primary:'#5b0617','primary-soft':'#7a1f2b',
+          surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7',
+          ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+          primary:'#16357e','primary-soft':'#2f52a6',
           gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
           olive:'#384700','olive-soft':'#a2b665',
         },
@@ -41,7 +41,7 @@ $year = date('Y');
   <style>
     .font-display { font-family: 'Newsreader','Noto Serif Ethiopic',serif; }
     .ethiopic { font-family: 'Noto Sans Ethiopic', serif; }
-    .seg-active { background:#fed175; color:#5b0617; }
+    .seg-active { background:#fed175; color:#16357e; }
     .rule-gold { height:1px; background: linear-gradient(to right, transparent, #c9a14a 20%, #c9a14a 80%, transparent); }
     .rule-gold-tiny { display:inline-block; width:12px; height:1px; background:#c9a14a; vertical-align:middle; }
     .eyebrow { font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:#795901; display:inline-flex; align-items:center; gap:12px; }

@@ -18,7 +18,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <div class="stat-card border-t-primary">
     <p class="text-[10px] font-semibold uppercase tracking-widestest text-ink-soft flex items-center justify-between">
       <span data-en="Total Students" data-am="ጠቅላላ ተማሪዎች">Total Students</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#897172" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7690" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
     </p>
     <p class="font-display text-5xl text-ink mt-3 mb-3 leading-none" data-stat="total_students">—</p>
     <p class="text-xs text-ink-soft" data-en="Active" data-am="ንቁ">Active</p>
@@ -27,7 +27,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <div class="stat-card border-t-gold-soft">
     <p class="text-[10px] font-semibold uppercase tracking-widestest text-ink-soft flex items-center justify-between">
       <span data-en="Active Classes" data-am="ንቁ ክፍሎች">Active Classes</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#897172" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7690" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     </p>
     <p class="font-display text-5xl text-ink mt-3 mb-3 leading-none" data-stat="active_classes">—</p>
     <p class="text-xs text-ink-soft" data-en="Across all tracks" data-am="በሁሉም ኮርሶች">Across all tracks</p>
@@ -36,7 +36,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <div class="stat-card" style="border-top-color:#ba1a1a;">
     <p class="text-[10px] font-semibold uppercase tracking-widestest text-ink-soft flex items-center justify-between">
       <span data-en="Unpaid This Term" data-am="ያልተከፈለ በዚህ ኮርስ">Unpaid This Term</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#897172" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7690" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
     </p>
     <p class="font-display text-5xl text-error mt-3 mb-3 leading-none" data-stat="unpaid_this_term">—</p>
     <p class="text-xs text-error" data-stat-trend="outstanding"><span data-en="No outstanding amount" data-am="ቀሪ ሂሳብ የለም">No outstanding amount</span></p>
@@ -45,7 +45,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <div class="stat-card border-t-olive">
     <p class="text-[10px] font-semibold uppercase tracking-widestest text-ink-soft flex items-center justify-between">
       <span data-en="Active Teachers" data-am="ንቁ መምህራን">Active Teachers</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#897172" stroke-width="1.5" stroke-linecap="round"><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7690" stroke-width="1.5" stroke-linecap="round"><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
     </p>
     <p class="font-display text-5xl text-ink mt-3 mb-3 leading-none" data-stat="active_teachers">—</p>
     <p class="text-xs text-ink-soft" data-en="With at least one assignment" data-am="ቢያንስ አንድ ምድብ ያላቸው">With at least one assignment</p>

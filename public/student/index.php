@@ -23,9 +23,9 @@ $email = $_SESSION['user_email'] ?? '';
   <script>
     tailwind.config = { theme: { extend: {
       colors: {
-        surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7',
-        ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-        primary:'#5b0617','primary-soft':'#7a1f2b',
+        surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7',
+        ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+        primary:'#16357e','primary-soft':'#2f52a6',
         gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
         olive:'#384700','olive-soft':'#a2b665',error:'#9b1c1c',
       },
@@ -34,10 +34,10 @@ $email = $_SESSION['user_email'] ?? '';
     }}};
   </script>
   <style>
-    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#fcf9f2;color:#1c1c18;}
+    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#f4f7fc;color:#141824;}
     .panel{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;}
     .stat-card{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;padding:20px 22px;border-top:3px solid #c9a14a;}
-    .seg-active{background:#fed175;color:#5b0617;}
+    .seg-active{background:#fed175;color:#16357e;}
   </style>
 </head>
 <body>

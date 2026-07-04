@@ -278,7 +278,7 @@ $auto_open_new = isset($_GET['new']) && $_GET['new'] === '1';
         var w = window.open('', '_blank');
         if (w) {
           w.document.title = 'Generated passwords — save these';
-          w.document.body.style.cssText = 'font-family:monospace; padding:24px; background:#fcf9f2; color:#1c1c18; white-space:pre-wrap;';
+          w.document.body.style.cssText = 'font-family:monospace; padding:24px; background:#f4f7fc; color:#141824; white-space:pre-wrap;';
           w.document.body.textContent = 'Generated passwords (save these now — they will not be shown again):\n\n' + html;
         }
       }

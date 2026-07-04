@@ -15,9 +15,9 @@
       theme: {
         extend: {
           colors: {
-            surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7','surface-high':'#ebe8e1',
-            ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-            primary:'#5b0617','primary-soft':'#7a1f2b','primary-warm':'#a13c46',
+            surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7','surface-high':'#ebe8e1',
+            ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+            primary:'#16357e','primary-soft':'#2f52a6','primary-warm':'#3f66c4',
             gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
             olive:'#384700','olive-soft':'#a2b665',
             error:'#ba1a1a',
@@ -34,7 +34,7 @@
   </script>
 
   <style>
-    html, body { background: #fcf9f2; }
+    html, body { background: #f4f7fc; }
     .font-display { font-family: 'Newsreader','Noto Serif Ethiopic',serif; }
     .ethiopic { font-family: 'Noto Sans Ethiopic', serif; }
 
@@ -61,7 +61,7 @@
       opacity: 0.7;
     }
 
-    .seg-active { background:#fed175; color:#5b0617; }
+    .seg-active { background:#fed175; color:#16357e; }
 
     :where(a, button, input, select, textarea):focus-visible {
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
@@ -74,7 +74,7 @@
       border: 1px solid rgba(137,113,114,0.25);
       border-radius: 4px;
       font-size: 15px;
-      color: #1c1c18;
+      color: #141824;
       transition: all 150ms ease;
     }
     .input-field:focus {
@@ -83,7 +83,7 @@
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(201,161,74,0.12);
     }
-    .input-field::placeholder { color: #897172; }
+    .input-field::placeholder { color: #6b7690; }
   </style>
 </head>
 <body class="bg-surface text-ink font-body antialiased min-h-screen flex flex-col">
@@ -116,7 +116,7 @@
             <div class="relative w-16 h-16 mb-6">
               <div class="absolute inset-0 border border-primary/60 transform rotate-45 rounded-sm"></div>
               <div class="absolute inset-0 flex items-center justify-center">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5b0617" stroke-width="1.6" stroke-linecap="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16357e" stroke-width="1.6" stroke-linecap="round">
                   <path d="M12 4v16M4 12h16"/>
                 </svg>
               </div>

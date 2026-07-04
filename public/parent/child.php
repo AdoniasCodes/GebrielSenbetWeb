@@ -37,9 +37,9 @@ $email = $_SESSION['user_email'] ?? '';
   <script>
     tailwind.config = { theme: { extend: {
       colors: {
-        surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7',
-        ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-        primary:'#5b0617','primary-soft':'#7a1f2b',
+        surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7',
+        ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+        primary:'#16357e','primary-soft':'#2f52a6',
         gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
         olive:'#384700','olive-soft':'#a2b665',
       },
@@ -48,17 +48,17 @@ $email = $_SESSION['user_email'] ?? '';
     }}};
   </script>
   <style>
-    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#fcf9f2;color:#1c1c18;}
+    body{font-family:'Plus Jakarta Sans','Noto Sans Ethiopic',sans-serif;background:#f4f7fc;color:#141824;}
     .panel{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;}
     .stat-card{background:#fff;border:1px solid rgba(220,192,192,0.4);border-radius:8px;padding:24px;border-top:3px solid #c9a14a;}
     .data{width:100%;border-collapse:collapse;}
     .data th,.data td{padding:12px 16px;text-align:left;border-bottom:1px solid rgba(220,192,192,0.3);}
-    .data th{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#897172;background:#f6f3ec;font-weight:600;}
+    .data th{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#6b7690;background:#eef2fa;font-weight:600;}
     .pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:600;}
     .pill-paid{background:#e7f0d2;color:#384700;}
     .pill-partial{background:#fef0c7;color:#795901;}
     .pill-unpaid{background:#fde4e4;color:#ba1a1a;}
-    .seg-active{background:#fed175;color:#5b0617;}
+    .seg-active{background:#fed175;color:#16357e;}
   </style>
 </head>
 <body>

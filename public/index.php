@@ -40,17 +40,17 @@ $year = date('Y');
       theme: {
         extend: {
           colors: {
-            surface:        '#fcf9f2',
-            'surface-low':  '#f6f3ec',
-            'surface-mid':  '#f0eee7',
+            surface:        '#f4f7fc',
+            'surface-low':  '#eef2fa',
+            'surface-mid':  '#e5ecf7',
             'surface-high': '#ebe8e1',
-            ink:            '#1c1c18',
-            'ink-soft':     '#564242',
-            outline:        '#897172',
-            'outline-soft': '#dcc0c0',
-            primary:        '#5b0617',
-            'primary-soft': '#7a1f2b',
-            'primary-warm': '#a13c46',
+            ink:            '#141824',
+            'ink-soft':     '#3f4658',
+            outline:        '#6b7690',
+            'outline-soft': '#c4d0e4',
+            primary:        '#16357e',
+            'primary-soft': '#2f52a6',
+            'primary-warm': '#3f66c4',
             gold:           '#795901',
             'gold-soft':    '#c9a14a',
             'gold-warm':    '#fed175',
@@ -71,7 +71,7 @@ $year = date('Y');
   </script>
 
   <style>
-    html, body { background: #fcf9f2; }
+    html, body { background: #f4f7fc; }
     body { font-feature-settings: 'kern','liga','dlig'; }
 
     /* Latin → Newsreader; Ethiopic → Noto Serif Ethiopic, automatic fallback */
@@ -119,22 +119,22 @@ $year = date('Y');
     .link-arrow:hover svg { transform: translateX(4px); }
 
     .pattern-children {
-      background-color: #f6f3ec;
+      background-color: #eef2fa;
       background-image:
         radial-gradient(circle at 20% 30%, rgba(201,161,74,0.18) 0, transparent 32px),
         radial-gradient(circle at 75% 70%, rgba(91,6,23,0.10) 0, transparent 36px),
         radial-gradient(circle at 50% 50%, rgba(56,71,0,0.08) 0, transparent 28px);
     }
     .pattern-adult {
-      background-color: #f0eee7;
+      background-color: #e5ecf7;
       background-image:
         repeating-linear-gradient(135deg, rgba(201,161,74,0.10) 0 1px, transparent 1px 14px),
         repeating-linear-gradient(45deg, rgba(91,6,23,0.06) 0 1px, transparent 1px 22px);
     }
 
-    .seg-active { background: #fed175; color: #5b0617; }
+    .seg-active { background: #fed175; color: #16357e; }
 
-    .scripture { background: radial-gradient(ellipse at top, #7a1f2b 0%, #5b0617 60%, #40000c 100%); color: #f3f0ea; }
+    .scripture { background: radial-gradient(ellipse at top, #2f52a6 0%, #16357e 60%, #0a1f4d 100%); color: #f3f0ea; }
 
     :where(a, button, input, select, textarea):focus-visible {
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;

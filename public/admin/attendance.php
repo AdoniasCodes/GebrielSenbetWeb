@@ -67,12 +67,12 @@ require __DIR__ . '/_partials/page-shell.php';
   </div>
 </section>
 
-<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;margin-bottom:6px;}
+<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#3f4658;margin-bottom:6px;}
   .seg{display:inline-flex;border:1px solid rgba(137,113,114,0.3);border-radius:6px;overflow:hidden;}
-  .seg button{padding:4px 10px;font-size:12px;background:#fff;color:#564242;border-right:1px solid rgba(137,113,114,0.2);}
+  .seg button{padding:4px 10px;font-size:12px;background:#fff;color:#3f4658;border-right:1px solid rgba(137,113,114,0.2);}
   .seg button:last-child{border-right:none;}
   .seg button.on-present{background:#384700;color:#fff;} .seg button.on-absent{background:#ba1a1a;color:#fff;}
-  .seg button.on-late{background:#fed175;color:#5b0617;} .seg button.on-excused{background:#897172;color:#fff;}
+  .seg button.on-late{background:#fed175;color:#16357e;} .seg button.on-excused{background:#6b7690;color:#fff;}
 </style>
 
 <script>

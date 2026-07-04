@@ -51,7 +51,7 @@ require __DIR__ . '/_partials/page-shell.php';
   </div>
 </section>
 
-<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#564242;margin-bottom:6px;}
+<style>.lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:#3f4658;margin-bottom:6px;}
   .bar{height:6px;border-radius:9999px;background:#ebe8e1;overflow:hidden;width:90px;display:inline-block;vertical-align:middle;}
   .bar>span{display:block;height:100%;}
 </style>

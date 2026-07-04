@@ -67,9 +67,9 @@ $nav_groups = [
     tailwind.config = {
       theme: { extend: {
         colors: {
-          surface:'#fcf9f2','surface-low':'#f6f3ec','surface-mid':'#f0eee7','surface-high':'#ebe8e1',
-          ink:'#1c1c18','ink-soft':'#564242',outline:'#897172','outline-soft':'#dcc0c0',
-          primary:'#5b0617','primary-soft':'#7a1f2b','primary-warm':'#a13c46',
+          surface:'#f4f7fc','surface-low':'#eef2fa','surface-mid':'#e5ecf7','surface-high':'#ebe8e1',
+          ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
+          primary:'#16357e','primary-soft':'#2f52a6','primary-warm':'#3f66c4',
           gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
           olive:'#384700','olive-soft':'#a2b665',
           error:'#ba1a1a',
@@ -136,19 +136,19 @@ $nav_groups = [
   </script>
 
   <style>
-    html, body { background: #fcf9f2; }
+    html, body { background: #f4f7fc; }
     .font-display { font-family: 'Newsreader','Noto Serif Ethiopic',serif; }
     .ethiopic { font-family: 'Noto Sans Ethiopic', serif; }
-    .seg-active { background:#fed175; color:#5b0617; }
+    .seg-active { background:#fed175; color:#16357e; }
     :where(a, button, input, select, textarea):focus-visible {
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
     }
 
-    .nav-item { display:flex; align-items:center; gap:12px; padding:9px 14px; border-radius:4px; color:#564242; font-size:14px; transition:all 150ms ease; position:relative; }
-    .nav-item:hover { background: rgba(91,6,23,0.04); color:#5b0617; }
-    .nav-item.active { color:#5b0617; font-weight:600; background: rgba(91,6,23,0.06); }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:9px 14px; border-radius:4px; color:#3f4658; font-size:14px; transition:all 150ms ease; position:relative; }
+    .nav-item:hover { background: rgba(91,6,23,0.04); color:#16357e; }
+    .nav-item.active { color:#16357e; font-weight:600; background: rgba(91,6,23,0.06); }
     .nav-item.active::before { content:''; position:absolute; left:-12px; top:6px; bottom:6px; width:2px; background:#c9a14a; border-radius:1px; }
-    .nav-section-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:#897172; padding:0 14px; margin:18px 0 6px; }
+    .nav-section-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:#6b7690; padding:0 14px; margin:18px 0 6px; }
 
     .stat-card { background:#fff; border:1px solid rgba(220,192,192,0.4); border-top-width:3px; border-radius:8px; padding:22px 22px 20px; transition: box-shadow 150ms ease; }
     .stat-card:hover { box-shadow: 0 4px 12px -4px rgba(91,6,23,0.08); }
@@ -159,36 +159,36 @@ $nav_groups = [
     .pill-published { background: rgba(56,71,0,0.10); color:#384700; }
     .pill-draft     { background: rgba(254,209,117,0.4); color:#5c4300; }
     .pill-active    { background: rgba(56,71,0,0.10); color:#384700; }
-    .pill-archived  { background: rgba(137,113,114,0.15); color:#564242; }
+    .pill-archived  { background: rgba(137,113,114,0.15); color:#3f4658; }
     .pill-paid      { background: rgba(56,71,0,0.10); color:#384700; }
     .pill-unpaid    { background: rgba(186,26,26,0.10); color:#ba1a1a; }
     .pill-partial   { background: rgba(254,209,117,0.4); color:#5c4300; }
 
-    .quick-actions { background: linear-gradient(180deg,#7a1f2b 0%,#5b0617 100%); color:#f3f0ea; }
+    .quick-actions { background: linear-gradient(180deg,#2f52a6 0%,#16357e 100%); color:#f3f0ea; }
 
-    .avatar { width:36px; height:36px; border-radius:9999px; background: linear-gradient(135deg,#a2b665 0%,#384700 100%); color:#fcf9f2; font-weight:700; font-size:13px; display:inline-flex; align-items:center; justify-content:center; letter-spacing:0.05em; }
+    .avatar { width:36px; height:36px; border-radius:9999px; background: linear-gradient(135deg,#a2b665 0%,#384700 100%); color:#f4f7fc; font-weight:700; font-size:13px; display:inline-flex; align-items:center; justify-content:center; letter-spacing:0.05em; }
     .avatar-circle { width:40px; height:40px; border-radius:9999px; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
 
     .bell { position:relative; }
-    .bell.has-unread::after { content:''; position:absolute; top:6px; right:6px; width:6px; height:6px; border-radius:9999px; background:#ba1a1a; box-shadow:0 0 0 2px #fcf9f2; }
+    .bell.has-unread::after { content:''; position:absolute; top:6px; right:6px; width:6px; height:6px; border-radius:9999px; background:#ba1a1a; box-shadow:0 0 0 2px #f4f7fc; }
 
-    .input-field { width:100%; padding:10px 12px; background:#fff; border:1px solid rgba(137,113,114,0.25); border-radius:4px; font-size:14px; color:#1c1c18; transition:all 150ms ease; }
+    .input-field { width:100%; padding:10px 12px; background:#fff; border:1px solid rgba(137,113,114,0.25); border-radius:4px; font-size:14px; color:#141824; transition:all 150ms ease; }
     .input-field:focus { outline:none; border-color:#c9a14a; box-shadow:0 0 0 3px rgba(201,161,74,0.12); }
-    .input-field::placeholder { color:#897172; }
+    .input-field::placeholder { color:#6b7690; }
 
-    .btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#5b0617; color:#fcf9f2; padding:10px 18px; border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; transition: background 150ms ease; cursor:pointer; }
-    .btn-primary:hover { background:#7a1f2b; }
+    .btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#16357e; color:#f4f7fc; padding:10px 18px; border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; transition: background 150ms ease; cursor:pointer; }
+    .btn-primary:hover { background:#2f52a6; }
     .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
-    .btn-ghost { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#f0eee7; color:#5b0617; padding:10px 18px; border:1px solid rgba(220,192,192,0.5); border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; transition: background 150ms ease; cursor:pointer; }
+    .btn-ghost { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#e5ecf7; color:#16357e; padding:10px 18px; border:1px solid rgba(220,192,192,0.5); border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; transition: background 150ms ease; cursor:pointer; }
     .btn-ghost:hover { background:#ebe8e1; }
-    .btn-icon { width:32px; height:32px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#564242; transition: all 150ms ease; }
-    .btn-icon:hover { background:#f0eee7; color:#5b0617; }
+    .btn-icon { width:32px; height:32px; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; color:#3f4658; transition: all 150ms ease; }
+    .btn-icon:hover { background:#e5ecf7; color:#16357e; }
     .btn-icon.danger:hover { background: rgba(186,26,26,0.1); color:#ba1a1a; }
 
     .table-wrap { overflow-x: auto; }
     table.data { width:100%; border-collapse:collapse; font-size:14px; }
-    table.data thead th { padding:12px 24px; text-align:left; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:#564242; border-bottom:1px solid rgba(220,192,192,0.4); background:#f6f3ec; }
-    table.data tbody td { padding:14px 24px; border-bottom:1px solid rgba(220,192,192,0.3); color:#1c1c18; }
+    table.data thead th { padding:12px 24px; text-align:left; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:#3f4658; border-bottom:1px solid rgba(220,192,192,0.4); background:#eef2fa; }
+    table.data tbody td { padding:14px 24px; border-bottom:1px solid rgba(220,192,192,0.3); color:#141824; }
     table.data tbody tr:hover td { background: rgba(246,243,236,0.5); }
     table.data tbody tr:last-child td { border-bottom: none; }
   </style>
