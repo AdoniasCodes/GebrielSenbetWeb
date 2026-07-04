@@ -52,6 +52,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '015_attendance_holidays.sql'      => "SHOW TABLES LIKE 'attendance_sessions'",
         '016_app_settings.sql'             => "SHOW TABLES LIKE 'app_settings'",
         '017_resources.sql'                => "SHOW TABLES LIKE 'resources'",
+        '018_departments_teacher_workflows.sql' => "SHOW TABLES LIKE 'tasks'",
     ];
     if (!isset($checks[$filename])) return null;
     try {

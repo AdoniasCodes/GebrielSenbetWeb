@@ -7,6 +7,18 @@ use App\Utils\Password;
 require_once __DIR__ . '/../_guard.php';
 require_csrf_for_write();
 
+// Keep people.first_name/last_name in sync with a teacher/student rename, but
+// only for the fields actually provided and only if a linked person exists.
+function sync_person_name(\PDO $pdo, int $userId, array $input): void {
+    $fields = []; $params = [];
+    if (isset($input['first_name'])) { $fields[] = 'first_name = ?'; $params[] = trim((string)$input['first_name']); }
+    if (isset($input['last_name']))  { $fields[] = 'last_name = ?';  $params[] = trim((string)$input['last_name']); }
+    if (!$fields) { return; }
+    $params[] = $userId;
+    $up = $pdo->prepare('UPDATE people SET ' . implode(', ', $fields) . ' WHERE user_id = ?');
+    $up->execute($params);
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $config = app_config();
 
@@ -75,16 +87,24 @@ if ($method === 'POST') {
             $phone = trim($input['phone'] ?? '');
             $address = trim($input['address'] ?? '');
             if ($first === '' || $last === '') { $pdo->rollBack(); Response::error('first_name and last_name required for student', 422); }
-            $is = $pdo->prepare('INSERT INTO students (user_id, first_name, last_name, guardian_name, phone, address) VALUES (?, ?, ?, ?, ?, ?)');
-            $is->execute([$userId, $first, $last, $guardian, $phone, $address]);
+            // Unify with the people-first flow: every student is also a canonical person.
+            $ip = $pdo->prepare('INSERT INTO people (user_id, first_name, last_name) VALUES (?, ?, ?)');
+            $ip->execute([$userId, $first, $last]);
+            $personId = (int)$pdo->lastInsertId();
+            $is = $pdo->prepare('INSERT INTO students (user_id, person_id, first_name, last_name, guardian_name, phone, address) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $is->execute([$userId, $personId, $first, $last, $guardian, $phone, $address]);
         } elseif ($roleName === 'teacher') {
             $first = trim($input['first_name'] ?? '');
             $last = trim($input['last_name'] ?? '');
             $phone = trim($input['phone'] ?? '');
             $bio = isset($input['bio']) ? (string)$input['bio'] : null;
             if ($first === '' || $last === '') { $pdo->rollBack(); Response::error('first_name and last_name required for teacher', 422); }
-            $it = $pdo->prepare('INSERT INTO teachers (user_id, first_name, last_name, phone, bio) VALUES (?, ?, ?, ?, ?)');
-            $it->execute([$userId, $first, $last, $phone, $bio]);
+            // Unify with the people-first flow: every teacher is also a canonical person.
+            $ip = $pdo->prepare('INSERT INTO people (user_id, first_name, last_name) VALUES (?, ?, ?)');
+            $ip->execute([$userId, $first, $last]);
+            $personId = (int)$pdo->lastInsertId();
+            $it = $pdo->prepare('INSERT INTO teachers (user_id, person_id, first_name, last_name, phone, bio) VALUES (?, ?, ?, ?, ?, ?)');
+            $it->execute([$userId, $personId, $first, $last, $phone, $bio]);
         }
 
         $pdo->commit();
@@ -144,6 +164,8 @@ if ($method === 'PUT') {
                 $us = $pdo->prepare('UPDATE students SET ' . implode(', ', $fields) . ' WHERE user_id = ?');
                 $us->execute($params);
             }
+            // Keep the canonical person's name in sync with the student row.
+            sync_person_name($pdo, $userId, $input);
         } elseif ($user['role_name'] === 'teacher') {
             $fields = [];$params=[];
             if (isset($input['first_name'])) { $fields[]='first_name = ?'; $params[] = trim((string)$input['first_name']); }
@@ -155,6 +177,8 @@ if ($method === 'PUT') {
                 $ut = $pdo->prepare('UPDATE teachers SET ' . implode(', ', $fields) . ' WHERE user_id = ?');
                 $ut->execute($params);
             }
+            // Keep the canonical person's name in sync with the teacher row.
+            sync_person_name($pdo, $userId, $input);
         }
 
         $pdo->commit();
