@@ -23,6 +23,10 @@ sample data so every dashboard shows something.
 | Parent  | `test-parent@mekaneselamss.com`  | `demo1234` | `/parent/`  — one linked child |
 | Dept-head (staff) | `test-staff@mekaneselamss.com` | `demo1234` | `/staff/` — heads the Choir (መዝሙር) dept only |
 
+Additionally, the reset creates **one dept-head login per non-archived department**
+(`head-<slug>@mekaneselamss.com`, password `demo1234`) so every department's head view
+is testable. Full list in `TESTER_LOGINS.md`.
+
 ## Going live (clean slate)
 Admin → Reset / Data → **"Wipe to clean slate"** (pw `Panda2022`) deletes all operational
 data AND the test accounts, keeping only your admin + reference data.

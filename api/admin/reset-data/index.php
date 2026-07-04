@@ -172,6 +172,18 @@ try {
     }
     $accounts[] = ['role' => 'staff', 'email' => 'test-staff@mekaneselamss.com', 'password' => $stu['pw']];
 
+    // DEPT HEADS — one staff login per (non-archived) department so every
+    // department's head view is testable: head-<slug>@mekaneselamss.com
+    $depts = $pdo->query("SELECT id, slug, name FROM departments WHERE is_archived=0 ORDER BY sort_order, id")->fetchAll();
+    foreach ($depts as $d) {
+        $email = 'head-' . $d['slug'] . '@mekaneselamss.com';
+        $hu = $mkUser($email, $roles['staff']);
+        $hPid = $mkPerson($hu['id'], 'Head', $d['name']);
+        $pdo->prepare("INSERT INTO department_memberships (person_id, department_id, is_head, title, joined_at) VALUES (?,?,1,'Head',CURDATE())")
+            ->execute([$hPid, (int)$d['id']]);
+        $accounts[] = ['role' => 'staff (head: ' . $d['name'] . ')', 'email' => $email, 'password' => $hu['pw']];
+    }
+
     // A public announcement so dashboards show one.
     $pdo->prepare("INSERT INTO notifications (sender_user_id, target_type, title, message, is_public)
                    VALUES (?, 'role', 'Welcome', 'This is a demo announcement created by the reset tool.', 1)")
