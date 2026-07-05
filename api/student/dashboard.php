@@ -91,13 +91,47 @@ $payments = $pstmt->fetchAll();
 $expected = 0.0; $paid = 0.0;
 foreach ($payments as $p) { $expected += (float)$p['amount']; $paid += (float)$p['paid_amount']; }
 
-// Announcements (public + targeted at the student role).
-$ann = $pdo->query(
-    "SELECT id, title, message, created_at
+// Announcements: public + targeted at the student role + department-targeted
+// (for departments this student belongs to, via their linked person) +
+// class-targeted (for their current active class).
+$deptIds = [];
+if ($pid > 0) {
+    $dstmt = $pdo->prepare(
+        "SELECT DISTINCT department_id FROM department_memberships
+         WHERE person_id=? AND is_archived=0 AND (ended_at IS NULL OR ended_at >= CURDATE())"
+    );
+    $dstmt->execute([$pid]);
+    $deptIds = array_map('intval', $dstmt->fetchAll(\PDO::FETCH_COLUMN));
+}
+$classId = $class ? (int)$class['class_id'] : 0;
+
+$annSql = "SELECT id, title, message, target_type, target_payload, created_at
      FROM notifications
      WHERE is_archived=0
-       AND (is_public=1 OR (target_type='role' AND JSON_EXTRACT(target_payload,'$.role')='student'))
-     ORDER BY created_at DESC LIMIT 50")->fetchAll();
+       AND (
+         is_public=1
+         OR (target_type='role' AND JSON_EXTRACT(target_payload,'$.role')='student')";
+$annParams = [];
+if ($deptIds) {
+    $ph = implode(',', array_fill(0, count($deptIds), '?'));
+    // JSON_UNQUOTE, not a bare JSON_EXTRACT comparison: PDO sends the bound
+    // param as a typed value (ATTR_EMULATE_PREPARES=false), which a raw
+    // JSON_EXTRACT scalar won't match (see api/teacher/notifications.php).
+    $annSql .= " OR (target_type='department' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.department_id')) IN ($ph))";
+    $annParams = array_merge($annParams, $deptIds);
+}
+if ($classId > 0) {
+    $annSql .= " OR (target_type='class' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.class_id')) = ?)";
+    $annParams[] = $classId;
+}
+$annSql .= ") ORDER BY created_at DESC LIMIT 50";
+$astmt2 = $pdo->prepare($annSql);
+$astmt2->execute($annParams);
+$ann = $astmt2->fetchAll();
+foreach ($ann as &$a) {
+    unset($a['target_type'], $a['target_payload']);
+}
+unset($a);
 
 Response::json([
     'profile' => $profile,

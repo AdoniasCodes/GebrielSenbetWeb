@@ -120,6 +120,28 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         </div>
 
         <div class="panel">
+          <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Events" data-am="ዝግጅቶች">Events</span> · <span id="evtCount" class="text-ink-soft text-sm">—</span></h3></header>
+          <div class="p-4 space-y-4">
+            <div>
+              <p class="lbl" data-en="Pending proposals" data-am="በመጠባበቅ ላይ ያሉ ሐሳቦች">Pending proposals</p>
+              <div id="evtPending" class="space-y-2"></div>
+            </div>
+            <div>
+              <p class="lbl" data-en="Decided" data-am="ውሳኔ የተሰጣቸው">Decided</p>
+              <div id="evtDecided" class="space-y-2"></div>
+            </div>
+            <form id="evtCreateForm" class="grid sm:grid-cols-2 gap-2 bg-surface-low rounded p-3 border border-outline-soft/30">
+              <p class="sm:col-span-2 lbl" data-en="Create event (immediately approved)" data-am="ዝግጅት ፍጠር (ወዲያውኑ ጸድቋል)">Create event (immediately approved)</p>
+              <input id="evt_title" class="input-field sm:col-span-2" placeholder="Title" />
+              <textarea id="evt_desc" class="input-field sm:col-span-2" rows="2" placeholder="Description (optional)"></textarea>
+              <div><label class="lbl" data-en="Start" data-am="ጀምር">Start</label><input id="evt_start" type="datetime-local" class="input-field" /></div>
+              <div><label class="lbl" data-en="End (optional)" data-am="ጨርስ (አማራጭ)">End (optional)</label><input id="evt_end" type="datetime-local" class="input-field" /></div>
+              <button type="submit" class="btn-primary sm:col-span-2" data-en="Create" data-am="ፍጠር">Create</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel">
           <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Members" data-am="አባላት">Members</span> · <span id="memCount" class="text-ink-soft text-sm">—</span></h3></header>
           <div class="p-4">
             <div class="mb-4 space-y-3">
@@ -175,7 +197,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   function applyLang(lang){ if(lang!=='en'&&lang!=='am')lang='en'; document.documentElement.setAttribute('data-lang',lang);
     document.querySelectorAll('[data-en],[data-am]').forEach(function(el){ var t=el.getAttribute('data-'+lang); if(t!==null)el.innerHTML=t; });
     document.querySelectorAll('[data-lang]').forEach(function(b){ if(b.tagName==='BUTTON'){ b.classList.toggle('seg-active',b.dataset.lang===lang); } });
-    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); renderResources(); }
+    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); renderResources(); renderEvents(); }
   }
   document.querySelectorAll('header [data-lang]').forEach(function(b){ b.addEventListener('click',function(){applyLang(b.dataset.lang);}); });
 
@@ -190,7 +212,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     v('empty').classList.add('hidden'); v('detail').classList.remove('hidden');
     v('detName').textContent=dlabel(current); v('detSub').textContent=current.description||'';
     renderDeptList();
-    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id)]);
+    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id), loadEvents(id)]);
     setMode('existing');
   }
 
@@ -205,6 +227,49 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         '<button class="btn-icon danger" data-delres="'+r.id+'" title="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
     }).join('');
   }
+
+  var events=[];
+  var EVT_STATUS_CHIP={
+    pending:{bg:'#fed175',fg:'#795901',en:'Pending',am:'በመጠባበቅ ላይ'},
+    approved:{bg:'#a2b665',fg:'#384700',en:'Approved',am:'ጸድቋል'},
+    rejected:{bg:'#f3caca',fg:'#9b1c1c',en:'Rejected',am:'ውድቅ ተደርጓል'}
+  };
+  function evtChip(status){
+    var c=EVT_STATUS_CHIP[status]||EVT_STATUS_CHIP.pending;
+    return '<span class="text-[11px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full" style="background:'+c.bg+';color:'+c.fg+'">'+(curLang()==='am'?c.am:c.en)+'</span>';
+  }
+  async function loadEvents(id){ try{ var r=await gs.api('/api/staff/events.php?department_id='+id); events=r.data||[]; renderEvents(); }catch(e){ events=[]; renderEvents(); } }
+  function renderEvents(){
+    var pw=v('evtPending'), dw=v('evtDecided'); if(!pw||!dw) return;
+    v('evtCount').textContent=events.length;
+    var pending=events.filter(function(e){return e.status==='pending';});
+    var decided=events.filter(function(e){return e.status!=='pending';});
+    pw.innerHTML=pending.length?pending.map(function(ev){
+      return '<div class="bg-surface-low rounded px-3 py-2 border border-outline-soft/30" data-evt="'+ev.id+'">'+
+        '<div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-medium text-sm">'+escHtml(ev.title)+'</span>'+evtChip(ev.status)+'</div>'+
+        (ev.description?'<p class="text-xs text-ink-soft mt-1">'+escHtml(ev.description)+'</p>':'')+
+        '<p class="text-[11px] text-ink-soft mt-1">'+escHtml(ev.start_datetime||'')+(ev.end_datetime?(' – '+escHtml(ev.end_datetime)):'')+
+        (ev.created_by_email?(' · '+escHtml(ev.created_by_email)):'')+'</p>'+
+        '<div class="flex gap-3 mt-2"><button class="text-xs font-semibold text-olive hover:underline" data-evt-approve="'+ev.id+'" data-en="Approve" data-am="ፍቀድ">'+(curLang()==='am'?'ፍቀድ':'Approve')+'</button>'+
+        '<button class="text-xs font-semibold text-error hover:underline" data-evt-reject="'+ev.id+'">'+(curLang()==='am'?'ውድቅ አድርግ':'Reject')+'</button></div></div>';
+    }).join('') : '<p class="text-sm text-ink-soft" data-en="No pending proposals." data-am="ምንም ያልተወሰነ ሐሳብ የለም።">No pending proposals.</p>';
+    dw.innerHTML=decided.length?decided.map(function(ev){
+      return '<div class="bg-surface-low rounded px-3 py-2 border border-outline-soft/30">'+
+        '<div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-medium text-sm">'+escHtml(ev.title)+'</span>'+evtChip(ev.status)+'</div>'+
+        '<p class="text-[11px] text-ink-soft mt-1">'+escHtml(ev.start_datetime||'')+(ev.end_datetime?(' – '+escHtml(ev.end_datetime)):'')+'</p></div>';
+    }).join('') : '<p class="text-sm text-ink-soft" data-en="No decided events yet." data-am="ገና ውሳኔ የተሰጠው ዝግጅት የለም።">No decided events yet.</p>';
+  }
+  v('evtCreateForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var body={action:'create',department_id:current.id,title:v('evt_title').value.trim(),start_datetime:v('evt_start').value};
+    var desc=v('evt_desc').value.trim(); if(desc) body.description=desc;
+    var end=v('evt_end').value; if(end) body.end_datetime=end;
+    if(!body.title||!body.start_datetime){gs.toast(curLang()==='am'?'ርዕስ እና መጀመሪያ ጊዜ ያስፈልጋሉ':'Title and start time are required','error');return;}
+    try{
+      await gs.api('/api/staff/events.php',{method:'POST',body:JSON.stringify(body)});
+      v('evt_title').value='';v('evt_desc').value='';v('evt_start').value='';v('evt_end').value='';
+      await loadEvents(current.id); gs.toast(curLang()==='am'?'ተፈጠረ':'Created','success');
+    }catch(err){gs.toast(err.message,'error');}
+  });
 
   var eligibility=null;
   async function loadEligibility(id){ try{ var r=await gs.api('/api/staff/eligibility.php?department_id='+id); eligibility=r; renderEligibility(); }catch(e){ eligibility=null; renderEligibility(); } }
@@ -330,6 +395,8 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     var dr=e.target.closest('[data-delres]'); if(dr){ if(!await gs.confirm(curLang()==='am'?'ይህን ግብዓት ያስወግዱ?':'Remove this resource?'))return; try{await gs.api('/api/staff/resources.php',{method:'DELETE',body:JSON.stringify({id:parseInt(dr.dataset.delres,10)})});await loadResources(current.id);}catch(err){gs.toast(err.message,'error');} return; }
     var rm=e.target.closest('[data-delmem]'); if(rm){ if(!await gs.confirm(curLang()==='am'?'ከክፍሉ ያስወግዱ?':'Remove from department?'))return; try{await gs.api('/api/staff/members.php',{method:'DELETE',body:JSON.stringify({id:parseInt(rm.dataset.delmem,10)})});await loadRoster(current.id);reloadDepts(current.id);}catch(err){gs.toast(err.message,'error');} return; }
     var rl=e.target.closest('[data-dellevel]'); if(rl){ if(!await gs.confirm(curLang()==='am'?'ይህን ደረጃ ያስወግዱ?':'Remove this level?'))return; try{await gs.api('/api/staff/levels.php',{method:'DELETE',body:JSON.stringify({id:parseInt(rl.dataset.dellevel,10)})});await loadLevels(current.id);await loadRoster(current.id);}catch(err){gs.toast(err.message,'error');} return; }
+    var ea=e.target.closest('[data-evt-approve]'); if(ea){ try{await gs.api('/api/staff/events.php',{method:'POST',body:JSON.stringify({action:'approve',id:parseInt(ea.dataset.evtApprove,10)})});await loadEvents(current.id);gs.toast(curLang()==='am'?'ጸድቋል':'Approved','success');}catch(err){gs.toast(err.message,'error');} return; }
+    var er=e.target.closest('[data-evt-reject]'); if(er){ if(!await gs.confirm(curLang()==='am'?'ይህን ሐሳብ ውድቅ ማድረግ ይፈልጋሉ?':'Reject this proposal?'))return; try{await gs.api('/api/staff/events.php',{method:'POST',body:JSON.stringify({action:'reject',id:parseInt(er.dataset.evtReject,10)})});await loadEvents(current.id);gs.toast(curLang()==='am'?'ውድቅ ተደርጓል':'Rejected','success');}catch(err){gs.toast(err.message,'error');} return; }
   });
   document.addEventListener('change', async function(e){
     var sl=e.target.closest('[data-setlevel]'); if(sl){ try{await gs.api('/api/staff/members.php',{method:'PUT',body:JSON.stringify({id:parseInt(sl.dataset.setlevel,10),level_id:sl.value?parseInt(sl.value,10):null})});await loadRoster(current.id);await loadLevels(current.id);}catch(err){gs.toast(err.message,'error');} }

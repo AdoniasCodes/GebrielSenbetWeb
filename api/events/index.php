@@ -18,6 +18,7 @@ $sql = "SELECT e.id, e.title, e.description, e.start_datetime, e.end_datetime, e
         FROM events e
         LEFT JOIN event_recurrence_rules r ON r.event_id = e.id
         WHERE e.is_archived = 0
+          AND e.status = 'approved'
           AND (e.end_datetime >= NOW() OR e.start_datetime >= NOW() OR e.is_recurring = 1)
         ORDER BY e.start_datetime ASC
         LIMIT $limit";

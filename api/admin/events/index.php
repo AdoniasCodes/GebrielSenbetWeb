@@ -21,8 +21,10 @@ if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
 
     $sql = "SELECT e.*,
+                   d.name AS department_name, d.name_am AS department_name_am,
                    r.id AS rr_id, r.freq, r.interval_num, r.by_day, r.until_date
             FROM events e
+            LEFT JOIN departments d ON d.id = e.department_id
             LEFT JOIN event_recurrence_rules r ON r.event_id=e.id
             WHERE 1=1";
     $params = [];
@@ -68,7 +70,9 @@ if ($method === 'POST' || $method === 'PUT') {
     try {
         $pdo->beginTransaction();
         if ($method === 'POST') {
-            $ins = $pdo->prepare('INSERT INTO events (title, description, start_datetime, end_datetime, is_recurring) VALUES (?, ?, ?, ?, ?)');
+            // Admin-created events are always immediately approved (explicit for clarity;
+            // 'approved' is also the column default).
+            $ins = $pdo->prepare("INSERT INTO events (title, description, start_datetime, end_datetime, is_recurring, status) VALUES (?, ?, ?, ?, ?, 'approved')");
             $ins->execute([$title, $description, $start, $end, $isRecurring]);
             $id = (int)$pdo->lastInsertId();
         } else {

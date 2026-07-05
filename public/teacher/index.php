@@ -107,6 +107,7 @@ $email = $_SESSION['user_email'] ?? '';
           <button data-tab="tasks" class="stat-btn" data-en="Tasks" data-am="ስራዎች">Tasks</button>
           <button data-tab="files" class="stat-btn" data-en="Files" data-am="ፋይሎች">Files</button>
           <button data-tab="ann" class="stat-btn" data-en="Announcements" data-am="ማስታወቂያዎች">Announcements</button>
+          <button data-tab="events" class="stat-btn" data-en="Events" data-am="ዝግጅቶች">Events</button>
         </div>
       </header>
 
@@ -220,6 +221,32 @@ $email = $_SESSION['user_email'] ?? '';
         </form>
         <p class="text-xs font-semibold uppercase tracking-widestest text-outline mb-2" data-en="My announcements" data-am="የእኔ ማስታወቂያዎች">My announcements</p>
         <ul id="annList" class="divide-y divide-outline-soft/20"></ul>
+      </div>
+
+      <!-- Events tab -->
+      <div id="dTabEvents" class="p-6 hidden">
+        <form id="eventForm" class="grid gap-3 mb-8">
+          <p class="text-xs font-semibold uppercase tracking-widestest text-outline" data-en="Propose an event" data-am="ዝግጅት ሐሳብ አቅርብ">Propose an event</p>
+          <input id="evtTitle" type="text" class="input-sm" placeholder="Title" required />
+          <textarea id="evtDesc" class="input-sm" rows="2" placeholder="Description (optional)"></textarea>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-widestest text-outline block mb-1" data-en="Start" data-am="ጀምር">Start</label>
+              <input id="evtStart" type="datetime-local" class="input-sm w-full" required />
+            </div>
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-widestest text-outline block mb-1" data-en="End (optional)" data-am="ጨርስ (አማራጭ)">End (optional)</label>
+              <input id="evtEnd" type="datetime-local" class="input-sm w-full" />
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="submit" class="btn-primary" data-en="Propose" data-am="ሐሳብ አቅርብ">Propose</button>
+            <span id="evtMsg" class="text-sm"></span>
+          </div>
+          <p class="text-[11px] text-outline" data-en="Your department head must approve this before it appears publicly." data-am="ይህ ከመታተሙ በፊት በክፍሉ ሃላፊ መጽደቅ አለበት።">Your department head must approve this before it appears publicly.</p>
+        </form>
+        <p class="text-xs font-semibold uppercase tracking-widestest text-outline mb-2" data-en="My proposals" data-am="የእኔ ሐሳቦች">My proposals</p>
+        <ul id="eventList" class="divide-y divide-outline-soft/20"></ul>
       </div>
     </section>
   </main>
@@ -359,11 +386,12 @@ $email = $_SESSION['user_email'] ?? '';
       document.getElementById('deptWsTitle').textContent=t('General (my classes)','አጠቃላይ (የእኔ ክፍሎች)');
       document.getElementById('deptWsSub').textContent=t('Your class-based grades and attendance.','በክፍል ላይ የተመሰረቱ ውጤቶችና መገኘት።');
     }
-    // Tasks & announcements are dept-scoped: hide them in General mode.
+    // Tasks, announcements & events are dept-scoped: hide them in General mode.
     var isDept=SEL.type==='dept';
     document.querySelector('#deptTabs [data-tab="tasks"]').classList.toggle('hidden',!isDept);
     document.querySelector('#deptTabs [data-tab="ann"]').classList.toggle('hidden',!isDept);
-    if(!isDept&&(TAB==='tasks'||TAB==='ann')) TAB='grades';
+    document.querySelector('#deptTabs [data-tab="events"]').classList.toggle('hidden',!isDept);
+    if(!isDept&&(TAB==='tasks'||TAB==='ann'||TAB==='events')) TAB='grades';
     showTab(TAB||'grades');
   }
 
@@ -376,11 +404,13 @@ $email = $_SESSION['user_email'] ?? '';
     document.getElementById('dTabTasks').classList.toggle('hidden',which!=='tasks');
     document.getElementById('dTabFiles').classList.toggle('hidden',which!=='files');
     document.getElementById('dTabAnn').classList.toggle('hidden',which!=='ann');
+    document.getElementById('dTabEvents').classList.toggle('hidden',which!=='events');
     if(which==='grades') renderGradesTab();
     if(which==='att') renderAttTab();
     if(which==='tasks') loadTasks();
     if(which==='files') loadResources();
     if(which==='ann'){ renderAnnClassOptions(); loadAnnouncements(); }
+    if(which==='events') loadEvents();
   }
   document.getElementById('deptTabs').addEventListener('click', function(e){
     var b=e.target.closest('[data-tab]'); if(!b) return; showTab(b.dataset.tab);
@@ -813,6 +843,64 @@ $email = $_SESSION['user_email'] ?? '';
       msg.className='text-sm text-olive'; msg.textContent=t('Posted','ተለጥፏል');
       document.getElementById('annForm').reset();
       loadAnnouncements();
+    }catch(err){ msg.className='text-sm text-error'; msg.textContent=err.message; }
+  });
+
+  // ---------- Events tab ----------
+  var EVENTS=[];
+  var EVT_STATUS_CHIP={
+    pending:{bg:'#fed175',fg:'#795901',en:'Pending',am:'በመጠባበቅ ላይ'},
+    approved:{bg:'#a2b665',fg:'#384700',en:'Approved',am:'ጸድቋል'},
+    rejected:{bg:'#f3caca',fg:'#9b1c1c',en:'Rejected',am:'ውድቅ ተደርጓል'}
+  };
+  function evtStatusChip(status){
+    var c=EVT_STATUS_CHIP[status]||EVT_STATUS_CHIP.pending;
+    return '<span class="text-[11px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full" style="background:'+c.bg+';color:'+c.fg+'">'+(isAm()?c.am:c.en)+'</span>';
+  }
+  async function loadEvents(){
+    if(!SEL||SEL.type!=='dept') return;
+    var ul=document.getElementById('eventList');
+    ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+t('Loading…','በመጫን ላይ…')+'</li>';
+    try{
+      var d=await api('/api/teacher/events.php?department_id='+SEL.dept.id);
+      EVENTS=d.data||[];
+      renderEvents();
+    }catch(e){ ul.innerHTML='<li class="py-8 text-center text-error text-sm">'+escHtml(e.message)+'</li>'; }
+  }
+  function renderEvents(){
+    var ul=document.getElementById('eventList');
+    if(!EVENTS.length){ ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+t('You have not proposed any events in this department yet.','በዚህ ዲፓርትመንት ገና ዝግጅት አላቀረቡም።')+'</li>'; return; }
+    ul.innerHTML=EVENTS.map(function(ev){
+      return '<li class="py-3 flex items-start justify-between gap-4" data-id="'+ev.id+'">'+
+        '<div><div class="flex items-center gap-2 flex-wrap"><p class="font-medium">'+escHtml(ev.title)+'</p>'+evtStatusChip(ev.status)+'</div>'+
+        (ev.description?'<p class="text-sm text-ink-soft mt-0.5">'+escHtml(ev.description)+'</p>':'')+
+        '<p class="text-[11px] text-outline mt-1">'+escHtml(ev.start_datetime||'')+(ev.end_datetime?(' – '+escHtml(ev.end_datetime)):'')+'</p></div>'+
+        (ev.status==='pending'?('<button class="js-evt-withdraw shrink-0 text-xs font-semibold text-error hover:underline" data-id="'+ev.id+'">'+t('Withdraw','ስረዝ')+'</button>'):'')+
+      '</li>';
+    }).join('');
+  }
+  document.getElementById('eventList').addEventListener('click', async function(e){
+    var b=e.target.closest('.js-evt-withdraw'); if(!b) return;
+    if(!confirm(t('Withdraw this proposal?','ይህን ሐሳብ መስረዝ ይፈልጋሉ?'))) return;
+    try{ await api('/api/teacher/events.php',{method:'DELETE',body:JSON.stringify({id:parseInt(b.dataset.id,10)})}); loadEvents(); }
+    catch(err){ alert(err.message); }
+  });
+  document.getElementById('eventForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if(!SEL||SEL.type!=='dept') return;
+    var msg=document.getElementById('evtMsg'); msg.className='text-sm text-ink-soft'; msg.textContent=t('Sending…','በመላክ ላይ…');
+    var title=document.getElementById('evtTitle').value.trim();
+    var desc=document.getElementById('evtDesc').value.trim();
+    var start=document.getElementById('evtStart').value;
+    var end=document.getElementById('evtEnd').value;
+    var body={department_id:Number(SEL.dept.id),title:title,start_datetime:start};
+    if(desc) body.description=desc;
+    if(end) body.end_datetime=end;
+    try{
+      await api('/api/teacher/events.php',{method:'POST',body:JSON.stringify(body)});
+      msg.className='text-sm text-olive'; msg.textContent=t('Proposed','ሐሳብ ቀርቧል');
+      document.getElementById('eventForm').reset();
+      loadEvents();
     }catch(err){ msg.className='text-sm text-error'; msg.textContent=err.message; }
   });
 
