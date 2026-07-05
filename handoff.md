@@ -9,10 +9,14 @@ Demo-login recovery:
 - Local: all 16 demo logins seeded with the TESTER_LOGINS.md password and verified PASS over HTTP.
 - Local dev server running at http://127.0.0.1:8080 (PHP built-in server, `-t public`).
 
-## Open items (prod)
-1. **Prod demo logins broken** — all `test-*` / `head-*` logins return 401 on mekaneselamss.com. Root cause: prod DB accounts were never reset after the Phase A–D deploy (seeder was uncommitted until 6f79cf2). Fix options: (a) admin Reset tool `load_demo` via API/UI (destructive: wipes operational data, recreates sample data + accounts), or (b) redeploy via cPanel then run the seeder in cPanel Terminal (non-destructive). Awaiting Eyoel's choice.
-2. **Prod migrations 017/018 likely unapplied** — migrate endpoint call was permission-blocked this session. Must run `POST /api/admin/deploy/migrate.php` with `X-DEPLOY-TOKEN` (token in `config/config.php`) before Phase A–D features are exercised on prod.
-3. YouTube channel RSS auto-fetch — still to build (long-standing).
+## Prod status (2026-07-05, RESOLVED)
+- Migration `018_departments_teacher_workflows.sql` applied on prod via the migrate endpoint (017 was already applied). All 18 migrations now live.
+- Root cause of broken demo logins: prod DB was never reseeded after the Phase A–D deploy. Fixed by running the admin Reset tool (`load_demo`) via API with Eyoel's approval — prod had almost no data (0 classes/grades/payments), so the wipe was harmless.
+- Prod verify: 15/16 demo logins PASS with the TESTER_LOGINS.md password. `test-admin@` fails BY DESIGN — the Reset tool never creates a demo admin (only the seeder does, and it hasn't been run on prod). Testers don't need it; TESTER_LOGINS.md lists no admin account.
+
+## Open items
+1. Optional: run `scripts/seed_demo_users.php` in cPanel Terminal after next prod deploy if a `test-admin` demo login is ever wanted on prod.
+2. YouTube channel RSS auto-fetch — still to build (long-standing).
 
 ## Key locations
 - Tester credentials list: `TESTER_LOGINS.md` (shared password documented there)
