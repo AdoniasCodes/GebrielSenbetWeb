@@ -51,6 +51,25 @@ function teacher_assert_class(int $classId): void {
         \App\Utils\Response::error('You do not teach this class', 403);
     }
 }
+// Department ids the teacher is an active member of (via their linked person_id).
+function teacher_department_ids(): array {
+    $tid = teacher_id();
+    if (!$tid) return [];
+    $st = tch_pdo()->prepare(
+        'SELECT DISTINCT dm.department_id
+         FROM department_memberships dm
+         JOIN teachers t ON t.person_id = dm.person_id
+         WHERE t.id = ? AND dm.is_archived = 0
+           AND (dm.ended_at IS NULL OR dm.ended_at >= CURDATE())'
+    );
+    $st->execute([$tid]);
+    return array_map('intval', $st->fetchAll(\PDO::FETCH_COLUMN));
+}
+function teacher_assert_department(int $deptId): void {
+    if (!in_array($deptId, teacher_department_ids(), true)) {
+        \App\Utils\Response::error('You are not assigned to this department', 403);
+    }
+}
 function teacher_assert_class_subject(int $classId, int $subjectId): void {
     $st = tch_pdo()->prepare('SELECT 1 FROM teacher_subject_assignments
                               WHERE teacher_id=? AND class_id=? AND subject_id=? AND is_archived=0
