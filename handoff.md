@@ -1,9 +1,12 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-Landing-page content overhaul + public registration system built and verified locally (2026-07-12). Awaiting manual cPanel deploy + prod migration 019. Before that: Phases A–D (dept-centric teacher workflows) live on prod.
+PLANNING (2026-07-12 eve): full system audit + architecture blueprint completed, no code changed. Deliverable: `SYSTEM_AUDIT_AND_BLUEPRINT.md` (per-role audits, workflow atlas, registration redesign architecture, dept-head workspace UX recommendation, continuity/data dead-end audit, eligibility engine design, 8-phase roadmap, 7 open decisions for Eyoel in §10). Next step: Eyoel answers §10 decisions, then Phase 1 (identity unification on `people`, single academic hierarchy, server-side permission fixes) begins with cheaper-model implementation agents. Separately: landing overhaul + registration v1 still awaiting manual cPanel deploy + prod migration 019.
 
-## Last completed task (2026-07-12)
+## Last completed task (2026-07-12, late)
+System audit & blueprint (7 parallel read-only audit agents + synthesis). Headline findings: two unreconciled schema eras (triple identity: users+students/teachers+people; dual academic hierarchies); data dead-ends everywhere (dept attendance unread, eligibility computed then discarded, grades feed nothing, submissions never become students); no promotion/rollover/graduation anywhere; admin registrations page wiring is CORRECT, the "broken" feel is the irreversible archive (no unarchive UI) + applicant-name heuristic; staff `form.create` restriction is UI-only (API allows it, security-relevant); notification system has one producer. Demo-admin backdoor decision (FABLE_BUG_REPORT #1/#5) still open.
+
+## Previous completed task (2026-07-12)
 Landing content overhaul + customizable public registrations + new logo (multi-agent build, QA'd end-to-end locally):
 - **Landing (`public/index.php`)**: new hero H1/subtext (paschal greeting untouched), Mission → "Core Mission & End Goal", gallery text tweak, Three Pillars → 3 registration announcement cards (live status badges), Features → 7 Core Academic Subjects, Roles → Abnet Traditional Education, building-campaign section gained a touch-swipeable progress slider (2 real progress photos + 4 renders, scroll-snap), new `#register` section near footer with dynamic form renderer.
 - **Registration system**: migration `019_registrations.sql` (forms/fields/submissions + seeds: sunday-school→timhirt, begena→mezmur, gishen-pilgrimage→guzo; probe entry added in `migrate.php`). Public API `api/registrations/` (GET forms, POST submit w/ CSRF+honeypot+validation+flood guard). Admin CRUD `api/admin/registrations/` + page `public/admin/registrations.php` (nav: Community → Registrations). Dept-scoped `api/staff/registrations.php` + section in staff portal — dept heads customize fields/status of their own forms only (verified: cross-dept 403). Shared logic in `api/registrations_lib.php`.
