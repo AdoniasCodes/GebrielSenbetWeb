@@ -78,3 +78,11 @@ DEMO_PASSWORD='the-password' php scripts/seed_demo_users.php --verify --base-url
   Admin → System → Reset / Data → "Reset with test accounts".
 - `test-admin@mekaneselamss.com` is a separate demo admin; the real production
   admin account is never touched.
+
+## Public registration system (added 2026-07-12)
+
+- Migration: `db/migrations/019_registrations.sql` (tables `registration_forms`, `registration_form_fields`, `registration_submissions` + seeded forms). Apply on prod via the migrate endpoint after deploy.
+- Public API: `GET /api/registrations/index.php` (forms + fields, frozen contract used by landing JS), `POST /api/registrations/submit.php` (JSON `{form_id, answers:{fieldId:value}, website:""}`, header `X-CSRF-Token` from `/api/auth/csrf.php`; honeypot field `website`; 5/hour/IP/form flood guard).
+- Admin: `/admin/registrations.php` (nav Community → Registrations). Actions API `api/admin/registrations/index.php` — POST `{action: 'form.create'|'form.update'|'form.archive'|'field.create'|'field.update'|'field.archive'|'field.reorder'|'submission.status'|'submission.archive', ...}`; GET `?resource=submissions&form_id=N`.
+- Dept heads: same actions via `api/staff/registrations.php`, scoped to departments they head (cannot reassign a form's department). UI section "Public registrations" in `/staff/`.
+- Form ownership defaults: sunday-school → timhirt, begena → mezmur, gishen-pilgrimage → guzo (Pilgrimage & Travel). Admin can reassign via form.update.

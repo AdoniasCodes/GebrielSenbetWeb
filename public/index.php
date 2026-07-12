@@ -28,6 +28,10 @@ $year = date('Y');
   <title>Mekane Selam Senbet School — Sabbath School</title>
   <meta name="description" content="Mekane Selam Senbet School. A modern home for our Sunday school: curriculum, grading, payments, and community announcements in one reverent place." />
 
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png" />
+  <link rel="apple-touch-icon" href="/images/logo-mekane-selam-192.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -134,6 +138,8 @@ $year = date('Y');
 
     .seg-active { background: #fed175; color: #16357e; }
 
+    #buildSlider::-webkit-scrollbar { display: none; }
+
     .scripture { background: radial-gradient(ellipse at top, #2f52a6 0%, #16357e 60%, #0a1f4d 100%); color: #f3f0ea; }
 
     :where(a, button, input, select, textarea):focus-visible {
@@ -159,12 +165,7 @@ $year = date('Y');
   <header class="sticky top-0 z-50 border-b border-outline-soft/40 bg-surface/85 backdrop-blur-md">
     <div class="max-w-[1280px] mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3 group">
-        <span class="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-surface">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-            <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-            <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
-          </svg>
-        </span>
+        <img src="/images/logo-mekane-selam.webp" class="h-10 w-10 rounded-full object-cover" alt="Mekane Selam Sunday School logo" width="40" height="40" />
         <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
       </a>
 
@@ -216,12 +217,12 @@ $year = date('Y');
             <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold-warm" data-en="Enrollment open · <?= $year ?>" data-am="ምዝገባ ክፍት ነው · <?= $year ?>">Enrollment open · <?= $year ?></span>
           </div>
 
-          <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.04] tracking-tight text-surface font-semibold drop-shadow-sm" data-en="A modern home for our<br/>Sabbath school." data-am="ለሰንበት ት/ቤታችን<br/>ዘመናዊ ቤት።">A modern home for our<br/>Sabbath school.</h1>
+          <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.04] tracking-tight text-surface font-semibold drop-shadow-sm" data-en="Raising a Generation Rooted in Orthodox Faith." data-am="በኦርቶዶክሳዊት እምነት የታነጸ ትውልድን ማፍራት።">Raising a Generation Rooted in Orthodox Faith.</h1>
 
           <div id="paschalGreeting" class="mt-6 max-w-md font-display ethiopic text-lg lg:text-xl leading-relaxed" aria-label="Paschal greeting — ክርስቶስ ተንሥአ እሙታን"></div>
 
-          <p class="mt-7 text-lg leading-relaxed text-surface/85 max-w-xl" data-en="Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind." data-am="የመካነ ሰላም ሰንበት ት/ቤት ሥርዓተ ትምህርትን፣ ውጤት መለያን፣ ክፍያዎችን እና ማኅበረሰብ ማስታወቂያዎችን ሁሉ በአንድ ቦታ ያሰባስባል — ከቤተ ክርስቲያናችን ዓመታዊ ምት እና ከማኅበረሰባችን ሙቀት ጋር ተስማምቶ የተሰራ።">
-            Mekane Selam Senbet School brings curriculum, grading, payments, and community announcements into one focused space — built with the rhythm of our church year and the warmth of our community in mind.
+          <p class="mt-7 text-lg leading-relaxed text-surface/85 max-w-xl" data-en="Welcome to Mekane Selam Sunday School, where we learn, live, and defend our Holy Orthodox Tewahedo Faith." data-am="እንኳን ወደ መካነ ሰላም ሰንበት ትምህርት ቤት በሰላም መጡ፤ እምነታችንን የምንማርበት፣ የምንኖርበትና የምንመሰክርበት ቅዱስ ስፍራ።">
+            Welcome to Mekane Selam Sunday School, where we learn, live, and defend our Holy Orthodox Tewahedo Faith.
           </p>
 
           <div class="mt-8 flex flex-col sm:flex-row gap-3">
@@ -236,7 +237,7 @@ $year = date('Y');
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
               </a>
             <?php endif; ?>
-            <a href="#enroll" class="inline-flex justify-center items-center gap-2 border border-surface/40 text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface/10 transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
+            <a href="#register" class="inline-flex justify-center items-center gap-2 border border-surface/40 text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface/10 transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
           </div>
 
           <div class="mt-10 flex items-center gap-6 text-sm text-surface/75">
@@ -251,12 +252,12 @@ $year = date('Y');
     <!-- ============ MISSION / ABOUT ============ -->
     <section id="about" class="bg-surface-low border-y border-outline-soft/40">
       <div class="max-w-3xl mx-auto px-6 lg:px-8 py-20 text-center">
-        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Our Mission" data-am="ተልዕኳችን">Our Mission</span><span class="rule-gold-tiny"></span></p>
-        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-5 mb-6 leading-tight" data-en="Bridging heritage and<br/>everyday efficiency." data-am="ቅርስን ከዕለታዊ<br/>ብቃት ጋር ማገናኘት።">
-          Bridging heritage and<br/>everyday efficiency.
+        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Core Mission &amp; End Goal" data-am="የአገልግሎት ዓላማችን">Core Mission &amp; End Goal</span><span class="rule-gold-tiny"></span></p>
+        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-5 mb-6 leading-tight" data-en="Spreading the Gospel, forming the faithful." data-am="ወንጌልን ማስፋፋት፣ ምዕመናንን መገንባት።">
+          Spreading the Gospel, forming the faithful.
         </h2>
-        <p class="text-lg text-ink-soft leading-relaxed" data-en="For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it." data-am="ለበርካታ አሥርት ዓመታት፣ የሰንበት ት/ቤታችን የብዙ ትውልዶችን እምነት እና ምሁርነት ቀርጿል። ዛሬ ለዚያ ቅርስ የምናከብረው የሥራውን ክብደት — እና ሥራውን የሚሠሩ ሰዎችን — በሚያከብሩ መሣሪያዎች ነው።">
-          For decades, our Sabbath school has shaped the faith and scholarship of generations. Today we honor that legacy with tools that respect the gravity of the work — and the people who do it.
+        <p class="text-lg text-ink-soft leading-relaxed" data-en="Our ultimate mission is to spread the Gospel of Jesus Christ, raise Orthodox Christians who deeply know and defend their faith, and guide all our members to actively participate in the Holy Communion (Holy Qurban)." data-am="ዋናውና የመጨረሻው ግባችን የወንጌልን ብርሃን ማስፋፋት፣ እምነታቸውን ጠንቅቀው የሚያውቁና የሚከላከሉ የኦርቶዶክስ ክርስቲያኖችን ማፍራት እንዲሁም አባላቶቻችን በሙሉ የቅዱስ ቁርባን ተሳታፊ እንዲሆኑ መምራት ነው።">
+          Our ultimate mission is to spread the Gospel of Jesus Christ, raise Orthodox Christians who deeply know and defend their faith, and guide all our members to actively participate in the Holy Communion (Holy Qurban).
         </p>
       </div>
     </section>
@@ -325,6 +326,44 @@ $year = date('Y');
           </div>
 
         </div>
+
+        <!-- Building progress / final design slider — touch-swipeable, native scroll-snap -->
+        <div class="mt-16 lg:mt-20">
+          <div class="flex items-end justify-between gap-4 mb-5">
+            <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="Watch it rise" data-am="ግንባታውን ይመልከቱ">Watch it rise</span></p>
+            <div class="hidden sm:flex items-center gap-2">
+              <button type="button" id="buildPrev" aria-label="Previous photo" class="w-9 h-9 rounded-full border border-surface/30 text-surface/80 hover:text-surface hover:border-surface/60 inline-flex items-center justify-center transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>
+              </button>
+              <button type="button" id="buildNext" aria-label="Next photo" class="w-9 h-9 rounded-full border border-surface/30 text-surface/80 hover:text-surface hover:border-surface/60 inline-flex items-center justify-center transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="buildSlider" class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2" style="scroll-behavior:smooth; -webkit-overflow-scrolling:touch; scrollbar-width:none;">
+            <?php
+              $buildSlides = [
+                ['building-progress-1.w800.webp', 'Current construction progress at the new Mekane Selam Sunday School building, view 1 · የመካነ ሰላም ሰንበት ት/ቤት ሕንፃ አሁን ያለበት ደረጃ፣ ፎቶ 1', 'Current Progress', 'አሁን ያለንበት ደረጃ'],
+                ['building-progress-2.w800.webp', 'Current construction progress at the new Mekane Selam Sunday School building, view 2 · የመካነ ሰላም ሰንበት ት/ቤት ሕንፃ አሁን ያለበት ደረጃ፣ ፎቶ 2', 'Current Progress', 'አሁን ያለንበት ደረጃ'],
+                ['building-render-1.w800.webp', 'Architectural render of the finished Mekane Selam Sunday School building, view 1 · የመጨረሻው ሕንፃ ንድፍ፣ ፎቶ 1', 'Final Design', 'የመጨረሻው ንድፍ'],
+                ['building-render-2.w800.webp', 'Architectural render of the finished Mekane Selam Sunday School building, view 2 · የመጨረሻው ሕንፃ ንድፍ፣ ፎቶ 2', 'Final Design', 'የመጨረሻው ንድፍ'],
+                ['building-render-3.w800.webp', 'Architectural render of the finished Mekane Selam Sunday School building, view 3 · የመጨረሻው ሕንፃ ንድፍ፣ ፎቶ 3', 'Final Design', 'የመጨረሻው ንድፍ'],
+                ['building-render-4.w800.webp', 'Architectural render of the finished Mekane Selam Sunday School building, view 4 · የመጨረሻው ሕንፃ ንድፍ፣ ፎቶ 4', 'Final Design', 'የመጨረሻው ንድፍ'],
+              ];
+              foreach ($buildSlides as $s):
+            ?>
+              <figure class="snap-start shrink-0 w-[82%] sm:w-[55%] lg:w-[31%] relative rounded-lg overflow-hidden border border-surface/15">
+                <img src="/images/<?= htmlspecialchars($s[0]) ?>" loading="lazy" decoding="async" alt="<?= htmlspecialchars($s[1]) ?>"
+                     class="w-full h-64 lg:h-72 object-cover" width="800" height="533" />
+                <span class="absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-widestest text-primary bg-surface/90 px-2.5 py-1 rounded-full" data-en="<?= htmlspecialchars($s[2]) ?>" data-am="<?= htmlspecialchars($s[3]) ?>"><?= htmlspecialchars($s[2]) ?></span>
+              </figure>
+            <?php endforeach; ?>
+          </div>
+
+          <div id="buildDots" class="flex justify-center gap-2 mt-4"></div>
+        </div>
+
       </div>
     </section>
 
@@ -333,8 +372,8 @@ $year = date('Y');
       <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
         <div class="max-w-2xl mb-12">
           <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Life Together" data-am="በአንድነት">Life Together</span></p>
-          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="Our community, in worship." data-am="ማኅበረሰባችን፣ በአምልኮ።">Our community, in worship.</h2>
-          <p class="mt-4 text-lg text-ink-soft leading-relaxed" data-en="Feast days, processions, and the voices of our choir — moments from the life of the parish." data-am="የበዓል ቀናት፣ ሰልፎች እና የመዘምራኑ ድምፅ — ከቤተ ክርስቲያኒቱ ሕይወት የተወሰዱ ቅጽበቶች።">Feast days, processions, and the voices of our choir — moments from the life of the parish.</p>
+          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="Our family, in worship." data-am="ቤተሰባችን ፣ በአምልኮ።">Our family, in worship.</h2>
+          <p class="mt-4 text-lg text-ink-soft leading-relaxed" data-en="Feast days, learning, and service. Moments from the life of our Sunday School." data-am="የበዓል ቀናት፣ በትምህርት እና በአገልግሎት ላይ ከሰንብት ትምህርት ቤታችን የተወሰዱ ቅጽበቶች።">Feast days, learning, and service. Moments from the life of our Sunday School.</p>
         </div>
 
         <!-- Mosaic: a flush rectangle on desktop (4×4 tiled), tiles vary in size; 2-col stack on mobile -->
@@ -398,34 +437,63 @@ $year = date('Y');
     })();
     </script>
 
-    <!-- ============ PILLARS ============ -->
-    <section class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
+    <!-- ============ JOIN THE SERVICE (registration announcements) ============ -->
+    <section id="join" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
       <div class="text-center mb-14">
-        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Three Pillars" data-am="ሦስቱ ምሰሶዎች">Three Pillars</span><span class="rule-gold-tiny"></span></p>
-        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="What we hold up." data-am="የምንታመንባቸው።">What we hold up.</h2>
+        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Join the Service" data-am="አገልግሎቱን ይቀላቀሉ">Join the Service</span><span class="rule-gold-tiny"></span></p>
+        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Register today." data-am="ዛሬ ይመዝገቡ።">Register today.</h2>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-px bg-outline-soft/30 rounded-lg overflow-hidden border border-outline-soft/40">
-        <div class="bg-surface p-8 lg:p-10">
-          <div class="w-11 h-11 rounded-sm bg-primary/10 text-primary inline-flex items-center justify-center mb-5">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="reg-announce-card bg-surface rounded-lg p-7 lg:p-8 border border-outline-soft/40 flex flex-col" data-reg-slug="sunday-school">
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="w-11 h-11 rounded-sm bg-primary/10 text-primary inline-flex items-center justify-center">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h6a4 4 0 0 1 4 4v13M22 4h-6a4 4 0 0 0-4 4v13"/></svg>
+            </div>
+            <span class="reg-status-badge text-[11px] font-semibold uppercase tracking-widestest px-2.5 py-1 rounded-full bg-olive/15 text-olive whitespace-nowrap">
+              <span data-en="Open" data-am="ክፍት ነው">Open</span>
+            </span>
           </div>
-          <h3 class="font-display text-xl text-primary mb-2" data-en="Spiritual Formation" data-am="መንፈሳዊ ምስረታ">Spiritual Formation</h3>
-          <p class="text-ink-soft leading-relaxed" data-en="Catechism, scripture, and tradition taught with reverence — for every age, in every track." data-am="ሃይማኖታዊ ትምህርት፣ ቅዱስ መጽሐፍ እና ባህል በክብር — ለሁሉም ዕድሜ፣ በሁሉም ኮርስ።">Catechism, scripture, and tradition taught with reverence — for every age, in every track.</p>
+          <h3 class="font-display text-xl text-primary mb-2" data-en="Sunday School Academic Registration" data-am="የሰንበት ትምህርት ቤት ምዝገባ">Sunday School Academic Registration</h3>
+          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Enroll in this year's catechism and academic track." data-am="ለዘንድሮው ሃይማኖታዊ እና አካዳሚያዊ ኮርስ ይመዝገቡ።">Enroll in this year's catechism and academic track.</p>
+          <button type="button" class="reg-cta-btn mt-6 inline-flex justify-center items-center gap-2 bg-primary text-surface px-5 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+            <span data-en="Register Online" data-am="ይመዝገቡ">Register Online</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
         </div>
-        <div class="bg-surface p-8 lg:p-10">
-          <div class="w-11 h-11 rounded-sm bg-gold/15 text-gold inline-flex items-center justify-center mb-5">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 4h6a4 4 0 0 1 4 4v13M22 4h-6a4 4 0 0 0-4 4v13"/></svg>
+
+        <div class="reg-announce-card bg-surface rounded-lg p-7 lg:p-8 border border-outline-soft/40 flex flex-col" data-reg-slug="begena">
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="w-11 h-11 rounded-sm bg-gold/15 text-gold inline-flex items-center justify-center">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+            </div>
+            <span class="reg-status-badge text-[11px] font-semibold uppercase tracking-widestest px-2.5 py-1 rounded-full bg-olive/15 text-olive whitespace-nowrap">
+              <span data-en="Open" data-am="ክፍት ነው">Open</span>
+            </span>
           </div>
-          <h3 class="font-display text-xl text-primary mb-2" data-en="Scholarly Tradition" data-am="ምሁራዊ ባህል">Scholarly Tradition</h3>
-          <p class="text-ink-soft leading-relaxed" data-en="Structured progression through historical, theological, and liturgical study — paced by term." data-am="በታሪካዊ፣ ሥነ መለኮታዊ እና ሥርዓተ አምልኮ ጥናት — በወቅቶች የተደራጀ እድገት።">Structured progression through historical, theological, and liturgical study — paced by term.</p>
+          <h3 class="font-display text-xl text-primary mb-2" data-en="Begena Classes" data-am="የበገና ስልጠና ምዝገባ">Begena Classes</h3>
+          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Learn the sacred harp of David with our begena instructors." data-am="ከበገና አስተማሪዎቻችን ጋር የዳዊትን በገና ይማሩ።">Learn the sacred harp of David with our begena instructors.</p>
+          <button type="button" class="reg-cta-btn mt-6 inline-flex justify-center items-center gap-2 bg-primary text-surface px-5 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+            <span data-en="Sign Up" data-am="ይመዝገቡ">Sign Up</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
         </div>
-        <div class="bg-surface p-8 lg:p-10">
-          <div class="w-11 h-11 rounded-sm bg-olive/15 text-olive inline-flex items-center justify-center mb-5">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+        <div class="reg-announce-card bg-surface rounded-lg p-7 lg:p-8 border border-outline-soft/40 flex flex-col" data-reg-slug="gishen-pilgrimage">
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div class="w-11 h-11 rounded-sm bg-olive/15 text-olive inline-flex items-center justify-center">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 21l6-16 3 8 3-8 6 16H3z"/></svg>
+            </div>
+            <span class="reg-status-badge text-[11px] font-semibold uppercase tracking-widestest px-2.5 py-1 rounded-full bg-gold/15 text-gold whitespace-nowrap">
+              <span data-en="Limited Spots" data-am="ውስን ቦታዎች">Limited Spots</span>
+            </span>
           </div>
-          <h3 class="font-display text-xl text-primary mb-2" data-en="Community Service" data-am="የማኅበረሰብ አገልግሎት">Community Service</h3>
-          <p class="text-ink-soft leading-relaxed" data-en="A school is its people. We make it easier for families, teachers, and clergy to stay woven together." data-am="ት/ቤት ሰዎቹ ናቸው። ለቤተሰቦች፣ ለመምህራን እና ለካህናት እርስ በርስ ለመተሳሰር ቀላል እናደርጋለን።">A school is its people. We make it easier for families, teachers, and clergy to stay woven together.</p>
+          <h3 class="font-display text-xl text-primary mb-2" data-en="Spiritual Pilgrimage to Gishen Mariam" data-am="የግሸን ማርያም ጉዞ ምዝገባ">Spiritual Pilgrimage to Gishen Mariam</h3>
+          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Join our community pilgrimage to the holy mount of Gishen Mariam." data-am="ወደ ቅዱስ ግሸን ማርያም ተራራ ከማኅበረሰባችን ጋር ይጓዙ።">Join our community pilgrimage to the holy mount of Gishen Mariam.</p>
+          <button type="button" class="reg-cta-btn mt-6 inline-flex justify-center items-center gap-2 bg-primary text-surface px-5 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+            <span data-en="Reserve Seat" data-am="ቦታ ይያዙ">Reserve Seat</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
         </div>
       </div>
     </section>
@@ -501,54 +569,61 @@ $year = date('Y');
     <!-- ============ FEATURES GRID ============ -->
     <section class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
       <div class="max-w-2xl mb-14">
-        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="What's Inside" data-am="ምን ይዟል">What's Inside</span><span class="rule-gold-tiny"></span></p>
-        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="A reverent operating system for the school year." data-am="ለትምህርት ዓመቱ የተከበረ ሥርዓት።">A reverent operating system for the school year.</h2>
+        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Core Academic Subjects" data-am="ዋና ዋና የትምህርት ዓይነቶች">Core Academic Subjects</span><span class="rule-gold-tiny"></span></p>
+        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="What we teach, term after term." data-am="ከወቅት ወቅት የምናስተምረው።">What we teach, term after term.</h2>
       </div>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-outline-soft/30 rounded-lg overflow-hidden border border-outline-soft/40">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-outline-soft/30 rounded-lg overflow-hidden border border-outline-soft/40">
         <?php
           $features = [
             [
-              'en_title' => 'Curriculum',
-              'am_title' => 'ሥርዓተ ትምህርት',
-              'en_desc'  => 'Define tracks, levels, classes, and subjects with the structure your school already uses.',
-              'am_desc'  => 'ት/ቤትዎ የሚጠቀምበትን አወቃቀር በመጠቀም ኮርሶችን፣ ደረጃዎችን፣ ክፍሎችን እና ትምህርቶችን ይፍጠሩ።',
-              'svg'      => '<path d="M2 4h6a4 4 0 0 1 4 4v13M22 4h-6a4 4 0 0 0-4 4v13"/>',
+              'en_title' => 'Geez Language',
+              'am_title' => 'ግዕዝ',
+              'en_desc'  => 'The root language of our liturgy and heritage.',
+              'am_desc'  => 'የአምልኮታችን እና የቅርሳችን መሠረት ቋንቋ።',
+              'svg'      => '<path d="M4 19.5V6.2A2.2 2.2 0 0 1 6.2 4H20v15.5M4 19.5A2.2 2.2 0 0 0 6.2 21.7H20v-2.2M4 19.5H20"/>',
             ],
             [
-              'en_title' => 'Grading & report cards',
-              'am_title' => 'ውጤት እና ሪፖርት ካርድ',
-              'en_desc'  => 'Teachers enter scores per subject and term. Students and families view results.',
-              'am_desc'  => 'መምህራን በትምህርት እና በወቅት ውጤት ያስገባሉ። ተማሪዎች እና ቤተሰቦች ውጤትን ይመለከታሉ።',
-              'svg'      => '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+              'en_title' => 'History of Orthodoxy & EOTC',
+              'am_title' => 'የቤተክርስቲያን ታሪክ',
+              'en_desc'  => 'Understanding the journey of Christianity globally and locally in Ethiopia.',
+              'am_desc'  => 'የክርስትናን ጉዞ በዓለም አቀፍና በኢትዮጵያ ደረጃ መረዳት።',
+              'svg'      => '<path d="M4 19.5A2.2 2.2 0 0 1 6.2 17.3H20M4 19.5V4h14a2 2 0 0 1 2 2v13.5M8 8h8M8 12h5"/>',
             ],
             [
-              'en_title' => 'Class scheduling',
-              'am_title' => 'የክፍል መርሐ ግብር',
-              'en_desc'  => 'Assign teachers as primary or substitute, with date-bounded responsibility.',
-              'am_desc'  => 'መምህራንን እንደ ቋሚ ወይም ምትክ ይመድቡ፣ በቀን ወሰን ኃላፊነት።',
-              'svg'      => '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+              'en_title' => 'Dogmatics',
+              'am_title' => 'ነገረ ሃይማኖት',
+              'en_desc'  => 'Learning the core dogmas, doctrines, and pillars of our faith.',
+              'am_desc'  => 'የእምነታችንን መሠረታዊ ትምህርቶች እና ምሰሶዎች መማር።',
+              'svg'      => '<path d="M12 2.5l2.4 6.9H21l-5.6 4.3 2.1 7.1L12 16.6l-5.5 4.2 2.1-7.1L3 9.4h6.6z"/>',
             ],
             [
-              'en_title' => 'Payments tracking',
-              'am_title' => 'የክፍያ መከታተያ',
-              'en_desc'  => 'Per-term payment status, partial balances, and one-glance defaulter lists.',
-              'am_desc'  => 'በወቅት የክፍያ ሁኔታ፣ ቀሪ ሂሳቦች እና ያልከፈሉ ተማሪዎች ዝርዝር።',
-              'svg'      => '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+              'en_title' => 'Ecclesiology & Liturgical Canons',
+              'am_title' => 'ስርዓተ ቤተክርስቲያን',
+              'en_desc'  => 'The order, rites, and administrative canons of the church.',
+              'am_desc'  => 'የቤተክርስቲያኒቱ ሥርዓት፣ ሥነ ሥርዓቶች እና የአስተዳደር ደንቦች።',
+              'svg'      => '<path d="M12 2.5v6M4 21V11l8-4 8 4v10M7 21v-6h3v6M14 21v-6h3v6"/>',
             ],
             [
-              'en_title' => 'Events & calendar',
-              'am_title' => 'ዝግጅቶች እና የቀን መቁጠሪያ',
-              'en_desc'  => 'Recurring services, holy days, and parish events in a unified calendar.',
-              'am_desc'  => 'ተደጋጋሚ አገልግሎቶች፣ የበዓል ቀኖች እና የቤተ ክርስቲያን ዝግጅቶች በአንድ መርሐ ግብር።',
-              'svg'      => '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+              'en_title' => 'Hagiology',
+              'am_title' => 'ነገረ ቅድሳን',
+              'en_desc'  => 'The study of the lives of the holy saints, martyrs, and angels.',
+              'am_desc'  => 'የቅዱሳን፣ የሰማዕታት እና የመላእክት ሕይወት ጥናት።',
+              'svg'      => '<circle cx="12" cy="8" r="3.2"/><path d="M12 2.5a5.7 5.7 0 0 1 0 0M5 21c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/>',
             ],
             [
-              'en_title' => 'Announcements',
-              'am_title' => 'ማስታወቂያዎች',
-              'en_desc'  => 'Targeted notices to a class, a role, or families with outstanding payments.',
-              'am_desc'  => 'ለክፍል፣ ለሚና ወይም ላልከፈሉ ቤተሰቦች የተወሰነ ማስታወቂያ።',
-              'svg'      => '<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+              'en_title' => 'Mariology',
+              'am_title' => 'ነገረ ማርያም',
+              'en_desc'  => 'The theological study of our Holy Virgin Mother Mary.',
+              'am_desc'  => 'ስለ ቅድስት ድንግል ማርያም ሥነ መለኮታዊ ጥናት።',
+              'svg'      => '<path d="M12 20.5s-7.5-4.7-7.5-10.3A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.8c0 5.6-7.5 10.3-7.5 10.3z"/>',
+            ],
+            [
+              'en_title' => 'Christology',
+              'am_title' => 'ነገረ ክርስቶስ',
+              'en_desc'  => 'The study of the person, nature, and redemptive work of Jesus Christ.',
+              'am_desc'  => 'ስለ ኢየሱስ ክርስቶስ ማንነት፣ ባህርይና የቤዛነት ሥራ ጥናት።',
+              'svg'      => '<path d="M12 2.5v19M6.5 6.5h11"/>',
             ],
           ];
           foreach ($features as $f): ?>
@@ -563,54 +638,14 @@ $year = date('Y');
       </div>
     </section>
 
-    <!-- ============ ROLES ============ -->
+    <!-- ============ ABNET TRADITIONAL EDUCATION ============ -->
     <section class="bg-surface-low border-y border-outline-soft/40">
-      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
-        <div class="text-center max-w-2xl mx-auto mb-14">
-          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Built For Everyone" data-am="ለሁሉም የተሠራ">Built For Everyone</span><span class="rule-gold-tiny"></span></p>
-          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="A view for every seat in the room." data-am="ለእያንዳንዱ ሰው የተለየ እይታ።">A view for every seat in the room.</h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6">
-          <div class="bg-surface rounded-lg p-7 border border-outline-soft/40">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="w-2 h-2 rounded-full bg-primary"></span>
-              <span class="text-[11px] font-semibold uppercase tracking-widestest text-primary" data-en="Administrator" data-am="አስተዳዳሪ">Administrator</span>
-            </div>
-            <h3 class="font-display text-xl text-ink mb-4" data-en="For the superintendent." data-am="ለበላይ ኃላፊው።">For the superintendent.</h3>
-            <ul class="space-y-3 text-sm text-ink-soft">
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Manage tracks, levels, classes, subjects, and academic terms." data-am="ኮርሶችን፣ ደረጃዎችን፣ ክፍሎችን፣ ትምህርቶችን እና የትምህርት ወቅቶችን ያስተዳድሩ።">Manage tracks, levels, classes, subjects, and academic terms.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Onboard teachers and students with auto-generated credentials." data-am="ለመምህራን እና ለተማሪዎች በራስ-ሰር መለያዎችን ይፍጠሩ።">Onboard teachers and students with auto-generated credentials.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Reconcile payments and broadcast announcements." data-am="ክፍያዎችን ያስተካክሉ እና ማስታወቂያዎችን ይላኩ።">Reconcile payments and broadcast announcements.</span></li>
-            </ul>
-          </div>
-
-          <div class="bg-surface rounded-lg p-7 border border-outline-soft/40">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="w-2 h-2 rounded-full bg-gold"></span>
-              <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold" data-en="Teacher" data-am="መምህር">Teacher</span>
-            </div>
-            <h3 class="font-display text-xl text-ink mb-4" data-en="For the instructor." data-am="ለመምህሩ።">For the instructor.</h3>
-            <ul class="space-y-3 text-sm text-ink-soft">
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="See only the classes and subjects assigned to you." data-am="የተመደቡልዎትን ክፍሎች እና ትምህርቶች ብቻ ይመልከቱ።">See only the classes and subjects assigned to you.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Enter and revise grades inline by term." data-am="በወቅት ውጤትን ያስገቡ እና ያስተካክሉ።">Enter and revise grades inline by term.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Post lesson notes and handouts to your roster." data-am="የትምህርት ማስታወሻዎችን እና ጽሑፎችን ለተማሪዎችዎ ይላኩ።">Post lesson notes and handouts to your roster.</span></li>
-            </ul>
-          </div>
-
-          <div class="bg-surface rounded-lg p-7 border border-outline-soft/40">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="w-2 h-2 rounded-full bg-olive"></span>
-              <span class="text-[11px] font-semibold uppercase tracking-widestest text-olive" data-en="Student &amp; Family" data-am="ተማሪ እና ቤተሰብ">Student &amp; Family</span>
-            </div>
-            <h3 class="font-display text-xl text-ink mb-4" data-en="For the learner." data-am="ለተማሪው።">For the learner.</h3>
-            <ul class="space-y-3 text-sm text-ink-soft">
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Review grades, remarks, and printable report cards." data-am="ውጤቶችን፣ አስተያየቶችን እና ሪፖርት ካርዶችን ይመልከቱ።">Review grades, remarks, and printable report cards.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="See upcoming services, exams, and special events." data-am="የሚመጡ አገልግሎቶችን፣ ፈተናዎችን እና ልዩ ዝግጅቶችን ይመልከቱ።">See upcoming services, exams, and special events.</span></li>
-              <li class="flex gap-3"><span class="mt-1.5 inline-block w-1 h-1 rounded-full bg-gold flex-shrink-0"></span><span data-en="Track tuition status and read announcements." data-am="የክፍያ ሁኔታን ይከታተሉ እና ማስታወቂያዎችን ያንብቡ።">Track tuition status and read announcements.</span></li>
-            </ul>
-          </div>
-        </div>
+      <div class="max-w-3xl mx-auto px-6 lg:px-8 py-20 text-center">
+        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Abnet Traditional Education" data-am="የአብነት ትምህርት">Abnet Traditional Education</span><span class="rule-gold-tiny"></span></p>
+        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-5 mb-6 leading-tight" data-en="Abnet Traditional Education" data-am="የአብነት ትምህርት">Abnet Traditional Education</h2>
+        <p class="text-lg text-ink-soft leading-relaxed" data-en="Mekane Selam offers traditional Abnet (liturgical/clerical) education for students who wish to excel further in their spiritual scholarship. This pathway nurtures, trains, and prepares dedicated students to eventually be ordained as Deacons (ዲያቆናት) and Priests (ካህናት) to serve our holy church." data-am="ሰንበት ትምህርት ቤታችን በመደበኛው ትምህርት ጎን ለጎን የአብነት ትምህርትን ይሰጣል። ተማሪዎች በመንፈሳዊ እውቀታቸው በልጠው እንዲገኙና ውሎ አድሮም ዲያቆናትና ካህናት በመሆን ቅድስት ቤተክርስቲያንን በቅንነት እንዲያገለግሉ የሚያስችል ስልጠና ይሰጣል።">
+          Mekane Selam offers traditional Abnet (liturgical/clerical) education for students who wish to excel further in their spiritual scholarship. This pathway nurtures, trains, and prepares dedicated students to eventually be ordained as Deacons (ዲያቆናት) and Priests (ካህናት) to serve our holy church.
+        </p>
       </div>
     </section>
 
@@ -713,10 +748,32 @@ $year = date('Y');
             <span data-en="Sign in" data-am="ግባ">Sign in</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
-          <a href="#" class="inline-flex justify-center items-center gap-2 border border-outline text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
+          <a href="#register" class="inline-flex justify-center items-center gap-2 border border-outline text-primary px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
         </div>
       </div>
     </section>
+
+    <!-- ============ PUBLIC REGISTRATION ============ -->
+    <section id="register" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20 hidden">
+      <div class="max-w-2xl mb-10">
+        <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Registration" data-am="ምዝገባ">Registration</span><span class="rule-gold-tiny"></span></p>
+        <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="Register for a program." data-am="ለፕሮግራም ይመዝገቡ።">Register for a program.</h2>
+      </div>
+
+      <div id="regTabs" class="flex flex-wrap gap-3 mb-8" role="tablist"></div>
+
+      <div id="regFormHost" class="max-w-2xl"></div>
+    </section>
+
+    <!-- ============ REGISTRATION RESULT MODAL ============ -->
+    <div id="regModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-ink/70 backdrop-blur-sm p-4" role="alertdialog" aria-modal="true" aria-label="Registration result">
+      <div id="regModalCard" class="bg-surface rounded-lg max-w-sm w-full p-8 text-center shadow-2xl border-t-4 border-primary">
+        <p id="regModalMsg" class="text-ink leading-relaxed"></p>
+        <button id="regModalOk" type="button" class="mt-7 inline-flex justify-center items-center gap-2 bg-primary text-surface px-6 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
+          <span data-en="OK" data-am="እሺ">OK</span>
+        </button>
+      </div>
+    </div>
   </main>
 
   <!-- ============ FOOTER ============ -->
@@ -725,12 +782,7 @@ $year = date('Y');
       <div class="grid md:grid-cols-4 gap-10 mb-12">
         <div class="md:col-span-1">
           <div class="flex items-center gap-3 mb-4">
-            <span class="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-surface">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-                <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-                <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
-              </svg>
-            </span>
+            <img src="/images/logo-mekane-selam.webp" class="h-10 w-10 rounded-full object-cover" alt="Mekane Selam Sunday School logo" width="40" height="40" />
             <span class="font-display text-lg font-semibold text-primary" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
           </div>
           <p class="text-sm text-ink-soft leading-relaxed mb-4" data-en="Mekane Selam Senbet School. A modern home for our community of faith and learning." data-am="መካነ ሰላም ሰንበት ት/ቤት። ለእምነት እና ለትምህርት ማኅበረሰባችን ዘመናዊ ቤት።">Mekane Selam Senbet School. A modern home for our community of faith and learning.</p>
@@ -973,6 +1025,349 @@ $year = date('Y');
         }, 260); // let the slide-in settle before typing
       }
       typeLine();
+    })();
+  </script>
+
+  <script>
+    // Building progress / final design slider — native overflow-x scroll-snap
+    // (touch-swipeable by default), with prev/next arrows + dots on desktop.
+    (function () {
+      var slider = document.getElementById('buildSlider');
+      if (!slider) return;
+      var slides = Array.prototype.slice.call(slider.children);
+      var dotsHost = document.getElementById('buildDots');
+      var prevBtn = document.getElementById('buildPrev');
+      var nextBtn = document.getElementById('buildNext');
+      if (!slides.length) return;
+
+      slides.forEach(function (s, i) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.setAttribute('aria-label', 'Go to photo ' + (i + 1));
+        d.className = 'build-dot w-2 h-2 rounded-full bg-surface/30 transition-colors';
+        d.addEventListener('click', function () { scrollToSlide(i); });
+        dotsHost.appendChild(d);
+      });
+      var dots = Array.prototype.slice.call(dotsHost.children);
+
+      function scrollToSlide(i) {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        slider.scrollTo({ left: slides[i].offsetLeft - slider.offsetLeft, behavior: 'smooth' });
+      }
+
+      function currentIndex() {
+        var pos = slider.scrollLeft + slider.clientWidth / 2;
+        var best = 0, bestDist = Infinity;
+        slides.forEach(function (s, i) {
+          var c = (s.offsetLeft - slider.offsetLeft) + s.offsetWidth / 2;
+          var dist = Math.abs(c - pos);
+          if (dist < bestDist) { bestDist = dist; best = i; }
+        });
+        return best;
+      }
+
+      function updateDots() {
+        var idx = currentIndex();
+        dots.forEach(function (d, i) { d.classList.toggle('bg-surface/90', i === idx); d.classList.toggle('bg-surface/30', i !== idx); });
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', function () { scrollToSlide(currentIndex() - 1); });
+      if (nextBtn) nextBtn.addEventListener('click', function () { scrollToSlide(currentIndex() + 1); });
+
+      var scrollTimer;
+      slider.addEventListener('scroll', function () {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(updateDots, 80);
+      }, { passive: true });
+
+      updateDots();
+    })();
+  </script>
+
+  <script>
+    // Public registration: dynamic multi-form renderer against /api/registrations/*.
+    // Frozen contract — see spec. Hides gracefully if the backend isn't deployed yet.
+    (function () {
+      var section = document.getElementById('register');
+      var tabsHost = document.getElementById('regTabs');
+      var formHost = document.getElementById('regFormHost');
+      var modal = document.getElementById('regModal');
+      var modalCard = document.getElementById('regModalCard');
+      var modalMsg = document.getElementById('regModalMsg');
+      var modalOk = document.getElementById('regModalOk');
+      if (!section || !tabsHost || !formHost || !modal) return;
+
+      var forms = [];
+      var activeIndex = -1;
+      var pendingSlug = null;
+      var lastSuccess = false;
+
+      function curLang() { return window._currentLang || 'en'; }
+      function t(en, am) { return curLang() === 'am' ? am : en; }
+
+      function ensureCsrf() {
+        var tok = null;
+        try { tok = sessionStorage.getItem('csrf_token'); } catch (e) {}
+        if (tok) return Promise.resolve(tok);
+        return fetch('/api/auth/csrf.php').then(function (r) { return r.json(); }).then(function (d) {
+          try { sessionStorage.setItem('csrf_token', d.csrf_token); } catch (e) {}
+          return d.csrf_token;
+        });
+      }
+
+      function statusMeta(status) {
+        if (status === 'open') return { en: 'Open', am: 'ክፍት ነው', cls: 'bg-olive/15 text-olive' };
+        if (status === 'limited') return { en: 'Limited Spots', am: 'ውስን ቦታዎች', cls: 'bg-gold/15 text-gold' };
+        return { en: 'Closed', am: 'ዝግ ነው', cls: 'bg-outline-soft/50 text-outline' };
+      }
+
+      function updateAnnounceBadges() {
+        document.querySelectorAll('.reg-announce-card[data-reg-slug]').forEach(function (card) {
+          var slug = card.getAttribute('data-reg-slug');
+          var match = null;
+          forms.forEach(function (f) { if (f.slug === slug) match = f; });
+          if (!match) return;
+          var badge = card.querySelector('.reg-status-badge');
+          var btn = card.querySelector('.reg-cta-btn');
+          var m = statusMeta(match.status);
+          if (badge) {
+            badge.className = 'reg-status-badge text-[11px] font-semibold uppercase tracking-widestest px-2.5 py-1 rounded-full whitespace-nowrap ' + m.cls;
+            var span = badge.querySelector('span');
+            if (span) {
+              span.setAttribute('data-en', m.en);
+              span.setAttribute('data-am', m.am);
+              span.textContent = t(m.en, m.am);
+            }
+          }
+          if (btn) {
+            if (match.status === 'closed') { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); }
+            else { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); }
+          }
+        });
+      }
+
+      function renderTabs() {
+        tabsHost.innerHTML = forms.map(function (f, i) {
+          var m = statusMeta(f.status);
+          var active = i === activeIndex;
+          return '<button type="button" role="tab" aria-selected="' + (active ? 'true' : 'false') + '" data-idx="' + i + '" ' +
+            'class="reg-tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium transition-colors ' +
+            (active ? 'bg-primary text-surface border-primary' : 'bg-surface text-ink-soft border-outline-soft/50 hover:border-primary/40') + '">' +
+            '<span>' + escHtml(t(f.title_en, f.title_am)) + '</span>' +
+            '<span class="text-[10px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full ' + (active ? 'bg-surface/20 text-surface' : m.cls) + '">' + escHtml(t(m.en, m.am)) + '</span>' +
+            '</button>';
+        }).join('');
+        Array.prototype.slice.call(tabsHost.querySelectorAll('.reg-tab-btn')).forEach(function (btn) {
+          btn.addEventListener('click', function () { selectForm(parseInt(btn.getAttribute('data-idx'), 10)); });
+        });
+      }
+
+      function fieldInputName(f) { return 'field_' + f.id; }
+
+      function renderField(f) {
+        var label = escHtml(t(f.label_en, f.label_am));
+        var placeholder = escHtml(t(f.placeholder_en || '', f.placeholder_am || ''));
+        var req = f.required ? ' <span class="text-primary">*</span>' : '';
+        var name = fieldInputName(f);
+        var common = 'class="reg-field-input w-full rounded border border-outline-soft/50 bg-surface px-4 py-2.5 text-sm text-ink focus:border-primary" data-field-id="' + f.id + '"';
+        var inputHtml = '';
+        switch (f.type) {
+          case 'textarea':
+            inputHtml = '<textarea name="' + name + '" rows="4" placeholder="' + placeholder + '" ' + common + (f.required ? ' required' : '') + '></textarea>';
+            break;
+          case 'select':
+            var opts = '<option value="">' + escHtml(t('Choose…', 'ይምረጡ…')) + '</option>' +
+              (f.options || []).map(function (o) { return '<option value="' + escHtml(o.value) + '">' + escHtml(t(o.label_en, o.label_am)) + '</option>'; }).join('');
+            inputHtml = '<select name="' + name + '" ' + common + (f.required ? ' required' : '') + '>' + opts + '</select>';
+            break;
+          case 'radio':
+            inputHtml = '<div class="flex flex-col gap-2">' + (f.options || []).map(function (o) {
+              return '<label class="flex items-center gap-2 text-sm text-ink-soft"><input type="radio" name="' + name + '" value="' + escHtml(o.value) + '" class="reg-field-input" data-field-id="' + f.id + '"' + (f.required ? ' required' : '') + '> ' + escHtml(t(o.label_en, o.label_am)) + '</label>';
+            }).join('') + '</div>';
+            break;
+          case 'checkbox':
+            inputHtml = '<div class="flex flex-col gap-2">' + (f.options || []).map(function (o) {
+              return '<label class="flex items-center gap-2 text-sm text-ink-soft"><input type="checkbox" name="' + name + '[]" value="' + escHtml(o.value) + '" class="reg-field-input" data-field-id="' + f.id + '"> ' + escHtml(t(o.label_en, o.label_am)) + '</label>';
+            }).join('') + '</div>';
+            break;
+          default:
+            var htmlType = ({ text: 'text', email: 'email', phone: 'tel', number: 'number', date: 'date' })[f.type] || 'text';
+            inputHtml = '<input type="' + htmlType + '" name="' + name + '" placeholder="' + placeholder + '" ' + common + (f.required ? ' required' : '') + ' />';
+        }
+        return '<div class="reg-field mb-5">' +
+          '<label class="block text-sm font-medium text-ink mb-1.5">' + label + req + '</label>' +
+          inputHtml +
+          '</div>';
+      }
+
+      function renderClosedNotice() {
+        return '<div class="rounded-lg border border-outline-soft/40 bg-surface-mid p-6 text-center">' +
+          '<p class="text-ink-soft">' + escHtml(t('Registration for this program is currently closed.', 'ለዚህ ፕሮግራም ምዝገባ በአሁኑ ጊዜ ዝግ ነው።')) + '</p>' +
+          '</div>';
+      }
+
+      function selectForm(i) {
+        if (i < 0 || i >= forms.length) return;
+        activeIndex = i;
+        renderTabs();
+        var f = forms[i];
+
+        if (f.status === 'closed') {
+          formHost.innerHTML = '<p class="text-ink-soft mb-6">' + escHtml(t(f.description_en, f.description_am)) + '</p>' + renderClosedNotice();
+          return;
+        }
+
+        var fields = (f.fields || []).slice().sort(function (a, b) { return (a.sort_order || 0) - (b.sort_order || 0); });
+        formHost.innerHTML =
+          '<p class="text-ink-soft mb-6">' + escHtml(t(f.description_en, f.description_am)) + '</p>' +
+          '<form id="regForm" novalidate>' +
+            '<div class="reg-honeypot" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">' +
+              '<label>Website<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>' +
+            '</div>' +
+            fields.map(renderField).join('') +
+            '<button type="submit" id="regSubmitBtn" class="w-full inline-flex justify-center items-center gap-2 bg-primary text-surface px-6 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">' +
+              '<span>' + escHtml(t('Submit registration', 'ምዝገባ ላክ')) + '</span>' +
+            '</button>' +
+          '</form>';
+
+        var formEl = document.getElementById('regForm');
+        formEl.addEventListener('submit', function (e) { handleSubmit(e, f, fields); });
+      }
+
+      function validate(fields, formEl) {
+        for (var i = 0; i < fields.length; i++) {
+          var f = fields[i];
+          if (!f.required) continue;
+          var name = fieldInputName(f);
+          if (f.type === 'checkbox') {
+            var checked = formEl.querySelectorAll('input[name="' + name + '[]"]:checked');
+            if (!checked.length) return t('Please complete: ', 'እባክዎ ይሙሉ፦ ') + t(f.label_en, f.label_am);
+          } else if (f.type === 'radio') {
+            var rchecked = formEl.querySelector('input[name="' + name + '"]:checked');
+            if (!rchecked) return t('Please complete: ', 'እባክዎ ይሙሉ፦ ') + t(f.label_en, f.label_am);
+          } else {
+            var el = formEl.querySelector('[name="' + name + '"]');
+            if (!el || !String(el.value || '').trim()) return t('Please complete: ', 'እባክዎ ይሙሉ፦ ') + t(f.label_en, f.label_am);
+          }
+        }
+        return null;
+      }
+
+      function collectAnswers(fields, formEl) {
+        var answers = {};
+        fields.forEach(function (f) {
+          var name = fieldInputName(f);
+          if (f.type === 'checkbox') {
+            answers[f.id] = Array.prototype.slice.call(formEl.querySelectorAll('input[name="' + name + '[]"]:checked')).map(function (el) { return el.value; });
+          } else if (f.type === 'radio') {
+            var rchecked = formEl.querySelector('input[name="' + name + '"]:checked');
+            answers[f.id] = rchecked ? rchecked.value : '';
+          } else {
+            var el = formEl.querySelector('[name="' + name + '"]');
+            answers[f.id] = el ? el.value : '';
+          }
+        });
+        return answers;
+      }
+
+      function showModal(msg, isError) {
+        lastSuccess = !isError;
+        modalMsg.textContent = msg;
+        modalCard.classList.remove('border-primary', 'border-gold');
+        modalCard.classList.add(isError ? 'border-gold' : 'border-primary');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function hideModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        if (lastSuccess && activeIndex >= 0) selectForm(activeIndex);
+      }
+
+      if (modalOk) modalOk.addEventListener('click', hideModal);
+      modal.addEventListener('click', function (e) { if (e.target === modal) hideModal(); });
+
+      function handleSubmit(e, f, fields) {
+        e.preventDefault();
+        var formEl = e.target;
+        var err = validate(fields, formEl);
+        if (err) { showModal(err, true); return; }
+
+        var honeypot = formEl.querySelector('input[name="website"]');
+        var answers = collectAnswers(fields, formEl);
+        var btn = document.getElementById('regSubmitBtn');
+        var originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span>' + escHtml(t('Sending…', 'በመላክ ላይ…')) + '</span>';
+
+        ensureCsrf().then(function (token) {
+          return fetch('/api/registrations/submit.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+            body: JSON.stringify({ form_id: f.id, answers: answers, website: honeypot ? honeypot.value : '' })
+          });
+        }).then(function (r) {
+          return r.json().then(function (d) { return { ok: r.ok, data: d }; }).catch(function () { return { ok: r.ok, data: {} }; });
+        }).then(function (res) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          if (!res.ok || !(res.data && res.data.data && res.data.data.ok)) {
+            throw new Error((res.data && res.data.error) || t('Something went wrong. Please try again.', 'የሆነ ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።'));
+          }
+          showModal(t('Registration received. God bless you.', 'ምዝገባዎ ደርሶናል። እግዚአብሔር ይባርክዎ።'), false);
+        }).catch(function (err2) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          showModal(err2.message || t('Something went wrong. Please try again.', 'የሆነ ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።'), true);
+        });
+      }
+
+      function selectBySlug(slug) {
+        var idx = -1;
+        forms.forEach(function (f, i) { if (f.slug === slug) idx = i; });
+        if (idx >= 0) selectForm(idx); else if (forms.length) selectForm(0);
+      }
+
+      document.querySelectorAll('.reg-cta-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var card = btn.closest('[data-reg-slug]');
+          var slug = card ? card.getAttribute('data-reg-slug') : null;
+          pendingSlug = slug;
+          if (forms.length) selectBySlug(slug);
+          section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+      window.__regRerenderPlaceholders = function () {
+        if (activeIndex < 0) return;
+        renderTabs();
+        selectForm(activeIndex);
+        updateAnnounceBadges();
+      };
+
+      fetch('/api/registrations/index.php').then(function (r) {
+        if (!r.ok) throw new Error('bad status');
+        return r.json();
+      }).then(function (d) {
+        forms = (d && d.data) || [];
+        if (!forms.length) { section.classList.add('hidden'); return; }
+        section.classList.remove('hidden');
+        updateAnnounceBadges();
+        renderTabs();
+        if (pendingSlug) selectBySlug(pendingSlug); else selectForm(0);
+      }).catch(function () {
+        section.classList.add('hidden');
+      });
+
+      // Re-render dynamic tab/form copy (and re-check announcement badges) on language toggle.
+      var origApplyLang = window._applyLang;
+      if (typeof origApplyLang === 'function') {
+        window._applyLang = function (lang) {
+          origApplyLang(lang);
+          if (window.__regRerenderPlaceholders) window.__regRerenderPlaceholders();
+        };
+      }
     })();
   </script>
 </body>

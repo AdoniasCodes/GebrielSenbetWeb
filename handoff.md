@@ -1,13 +1,19 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-Phases A–D (dept-centric teacher workflows) merged to `main` and pushed. Prod (mekaneselamss.com) has the code deployed manually via cPanel, but the prod DB is behind (see open items).
+Landing-page content overhaul + public registration system built and verified locally (2026-07-12). Awaiting manual cPanel deploy + prod migration 019. Before that: Phases A–D (dept-centric teacher workflows) live on prod.
 
-## Last completed task (2026-07-05)
-Demo-login recovery:
-- `scripts/seed_demo_users.php` — CLI-only idempotent seeder, one login per role + one dept-head per department, shared password via `DEMO_PASSWORD`. Committed + pushed (`6f79cf2`). Usage in `instructions.md`.
-- Local: all 16 demo logins seeded with the TESTER_LOGINS.md password and verified PASS over HTTP.
-- Local dev server running at http://127.0.0.1:8080 (PHP built-in server, `-t public`).
+## Last completed task (2026-07-12)
+Landing content overhaul + customizable public registrations + new logo (multi-agent build, QA'd end-to-end locally):
+- **Landing (`public/index.php`)**: new hero H1/subtext (paschal greeting untouched), Mission → "Core Mission & End Goal", gallery text tweak, Three Pillars → 3 registration announcement cards (live status badges), Features → 7 Core Academic Subjects, Roles → Abnet Traditional Education, building-campaign section gained a touch-swipeable progress slider (2 real progress photos + 4 renders, scroll-snap), new `#register` section near footer with dynamic form renderer.
+- **Registration system**: migration `019_registrations.sql` (forms/fields/submissions + seeds: sunday-school→timhirt, begena→mezmur, gishen-pilgrimage→guzo; probe entry added in `migrate.php`). Public API `api/registrations/` (GET forms, POST submit w/ CSRF+honeypot+validation+flood guard). Admin CRUD `api/admin/registrations/` + page `public/admin/registrations.php` (nav: Community → Registrations). Dept-scoped `api/staff/registrations.php` + section in staff portal — dept heads customize fields/status of their own forms only (verified: cross-dept 403). Shared logic in `api/registrations_lib.php`.
+- **Logo/favicon**: new circular seal (`public/images/logo-mekane-selam.*`) replaced the placeholder star SVG on landing, login, blog, all portals, admin shell; favicons added site-wide (site previously had none).
+- QA: full curl round trips (submit → DB → admin + dept dashboards), headless-Chrome visual pass, em-dash audit.
+
+## Deploy checklist for this release
+1. Push is done; Eyoel: cPanel → Git Version Control → Update from Remote + Deploy HEAD Commit.
+2. Hit the migrate endpoint (X-DEPLOY-TOKEN, see `reference_deployment_artifacts` memory / instructions.md) to apply migration 019.
+3. Smoke: GET /api/registrations/index.php returns 3 forms; submit one test registration; check /admin/registrations.php.
 
 ## Prod status (2026-07-05, RESOLVED)
 - Migration `018_departments_teacher_workflows.sql` applied on prod via the migrate endpoint (017 was already applied). All 18 migrations now live.

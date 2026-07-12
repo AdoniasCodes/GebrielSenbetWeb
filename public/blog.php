@@ -15,6 +15,9 @@ $year = date('Y');
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
+  <link rel="apple-touch-icon" href="/images/logo-mekane-selam-192.png">
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script src="/assets/js/ec-date.js"></script>
@@ -54,12 +57,7 @@ $year = date('Y');
   <header class="sticky top-0 z-50 border-b border-outline-soft/40 bg-surface/85 backdrop-blur-md">
     <div class="max-w-[1024px] mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3">
-        <span class="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-primary text-surface">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-            <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-            <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
-          </svg>
-        </span>
+        <img src="/images/logo-mekane-selam.webp" alt="Mekane Selam Sunday School" class="h-8 w-8 rounded-full object-cover">
         <span class="font-display text-xl font-semibold tracking-tight text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
       </a>
       <nav class="hidden md:flex items-center gap-8 text-[15px] text-ink-soft">

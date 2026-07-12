@@ -13,6 +13,9 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Department · Mekane Selam Senbet School</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
+  <link rel="apple-touch-icon" href="/images/logo-mekane-selam-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -180,8 +183,22 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
             </table></div>
           </div>
         </div>
+
+        <div class="panel">
+          <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Public registrations" data-am="የይፋ ምዝገባዎች">Public registrations</span> · <span id="regCount" class="text-ink-soft text-sm">—</span></h3></header>
+          <div class="p-4"><div id="regForms" class="space-y-4"><p class="text-sm text-ink-soft" data-en="No registration form for this department." data-am="ለዚህ ክፍል የምዝገባ ቅጽ የለም።">No registration form for this department.</p></div></div>
+        </div>
       </div>
     </section>
+  </div>
+</div>
+
+<!-- Blocking error modal (project rule: errors are modals, not vanishing toasts) -->
+<div id="regErrModal" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(20,24,36,0.4);padding:16px;">
+  <div class="panel" style="max-width:420px;width:100%;padding:22px;">
+    <h3 class="font-display text-lg" style="color:#ba1a1a;margin-bottom:8px;" data-en="Something went wrong" data-am="ችግር ተፈጥሯል">Something went wrong</h3>
+    <p id="regErrMsg" class="text-sm text-ink-soft" style="white-space:pre-wrap;margin-bottom:18px;"></p>
+    <div style="text-align:right;"><button id="regErrOk" class="btn-primary" data-en="OK" data-am="እሺ">OK</button></div>
   </div>
 </div>
 
@@ -197,7 +214,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   function applyLang(lang){ if(lang!=='en'&&lang!=='am')lang='en'; document.documentElement.setAttribute('data-lang',lang);
     document.querySelectorAll('[data-en],[data-am]').forEach(function(el){ var t=el.getAttribute('data-'+lang); if(t!==null)el.innerHTML=t; });
     document.querySelectorAll('[data-lang]').forEach(function(b){ if(b.tagName==='BUTTON'){ b.classList.toggle('seg-active',b.dataset.lang===lang); } });
-    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); renderResources(); renderEvents(); }
+    renderDeptList(); if(current){ renderLevels(); fillLevelSelect(); renderRoster(); renderEligibility(); renderResources(); renderEvents(); renderRegForms(); }
   }
   document.querySelectorAll('header [data-lang]').forEach(function(b){ b.addEventListener('click',function(){applyLang(b.dataset.lang);}); });
 
@@ -212,7 +229,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     v('empty').classList.add('hidden'); v('detail').classList.remove('hidden');
     v('detName').textContent=dlabel(current); v('detSub').textContent=current.description||'';
     renderDeptList();
-    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id), loadEvents(id)]);
+    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id), loadEvents(id), loadRegForms(id)]);
     setMode('existing');
   }
 
@@ -406,6 +423,145 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
   }, true);
 
   async function reloadDepts(keepId){ var r=await gs.api('/api/staff/departments.php'); depts=r.data||[]; renderDeptList(); if(keepId){ var s=depts.find(function(d){return d.id===keepId;}); if(s)selectDept(keepId); } }
+
+  // ===== Public registrations (department-scoped) =====
+  var REG_API='/api/staff/registrations.php';
+  var regForms=[], regSubs={}, regSubPage={};
+  var REG_TYPES=[['text','Short text','አጭር ጽሑፍ'],['textarea','Long text','ረጅም ጽሑፍ'],['email','Email','ኢሜይል'],['phone','Phone','ስልክ'],['number','Number','ቁጥር'],['date','Date','ቀን'],['select','Dropdown','ተቆልቋይ'],['radio','Single choice','ነጠላ ምርጫ'],['checkbox','Multiple choice','ብዙ ምርጫ']];
+  var REG_CHOICE=['select','radio','checkbox'];
+  var REG_SUBST={new:['New','አዲስ'],seen:['Seen','የታየ'],contacted:['Contacted','የተገናኘ']};
+  function regErr(msg){ v('regErrMsg').textContent=msg; v('regErrModal').style.display='flex'; }
+  v('regErrOk').addEventListener('click',function(){ v('regErrModal').style.display='none'; });
+  function regTypeLabel(t){ var m=REG_TYPES.find(function(x){return x[0]===t;}); return m?(curLang()==='am'?m[2]:m[1]):t; }
+  function regFlabel(f){ return curLang()==='am'?(f.title_am||f.title_en):(f.title_en||f.title_am); }
+
+  async function loadRegForms(id){
+    try{ var r=await gs.api(REG_API); regForms=(r.data||[]).filter(function(f){ return f.department_id===id; }); renderRegForms(); }
+    catch(e){ regForms=[]; renderRegForms(); }
+  }
+
+  function renderRegForms(){
+    var w=v('regForms'); if(!w) return;
+    v('regCount').textContent=regForms.length;
+    if(!regForms.length){ w.innerHTML='<p class="text-sm text-ink-soft" data-en="No registration form for this department." data-am="ለዚህ ክፍል የምዝገባ ቅጽ የለም።">No registration form for this department.</p>'; return; }
+    w.innerHTML=regForms.map(regFormCard).join('');
+    regForms.forEach(function(f){ if(regSubs[f.id]) renderRegSubs(f.id); });
+  }
+
+  function regTypeOptions(sel){ return REG_TYPES.map(function(t){ return '<option value="'+t[0]+'" '+(t[0]===sel?'selected':'')+'>'+escHtml(curLang()==='am'?t[2]:t[1])+'</option>'; }).join(''); }
+
+  function regFormCard(f){
+    var st=['open','limited','closed'].map(function(s){ var lbl={open:['Open','ክፍት'],limited:['Limited','የተወሰነ'],closed:['Closed','ዝግ']}[s]; return '<option value="'+s+'" '+(f.status===s?'selected':'')+'>'+(curLang()==='am'?lbl[1]:lbl[0])+'</option>'; }).join('');
+    var fields=(f.fields||[]).map(function(fld,i){
+      var lbl=curLang()==='am'?(fld.label_am||fld.label_en):fld.label_en;
+      var req=fld.is_required==1?'<span class="pill" style="background:rgba(186,26,26,0.1);color:#ba1a1a">'+(curLang()==='am'?'የግድ':'required')+'</span>':'';
+      var opt=(fld.options&&fld.options.length)?'<span class="text-[11px] text-ink-soft">· '+fld.options.length+'</span>':'';
+      return '<div class="flex items-center justify-between gap-2 bg-surface-low rounded px-3 py-2 border border-outline-soft/30">'+
+        '<div class="flex items-center gap-2 min-w-0"><span class="text-sm font-medium truncate '+(curLang()==='am'?'ethiopic':'')+'">'+escHtml(lbl)+'</span><span class="text-[11px] uppercase tracking-widestest text-outline">'+escHtml(regTypeLabel(fld.field_type))+'</span>'+req+opt+'</div>'+
+        '<div class="flex items-center gap-1 flex-shrink-0">'+
+          '<button class="btn-icon" data-regfmove="up" data-regfid="'+fld.id+'" data-regform="'+f.id+'" '+(i===0?'style="opacity:.3" disabled':'')+' title="Up"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg></button>'+
+          '<button class="btn-icon" data-regfmove="down" data-regfid="'+fld.id+'" data-regform="'+f.id+'" '+(i===(f.fields.length-1)?'style="opacity:.3" disabled':'')+' title="Down"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>'+
+          '<button class="btn-icon" data-regfedit="'+fld.id+'" data-regform="'+f.id+'" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>'+
+          '<button class="btn-icon danger" data-regfdel="'+fld.id+'" data-regform="'+f.id+'" title="Remove"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>'+
+        '</div></div>';
+    }).join('') || '<p class="text-sm text-ink-soft" data-en="No fields yet." data-am="ገና ጥያቄ የለም።">No fields yet.</p>';
+
+    return '<div class="rounded border border-outline-soft/40" data-regcard="'+f.id+'">'+
+      '<div class="flex items-center justify-between gap-3 flex-wrap px-4 py-3 bg-surface-low rounded-t">'+
+        '<span class="font-display text-base '+(curLang()==='am'?'ethiopic':'')+'">'+escHtml(regFlabel(f))+'</span>'+
+        '<label class="flex items-center gap-2 text-xs text-ink-soft"><span data-en="Status" data-am="ሁኔታ">Status</span>'+
+          '<select class="input-field" style="width:auto;padding:6px 10px" data-regstatus="'+f.id+'">'+st+'</select></label>'+
+      '</div>'+
+      '<div class="p-4 space-y-4">'+
+        '<div><p class="lbl mb-2" data-en="Fields" data-am="ጥያቄዎች">Fields</p><div class="space-y-2">'+fields+'</div></div>'+
+        regFieldFormHtml(f.id)+
+        '<div><button class="btn-ghost" data-regsubtoggle="'+f.id+'">'+(curLang()==='am'?'ምዝገባዎች አሳይ':'Show submissions')+' ('+f.submission_count+')</button>'+
+          '<div class="mt-3 '+(regSubs[f.id]?'':'hidden')+'" data-regsubsbox="'+f.id+'"></div></div>'+
+      '</div></div>';
+  }
+
+  function regFieldFormHtml(fid){
+    return '<form class="bg-surface-low rounded p-3 border border-outline-soft/30 space-y-2" data-regfieldform="'+fid+'">'+
+      '<div class="flex items-center justify-between"><p class="lbl rff-title" data-en="Add a field" data-am="ጥያቄ ጨምር">Add a field</p><button type="button" class="text-xs text-ink-soft hover:underline rff-cancel hidden" data-en="Cancel" data-am="ሰርዝ">Cancel</button></div>'+
+      '<input type="hidden" class="rff-id" value="" />'+
+      '<div class="grid sm:grid-cols-2 gap-2">'+
+        '<input class="input-field rff-len" placeholder="'+(curLang()==='am'?'መለያ (እንግሊዝኛ)':'Label (English)')+'" />'+
+        '<input class="input-field rff-lam ethiopic" placeholder="'+(curLang()==='am'?'መለያ (አማርኛ)':'Label (Amharic)')+'" />'+
+        '<select class="input-field rff-type">'+regTypeOptions('text')+'</select>'+
+        '<label class="flex items-center gap-2 text-sm text-ink-soft"><input type="checkbox" class="rff-req w-4 h-4" /><span data-en="Required" data-am="የግድ">Required</span></label>'+
+        '<input class="input-field rff-phen" placeholder="'+(curLang()==='am'?'ማሳያ (እንግሊዝኛ)':'Placeholder (EN)')+'" />'+
+        '<input class="input-field rff-pham ethiopic" placeholder="'+(curLang()==='am'?'ማሳያ (አማርኛ)':'Placeholder (AM)')+'" />'+
+      '</div>'+
+      '<div class="rff-optswrap hidden"><label class="lbl" data-en="Options: one per line as value|English|Amharic" data-am="አማራጮች፦ በእያንዳንዱ መስመር value|English|Amharic">Options — one per line: value|English|Amharic</label>'+
+        '<textarea class="input-field rff-opts" rows="3" placeholder="male|Male|ወንድ"></textarea></div>'+
+      '<button type="submit" class="btn-primary rff-submit" data-en="Add field" data-am="ጥያቄ ጨምር">Add field</button>'+
+    '</form>';
+  }
+
+  function regCard(fid){ return document.querySelector('[data-regcard="'+fid+'"]'); }
+  function regToggleOpts(form){ var t=form.querySelector('.rff-type').value; form.querySelector('.rff-optswrap').classList.toggle('hidden', REG_CHOICE.indexOf(t)<0); }
+  function regParseOpts(txt){ return txt.split('\n').map(function(l){ return l.trim(); }).filter(Boolean).map(function(l){ var p=l.split('|'); return {value:(p[0]||'').trim(), label_en:(p[1]||p[0]||'').trim(), label_am:(p[2]||'').trim()}; }).filter(function(o){ return o.value; }); }
+
+  async function loadRegSubs(fid, page){
+    page=page||1; regSubPage[fid]=page;
+    try{ var d=await gs.api(REG_API+'?resource=submissions&form_id='+fid+'&page='+page); regSubs[fid]=d; renderRegSubs(fid); }
+    catch(e){ regErr(e.message); }
+  }
+  function renderRegSubs(fid){
+    var box=document.querySelector('[data-regsubsbox="'+fid+'"]'); if(!box) return;
+    box.classList.remove('hidden');
+    var d=regSubs[fid]; if(!d){ box.innerHTML='<p class="text-sm text-ink-soft py-2">…</p>'; return; }
+    var rows=d.data||[];
+    var head='<div style="overflow-x:auto"><table class="data"><thead><tr>'+
+      '<th data-en="Name" data-am="ስም">Name</th><th data-en="Phone" data-am="ስልክ">Phone</th><th data-en="Date" data-am="ቀን">Date</th><th data-en="Status" data-am="ሁኔታ">Status</th><th></th></tr></thead><tbody>';
+    var body = rows.length ? rows.map(function(s){
+      var opts=['new','seen','contacted'].map(function(k){ return '<option value="'+k+'" '+(s.status===k?'selected':'')+'>'+(curLang()==='am'?REG_SUBST[k][1]:REG_SUBST[k][0])+'</option>'; }).join('');
+      var det=s.items.map(function(i){ return '<div class="py-1"><span class="text-[11px] uppercase tracking-widestest text-outline '+(curLang()==='am'?'ethiopic':'')+'">'+escHtml(curLang()==='am'?(i.label_am||i.label_en):i.label_en)+'</span><div class="text-sm">'+escHtml(i.value||'—')+'</div></div>'; }).join('');
+      return '<tr class="cursor-pointer" data-regsubrow="'+s.id+'"><td class="font-medium">'+escHtml(s.applicant_name||'—')+'</td><td class="text-ink-soft">'+escHtml(s.applicant_phone||'—')+'</td>'+
+        '<td class="text-ink-soft text-sm">'+escHtml(s.created_at||'')+'</td>'+
+        '<td><select class="input-field" style="padding:5px 8px" data-regsubstatus="'+s.id+'" data-regform="'+fid+'">'+opts+'</select></td>'+
+        '<td class="text-right"><button class="btn-icon danger" data-regsubdel="'+s.id+'" data-regform="'+fid+'" title="Archive"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button></td></tr>'+
+        '<tr class="hidden" data-regsubdetail="'+s.id+'"><td colspan="5" style="background:#eef2fa"><div class="grid sm:grid-cols-2 gap-x-8">'+det+'</div></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="text-center text-ink-soft py-6" data-en="No submissions." data-am="ምዝገባ የለም።">No submissions.</td></tr>';
+    var pages=Math.max(1,Math.ceil(d.total/d.per_page));
+    var nav='<div class="flex items-center justify-between mt-2"><button class="btn-ghost" data-regsubprev="'+fid+'" '+(d.page<=1?'disabled style="opacity:.4"':'')+' data-en="Previous" data-am="ቀዳሚ">Previous</button><span class="text-sm text-ink-soft">'+(curLang()==='am'?'ገጽ ':'Page ')+d.page+' / '+pages+'</span><button class="btn-ghost" data-regsubnext="'+fid+'" '+(d.page>=pages?'disabled style="opacity:.4"':'')+' data-en="Next" data-am="ቀጣይ">Next</button></div>';
+    box.innerHTML=head+body+'</tbody></table></div>'+nav;
+  }
+
+  // Reg event delegation
+  document.addEventListener('submit', async function(e){
+    var ff=e.target.closest('[data-regfieldform]'); if(!ff) return;
+    e.preventDefault();
+    var fid=parseInt(ff.getAttribute('data-regfieldform'),10);
+    var labelEn=ff.querySelector('.rff-len').value.trim();
+    if(!labelEn){ regErr(curLang()==='am'?'የእንግሊዝኛ መለያ ያስፈልጋል':'English label is required'); return; }
+    var type=ff.querySelector('.rff-type').value;
+    var body={form_id:fid,label_en:labelEn,label_am:ff.querySelector('.rff-lam').value.trim(),field_type:type,
+      is_required:ff.querySelector('.rff-req').checked?1:0,placeholder_en:ff.querySelector('.rff-phen').value.trim(),placeholder_am:ff.querySelector('.rff-pham').value.trim()};
+    if(REG_CHOICE.indexOf(type)>=0){ body.options=regParseOpts(ff.querySelector('.rff-opts').value); if(!body.options.length){ regErr(curLang()==='am'?'ቢያንስ አንድ አማራጭ ያስፈልጋል':'Add at least one option'); return; } }
+    var editId=ff.querySelector('.rff-id').value;
+    body.action=editId?'field.update':'field.create'; if(editId) body.id=parseInt(editId,10);
+    try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify(body)}); await loadRegForms(current.id); gs.toast(curLang()==='am'?'ተቀምጧል':'Saved','success'); }
+    catch(err){ regErr(err.message); }
+  });
+
+  document.addEventListener('change', async function(e){
+    var st=e.target.closest('[data-regstatus]'); if(st){ try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify({action:'form.update',id:parseInt(st.dataset.regstatus,10),status:st.value})}); var f=regForms.find(function(x){return x.id===parseInt(st.dataset.regstatus,10);}); if(f)f.status=st.value; gs.toast(curLang()==='am'?'ተዘምኗል':'Updated','success'); }catch(err){ regErr(err.message); loadRegForms(current.id); } return; }
+    var ss=e.target.closest('[data-regsubstatus]'); if(ss){ try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify({action:'submission.status',id:parseInt(ss.dataset.regsubstatus,10),status:ss.value})}); gs.toast(curLang()==='am'?'ተዘምኗል':'Updated','success'); }catch(err){ regErr(err.message); } return; }
+    var ty=e.target.closest('.rff-type'); if(ty){ var form=ty.closest('[data-regfieldform]'); if(form) regToggleOpts(form); }
+  });
+
+  document.addEventListener('click', async function(e){
+    var tg=e.target.closest('[data-regsubtoggle]'); if(tg){ var fid=parseInt(tg.dataset.regsubtoggle,10); var box=document.querySelector('[data-regsubsbox="'+fid+'"]'); if(regSubs[fid]){ regSubs[fid]=null; box.classList.add('hidden'); box.innerHTML=''; } else { loadRegSubs(fid,1); } return; }
+    var ed=e.target.closest('[data-regfedit]'); if(ed){ var fid2=parseInt(ed.dataset.regform,10); var fld=(regForms.find(function(x){return x.id===fid2;})||{fields:[]}).fields.find(function(x){return x.id===parseInt(ed.dataset.regfedit,10);}); if(!fld) return; var form=regCard(fid2).querySelector('[data-regfieldform]'); form.querySelector('.rff-id').value=fld.id; form.querySelector('.rff-len').value=fld.label_en||''; form.querySelector('.rff-lam').value=fld.label_am||''; form.querySelector('.rff-type').value=fld.field_type; form.querySelector('.rff-req').checked=fld.is_required==1; form.querySelector('.rff-phen').value=fld.placeholder_en||''; form.querySelector('.rff-pham').value=fld.placeholder_am||''; form.querySelector('.rff-opts').value=(fld.options||[]).map(function(o){return o.value+'|'+(o.label_en||'')+'|'+(o.label_am||'');}).join('\n'); regToggleOpts(form); form.querySelector('.rff-submit').textContent=curLang()==='am'?'አዘምን':'Update field'; form.querySelector('.rff-title').textContent=curLang()==='am'?'ጥያቄ አስተካክል':'Edit field'; form.querySelector('.rff-cancel').classList.remove('hidden'); form.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    var cn=e.target.closest('.rff-cancel'); if(cn){ var form2=cn.closest('[data-regfieldform]'); form2.reset(); form2.querySelector('.rff-id').value=''; regToggleOpts(form2); form2.querySelector('.rff-submit').textContent=curLang()==='am'?'ጥያቄ ጨምር':'Add field'; form2.querySelector('.rff-title').textContent=curLang()==='am'?'ጥያቄ ጨምር':'Add a field'; cn.classList.add('hidden'); return; }
+    var dl=e.target.closest('[data-regfdel]'); if(dl){ if(!await gs.confirm(curLang()==='am'?'ይህን ጥያቄ ያስወግዱ?':'Remove this field?'))return; try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify({action:'field.archive',id:parseInt(dl.dataset.regfdel,10)})}); await loadRegForms(current.id); }catch(err){ regErr(err.message); } return; }
+    var mv=e.target.closest('[data-regfmove]'); if(mv){ var fid3=parseInt(mv.dataset.regform,10); var f3=regForms.find(function(x){return x.id===fid3;}); if(!f3)return; var arr=f3.fields.slice(); var idx=arr.findIndex(function(x){return x.id===parseInt(mv.dataset.regfid,10);}); var sw=mv.dataset.regfmove==='up'?idx-1:idx+1; if(sw<0||sw>=arr.length)return; var t=arr[idx];arr[idx]=arr[sw];arr[sw]=t; try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify({action:'field.reorder',form_id:fid3,order:arr.map(function(x){return x.id;})})}); await loadRegForms(current.id); }catch(err){ regErr(err.message); } return; }
+    var sd=e.target.closest('[data-regsubdel]'); if(sd){ if(!await gs.confirm(curLang()==='am'?'ይህን ምዝገባ ያስቀምጡ?':'Archive this submission?'))return; try{ await gs.api(REG_API,{method:'POST',body:JSON.stringify({action:'submission.archive',id:parseInt(sd.dataset.regsubdel,10)})}); loadRegSubs(parseInt(sd.dataset.regform,10),regSubPage[sd.dataset.regform]||1); loadRegForms(current.id); }catch(err){ regErr(err.message); } return; }
+    var sp=e.target.closest('[data-regsubprev]'); if(sp){ var pf=parseInt(sp.dataset.regsubprev,10); loadRegSubs(pf,Math.max(1,(regSubPage[pf]||1)-1)); return; }
+    var sn=e.target.closest('[data-regsubnext]'); if(sn){ var nf=parseInt(sn.dataset.regsubnext,10); loadRegSubs(nf,(regSubPage[nf]||1)+1); return; }
+    var row=e.target.closest('[data-regsubrow]'); if(row && !e.target.closest('select') && !e.target.closest('button')){ var dr=document.querySelector('[data-regsubdetail="'+row.dataset.regsubrow+'"]'); if(dr) dr.classList.toggle('hidden'); return; }
+  });
 
   v('logoutBtn').addEventListener('click', async function(){ try{ await gs.api('/api/auth/logout.php',{method:'POST'}); }catch(e){} window.location.href='/'; });
 

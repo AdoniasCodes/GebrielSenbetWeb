@@ -15,6 +15,7 @@ $nav_groups = [
     ['slug'=>'people','href'=>'/admin/people.php','en'=>'People','am'=>'አባላት','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'],
     ['slug'=>'departments','href'=>'/admin/departments.php','en'=>'Departments','am'=>'ክፍሎች','svg'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
     ['slug'=>'resources','href'=>'/admin/resources.php','en'=>'Resources','am'=>'መርጃዎች','svg'=>'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'],
+    ['slug'=>'registrations','href'=>'/admin/registrations.php','en'=>'Registrations','am'=>'ምዝገባዎች','svg'=>'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/>'],
   ]],
   ['label_en' => 'Registry', 'label_am' => 'መዝገብ', 'items' => [
     ['slug'=>'students','href'=>'/admin/students.php','en'=>'Students','am'=>'ተማሪዎች','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>'],
@@ -60,6 +61,9 @@ $nav_groups = [
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Plus+Jakarta+Sans:wght@400..700&family=Noto+Sans+Ethiopic:wght@400;500;700&family=Noto+Serif+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png">
+  <link rel="apple-touch-icon" href="/images/logo-mekane-selam-192.png">
 
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <script src="/assets/js/ec-date.js"></script>
@@ -200,12 +204,7 @@ $nav_groups = [
   <!-- ============ SIDEBAR ============ -->
   <aside class="w-60 flex-shrink-0 bg-surface border-r border-outline-soft/40 px-5 py-6 flex flex-col sticky top-0 h-screen overflow-y-auto">
     <a href="/admin/index.php" class="flex items-center gap-3 mb-1 px-2">
-      <span class="inline-flex items-center justify-center w-9 h-9 rounded-sm bg-primary text-surface">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
-          <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-          <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
-        </svg>
-      </span>
+      <img src="/images/logo-mekane-selam.webp" alt="Mekane Selam Sunday School" class="h-9 w-9 rounded-full object-cover">
       <div class="flex flex-col">
         <span class="font-display text-lg font-semibold text-primary leading-none" data-en="Mekane Selam Senbet School" data-am="መካነ ሰላም ሰንበት ት/ቤት">Mekane Selam Senbet School</span>
         <span class="text-[10px] font-semibold uppercase tracking-widestest text-gold mt-1" data-en="Sacred Administration" data-am="ቅዱስ አስተዳደር">Sacred Administration</span>
