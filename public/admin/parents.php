@@ -28,6 +28,8 @@ require __DIR__ . '/_partials/page-shell.php';
   </header>
   <form id="entityForm" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
     <input type="hidden" id="f_id" />
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Full name" data-am="ሙሉ ስም">Full name</label><input id="f_full_name" class="input-field" placeholder="e.g. Alemu Kebede" /></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2" data-en="Phone" data-am="ስልክ">Phone</label><input id="f_phone" class="input-field" placeholder="+251 ..." /></div>
     <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Email</label><input id="f_email" type="email" class="input-field" required /></div>
     <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Password (leave blank to auto-generate)</label><input id="f_password" type="text" class="input-field" placeholder="auto-generate" /></div>
     <div class="md:col-span-2">
@@ -49,8 +51,8 @@ require __DIR__ . '/_partials/page-shell.php';
   </header>
   <div class="table-wrap">
     <table class="data">
-      <thead><tr><th>Email</th><th>Children</th><th># linked</th><th>Created</th><th class="text-right">&nbsp;</th></tr></thead>
-      <tbody id="tbody"><tr><td colspan="5" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
+      <thead><tr><th data-en="Name" data-am="ስም">Name</th><th>Email</th><th>Children</th><th># linked</th><th>Created</th><th class="text-right">&nbsp;</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="6" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -74,10 +76,12 @@ require __DIR__ . '/_partials/page-shell.php';
   function render() {
     document.getElementById('rowCount').textContent = all.length + ' total';
     var tbody = document.getElementById('tbody');
-    if (!all.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-ink-soft py-16">No parent accounts yet.</td></tr>'; return; }
+    if (!all.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-ink-soft py-16">No parent accounts yet.</td></tr>'; return; }
     tbody.innerHTML = all.map(function(p){
+      var fullName = ((p.first_name || '') + ' ' + (p.last_name || '')).trim();
       return '<tr>' +
-        '<td><p class="font-medium">'+escHtml(p.email)+'</p></td>' +
+        '<td><p class="font-medium">'+escHtml(fullName || '—')+'</p>'+(p.phone?'<p class="text-xs text-ink-soft">'+escHtml(p.phone)+'</p>':'')+'</td>' +
+        '<td><p class="text-sm">'+escHtml(p.email)+'</p></td>' +
         '<td class="text-ink-soft text-sm">'+escHtml(p.children_names || '—')+'</td>' +
         '<td>'+escHtml(p.linked_students)+'</td>' +
         '<td class="text-ink-soft text-sm" data-iso="'+escHtml(p.created_at)+'" data-fmt-style="long">'+escHtml(p.created_at)+'</td>' +
@@ -109,6 +113,8 @@ require __DIR__ . '/_partials/page-shell.php';
     formPanel.classList.remove('hidden');
     msg.className = 'text-sm hidden';
     document.getElementById('f_id').value = item ? item.id : '';
+    document.getElementById('f_full_name').value = item ? (((item.first_name || '') + ' ' + (item.last_name || '')).trim()) : '';
+    document.getElementById('f_phone').value = item && item.phone ? item.phone : '';
     document.getElementById('f_email').value = item ? item.email : '';
     document.getElementById('f_password').value = '';
     formTitle.textContent = item ? 'Edit parent' : 'New parent';
@@ -127,6 +133,8 @@ require __DIR__ . '/_partials/page-shell.php';
     var checked = Array.prototype.slice.call(document.querySelectorAll('.student-check:checked')).map(function(c){ return parseInt(c.value, 10); });
     var body = {
       email: document.getElementById('f_email').value.trim(),
+      full_name: document.getElementById('f_full_name').value.trim(),
+      phone: document.getElementById('f_phone').value.trim(),
       student_ids: checked,
     };
     var pwd = document.getElementById('f_password').value.trim();

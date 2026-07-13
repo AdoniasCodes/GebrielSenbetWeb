@@ -81,7 +81,23 @@ function create_person_account(\PDO $pdo, array $input): array {
         $it->execute([$userId, $personId, $first, $last, $phone, $bio]);
         $profileId = (int)$pdo->lastInsertId();
     }
-    // Any other role (staff/parent/admin): user row only, matching prior behaviour.
+    elseif ($roleName === 'parent' || $roleName === 'staff') {
+        // Phase 1.1 identity unification: every non-admin login gets a canonical
+        // person row. Accepts full_name (split on first space) or first/last.
+        $first = trim((string)($input['first_name'] ?? ''));
+        $last  = trim((string)($input['last_name'] ?? ''));
+        if ($first === '' && trim((string)($input['full_name'] ?? '')) !== '') {
+            $parts = preg_split('/\s+/', trim((string)$input['full_name']), 2);
+            $first = $parts[0];
+            $last  = $parts[1] ?? '';
+        }
+        if ($first === '') { $first = strstr($email, '@', true) ?: $email; }
+        $phone = trim((string)($input['phone'] ?? ''));
+        $ip = $pdo->prepare('INSERT INTO people (user_id, first_name, last_name, phone) VALUES (?, ?, ?, ?)');
+        $ip->execute([$userId, $first, $last, $phone !== '' ? $phone : null]);
+        $personId = (int)$pdo->lastInsertId();
+    }
+    // Admin role: user row only (admins are operators, not tracked members).
 
     return [
         'user_id'            => $userId,

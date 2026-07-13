@@ -55,6 +55,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '018_departments_teacher_workflows.sql' => "SHOW TABLES LIKE 'tasks'",
         '019_registrations.sql'            => "SHOW TABLES LIKE 'registration_forms'",
         '020_academic_hierarchy_cleanup.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_020_applied' LIMIT 1",
+        '021_identity_unification.sql'     => "SELECT 1 FROM app_settings WHERE setting_key='migration_021_applied' LIMIT 1",
     ];
     if (!isset($checks[$filename])) return null;
     try {

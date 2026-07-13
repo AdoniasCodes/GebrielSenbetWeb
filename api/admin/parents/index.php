@@ -7,9 +7,9 @@
 
 use App\Database;
 use App\Utils\Response;
-use App\Utils\Password;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../person_accounts_lib.php';
 require_csrf_for_write();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -41,15 +41,17 @@ function _replace_links(\PDO $pdo, int $userId, array $studentIds): void {
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
     $sql = "SELECT u.id, u.email, u.is_archived, u.created_at,
+                   p.first_name, p.last_name, p.phone,
                    COUNT(DISTINCT sg.student_id) AS linked_students,
                    GROUP_CONCAT(DISTINCT CONCAT(s.first_name,' ',s.last_name) ORDER BY s.first_name SEPARATOR ', ') AS children_names,
                    GROUP_CONCAT(DISTINCT s.id ORDER BY s.id) AS children_ids
             FROM users u
             JOIN roles r ON r.id=u.role_id AND r.name='parent'
+            LEFT JOIN people p ON p.user_id=u.id
             LEFT JOIN student_guardians sg ON sg.user_id=u.id AND sg.is_archived=0
             LEFT JOIN students s ON s.id=sg.student_id";
     if (!$includeArchived) $sql .= ' WHERE u.is_archived=0';
-    $sql .= ' GROUP BY u.id ORDER BY u.created_at DESC';
+    $sql .= ' GROUP BY u.id, p.id ORDER BY u.created_at DESC';
     $rows = $pdo->query($sql)->fetchAll();
     foreach ($rows as &$r) {
         $r['linked_students'] = (int)$r['linked_students'];
@@ -60,25 +62,22 @@ if ($method === 'GET') {
 
 if ($method === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true) ?: [];
-    $email = trim((string)($input['email'] ?? ''));
-    $password = isset($input['password']) && $input['password'] !== '' ? (string)$input['password'] : Password::generate(12);
     $studentIds = is_array($input['student_ids'] ?? null) ? $input['student_ids'] : [];
-    if ($email === '') Response::error('email is required', 422);
+    _parent_role_id($pdo); // 500 early if the role was never provisioned
 
     try {
         $pdo->beginTransaction();
-        $check = $pdo->prepare('SELECT id FROM users WHERE email=? LIMIT 1');
-        $check->execute([$email]);
-        if ($check->fetch()) { $pdo->rollBack(); Response::error('Email already exists', 409); }
-        $roleId = _parent_role_id($pdo);
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $ins = $pdo->prepare('INSERT INTO users (email, password_hash, role_id) VALUES (?, ?, ?)');
-        $ins->execute([$email, $hash, $roleId]);
-        $userId = (int)$pdo->lastInsertId();
+        // Shared creation path (Phase 1.1): users row + canonical people row.
+        $input['role'] = 'parent';
+        $acct = create_person_account($pdo, $input);
+        $userId = $acct['user_id'];
         _replace_links($pdo, $userId, $studentIds);
         $pdo->commit();
-        \App\Audit::log('parent.create', 'user', $userId, ['email' => $email, 'student_count' => count($studentIds)]);
-        Response::json(['ok' => true, 'id' => $userId, 'generated_password' => $password], 201);
+        \App\Audit::log('parent.create', 'user', $userId, ['email' => trim((string)($input['email'] ?? '')), 'student_count' => count($studentIds)]);
+        Response::json(['ok' => true, 'id' => $userId, 'generated_password' => $acct['password']], 201);
+    } catch (PersonAccountError $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        Response::error($e->getMessage(), $e->status);
     } catch (\Throwable $e) {
         if ($pdo->inTransaction()) $pdo->rollBack();
         Response::error('Failed to create parent', 500);
@@ -110,6 +109,27 @@ if ($method === 'PUT') {
         if (array_key_exists('student_ids', $input) && is_array($input['student_ids'])) {
             _replace_links($pdo, $id, $input['student_ids']);
         }
+        // Name/phone live on the canonical person row (Phase 1.1).
+        if (isset($input['full_name']) || isset($input['phone'])) {
+            $ps = $pdo->prepare('SELECT id, first_name, last_name, phone FROM people WHERE user_id=? LIMIT 1');
+            $ps->execute([$id]);
+            $person = $ps->fetch();
+            $first = $person['first_name'] ?? '';
+            $last  = $person['last_name'] ?? '';
+            if (isset($input['full_name']) && trim((string)$input['full_name']) !== '') {
+                $parts = preg_split('/\s+/', trim((string)$input['full_name']), 2);
+                $first = $parts[0];
+                $last  = $parts[1] ?? '';
+            }
+            $phone = isset($input['phone']) ? (trim((string)$input['phone']) ?: null) : ($person['phone'] ?? null);
+            if ($person) {
+                $pdo->prepare('UPDATE people SET first_name=?, last_name=?, phone=? WHERE id=?')
+                    ->execute([$first, $last, $phone, (int)$person['id']]);
+            } else {
+                $pdo->prepare('INSERT INTO people (user_id, first_name, last_name, phone) VALUES (?, ?, ?, ?)')
+                    ->execute([$id, $first !== '' ? $first : 'Parent', $last, $phone]);
+            }
+        }
         $pdo->commit();
         \App\Audit::log('parent.update', 'user', $id);
         Response::json(['ok' => true]);
@@ -125,6 +145,7 @@ if ($method === 'DELETE') {
     if ($id <= 0) Response::error('id is required', 422);
     $pdo->prepare('UPDATE users SET is_archived=1, archived_at=NOW() WHERE id=? AND is_archived=0')->execute([$id]);
     $pdo->prepare('UPDATE student_guardians SET is_archived=1, archived_at=NOW() WHERE user_id=? AND is_archived=0')->execute([$id]);
+    $pdo->prepare('UPDATE people SET is_archived=1, archived_at=NOW() WHERE user_id=? AND is_archived=0')->execute([$id]);
     \App\Audit::log('parent.archive', 'user', $id);
     Response::json(['ok' => true]);
 }

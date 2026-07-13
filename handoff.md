@@ -1,7 +1,18 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-PLANNING (2026-07-12 eve): full system audit + architecture blueprint completed, no code changed. Deliverable: `SYSTEM_AUDIT_AND_BLUEPRINT.md` (per-role audits, workflow atlas, registration redesign architecture, dept-head workspace UX recommendation, continuity/data dead-end audit, eligibility engine design, 8-phase roadmap, 7 open decisions for Eyoel in §10). Next step: Eyoel answers §10 decisions, then Phase 1 (identity unification on `people`, single academic hierarchy, server-side permission fixes) begins with cheaper-model implementation agents. Separately: landing overhaul + registration v1 still awaiting manual cPanel deploy + prod migration 019.
+PHASE 1 COMPLETE (2026-07-13): all four Phase 1 items from `SYSTEM_AUDIT_AND_BLUEPRINT.md` §9 built and verified locally. Awaiting manual cPanel deploy; after deploy hit the migrate endpoint to apply migrations 019 + 020 + 021 (019 from the previous release is still pending on prod too). Next: Phase 2 (workflow consistency: notification engine, grade finalization, term-scoped attendance, dept-head announcements).
+
+## Phase 1 summary (2026-07-13)
+1. **1.3 security**: `form.create` removed from `api/staff/registrations.php` (admin-only, verified 403 + no row). `api/setup/demo_logins.php` hardened: never seeds admin, random per-run password, auto-archives + rotates the legacy `demo@` admin if present (verified). Prod checked: backdoor login already rejected (401). Bonus fix: `reg_create_form` fataled when `status` omitted (bad ternary) — fixed.
+2. **1.4 admin event oversight**: `api/admin/events` gained `?status=` filter, creator email, and POST `{action:'approve'|'reject', id}`; admin events page now shows true approval status (Pending/Approved/Rejected pills), pending count + filter, approve/reject buttons, dept + proposer line. Verified: pending hidden from public feed until approved.
+3. **1.2 single academic hierarchy**: migration `020_academic_hierarchy_cleanup.sql` (backfills `classes.department_id` → timhirt, purges unreferenced archived Era-1 tracks/levels, `migration_020_applied` marker probe). Deleted: `admin/legacy.php`, `admin/users.php`, dead teacher/student endpoints + redirect stubs (10 files, zero references confirmed).
+4. **1.1 identity unification**: migration `021_identity_unification.sql` (every student/teacher incl. archived linked to a `people` row; parent + staff logins get people rows; marker probe). `create_person_account()` now creates people rows for parent/staff (admin excluded). Parents endpoint rewired through the shared lib: full_name/phone now stored on people (they were silently dropped before), GET returns them, PUT edits them, DELETE archives the person. Parents admin page gained Name/Phone fields + column. Verified end-to-end: 0 unlinked rows, no duplicate people, CRUD green, portals green.
+
+## Deploy checklist for this release
+1. Eyoel: cPanel → Git Version Control → Update from Remote + Deploy HEAD Commit.
+2. Hit the migrate endpoint (X-DEPLOY-TOKEN) → expect 019, 020, 021 applied.
+3. Smoke: GET /api/registrations/index.php (3 forms); admin → Events shows status pills; admin → Parents shows Name column.
 
 ## Last completed task (2026-07-12, late)
 System audit & blueprint (7 parallel read-only audit agents + synthesis). Headline findings: two unreconciled schema eras (triple identity: users+students/teachers+people; dual academic hierarchies); data dead-ends everywhere (dept attendance unread, eligibility computed then discarded, grades feed nothing, submissions never become students); no promotion/rollover/graduation anywhere; admin registrations page wiring is CORRECT, the "broken" feel is the irreversible archive (no unarchive UI) + applicant-name heuristic; staff `form.create` restriction is UI-only (API allows it, security-relevant); notification system has one producer. Demo-admin backdoor decision (FABLE_BUG_REPORT #1/#5) still open.
