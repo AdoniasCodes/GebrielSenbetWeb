@@ -1,7 +1,8 @@
 <?php
 // api/admin/events/index.php — events with optional recurrence rule
-// GET    /api/admin/events?upcoming=1&include_archived=
+// GET    /api/admin/events?upcoming=1&include_archived=&status=pending|approved|rejected
 // POST   body: { title, description?, start_datetime, end_datetime?, is_recurring?, recurrence?{ freq, interval_num, by_day?, until_date? } }
+//        or   { action: 'approve'|'reject', id }   (oversight of dept/teacher proposals)
 // PUT    body: { id, ...same fields }
 // DELETE body: { id }
 
@@ -20,16 +21,22 @@ if ($method === 'GET') {
     $upcomingOnly    = isset($_GET['upcoming']) && $_GET['upcoming'] === '1';
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
 
+    $statusFilter = isset($_GET['status']) && in_array($_GET['status'], ['pending','approved','rejected'], true)
+        ? $_GET['status'] : null;
+
     $sql = "SELECT e.*,
                    d.name AS department_name, d.name_am AS department_name_am,
+                   cu.email AS created_by_email,
                    r.id AS rr_id, r.freq, r.interval_num, r.by_day, r.until_date
             FROM events e
             LEFT JOIN departments d ON d.id = e.department_id
+            LEFT JOIN users cu ON cu.id = e.created_by_user_id
             LEFT JOIN event_recurrence_rules r ON r.event_id=e.id
             WHERE 1=1";
     $params = [];
     if ($upcomingOnly) { $sql .= ' AND (e.end_datetime >= NOW() OR e.start_datetime >= NOW())'; }
     if (!$includeArchived) { $sql .= ' AND e.is_archived=0'; }
+    if ($statusFilter !== null) { $sql .= ' AND e.status = ?'; $params[] = $statusFilter; }
     $sql .= ' ORDER BY e.start_datetime ASC LIMIT 500';
 
     $stmt = $pdo->prepare($sql);
@@ -52,6 +59,21 @@ function _writeRecurrence(\PDO $pdo, int $eventId, array $r): void {
 
 if ($method === 'POST' || $method === 'PUT') {
     $input = json_decode(file_get_contents('php://input'), true) ?: [];
+
+    // Approval oversight: admin can decide dept/teacher proposals from any state.
+    $action = (string)($input['action'] ?? '');
+    if ($method === 'POST' && ($action === 'approve' || $action === 'reject')) {
+        $eid = (int)($input['id'] ?? 0);
+        if ($eid <= 0) Response::error('id is required', 422);
+        $newStatus = $action === 'approve' ? 'approved' : 'rejected';
+        $chk = $pdo->prepare('SELECT id FROM events WHERE id=? AND is_archived=0');
+        $chk->execute([$eid]);
+        if (!$chk->fetchColumn()) Response::error('Event not found', 404);
+        $stmt = $pdo->prepare('UPDATE events SET status=?, approved_by_user_id=?, approved_at=NOW() WHERE id=?');
+        $stmt->execute([$newStatus, (int)($_SESSION['user_id'] ?? 0) ?: null, $eid]);
+        Response::json(['ok' => true, 'id' => $eid, 'status' => $newStatus]);
+    }
+
     $id = $method === 'PUT' ? (int)($input['id'] ?? 0) : 0;
     if ($method === 'PUT' && $id <= 0) Response::error('id is required', 422);
 

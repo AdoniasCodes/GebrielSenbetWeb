@@ -67,6 +67,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between flex-wrap gap-3">
     <h2 class="font-display text-lg text-ink">Events · <span id="rowCount" class="text-ink-soft text-sm">—</span></h2>
     <div class="flex items-center gap-4">
+      <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="pendingOnly" type="checkbox" class="w-4 h-4" /> <span data-en="Pending only" data-am="በመጠባበቅ ብቻ">Pending only</span></label>
       <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="upcomingOnly" type="checkbox" class="w-4 h-4" /> <span>Upcoming only</span></label>
       <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="includeArchived" type="checkbox" class="w-4 h-4" /> <span>Include archived</span></label>
     </div>
@@ -117,19 +118,36 @@ require __DIR__ . '/_partials/page-shell.php';
   document.getElementById('cancelBtn').addEventListener('click', hideForm);
   document.getElementById('cancelBtn2').addEventListener('click', hideForm);
 
+  function statusPill(e) {
+    if (e.is_archived == 1) return '<span class="pill pill-archived">Archived</span>';
+    if (e.status === 'pending')  return '<span class="pill pill-draft">Pending approval</span>';
+    if (e.status === 'rejected') return '<span class="pill pill-archived">Rejected</span>';
+    return '<span class="pill pill-active">Approved</span>';
+  }
+
   function render() {
-    document.getElementById('rowCount').textContent = all.length + ' total';
+    var pending = all.filter(function (e) { return e.status === 'pending' && e.is_archived != 1; }).length;
+    document.getElementById('rowCount').textContent = all.length + ' total' + (pending ? ' · ' + pending + ' pending' : '');
     var tbody = document.getElementById('tbody');
     if (!all.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-ink-soft py-16">No events.</td></tr>'; return; }
     tbody.innerHTML = all.map(function (e) {
-      var pill = e.is_archived == 1 ? '<span class="pill pill-archived">Archived</span>' : '<span class="pill pill-active">Active</span>';
       var rec = e.is_recurring == 1 ? ('<span class="pill pill-draft">'+escHtml(e.freq||'recurring')+'</span>') : '<span class="text-outline text-xs">—</span>';
+      var origin = (e.department_name || e.created_by_email)
+        ? '<p class="text-xs text-outline mt-0.5">' +
+            (e.department_name ? escHtml(e.department_name) : '') +
+            (e.department_name && e.created_by_email ? ' · ' : '') +
+            (e.created_by_email ? escHtml(e.created_by_email) : '') +
+          '</p>' : '';
+      var decide = (e.is_archived != 1 && e.status === 'pending')
+        ? '<button class="btn-icon" title="Approve" data-approve="'+e.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></button>' +
+          '<button class="btn-icon danger" title="Reject" data-reject="'+e.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>'
+        : '';
       return '<tr>' +
         '<td><p>'+escHtml(fmtDate(e.start_datetime))+'</p>' + (e.end_datetime?'<p class="text-xs text-outline">→ '+escHtml(fmtDate(e.end_datetime))+'</p>':'') + '</td>' +
-        '<td><p class="font-medium">'+escHtml(e.title)+'</p>'+(e.description?'<p class="text-xs text-ink-soft mt-0.5">'+escHtml(e.description)+'</p>':'')+'</td>' +
+        '<td><p class="font-medium">'+escHtml(e.title)+'</p>'+(e.description?'<p class="text-xs text-ink-soft mt-0.5">'+escHtml(e.description)+'</p>':'')+origin+'</td>' +
         '<td>'+rec+'</td>' +
-        '<td>'+pill+'</td>' +
-        '<td class="text-right"><div class="inline-flex items-center gap-1">' +
+        '<td>'+statusPill(e)+'</td>' +
+        '<td class="text-right"><div class="inline-flex items-center gap-1">' + decide +
           '<button class="btn-icon" title="Edit" data-edit="'+e.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
           (e.is_archived == 1 ? '' :
             '<button class="btn-icon danger" title="Archive" data-archive="'+e.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>') +
@@ -140,12 +158,14 @@ require __DIR__ . '/_partials/page-shell.php';
 
   async function load() {
     var qs = [];
+    if (document.getElementById('pendingOnly').checked) qs.push('status=pending');
     if (document.getElementById('upcomingOnly').checked) qs.push('upcoming=1');
     if (document.getElementById('includeArchived').checked) qs.push('include_archived=1');
     var url = '/api/admin/events/index.php' + (qs.length ? '?' + qs.join('&') : '');
     try { var d = await gs.api(url); all = d.data || []; render(); }
     catch (e) { gs.toast(e.message,'error'); }
   }
+  document.getElementById('pendingOnly').addEventListener('change', load);
   document.getElementById('upcomingOnly').addEventListener('change', load);
   document.getElementById('includeArchived').addEventListener('change', load);
   document.addEventListener('gs:lang-change', render);
@@ -177,9 +197,18 @@ require __DIR__ . '/_partials/page-shell.php';
   });
 
   document.addEventListener('click', async function (e) {
-    var t = e.target.closest('[data-edit], [data-archive]');
+    var t = e.target.closest('[data-edit], [data-archive], [data-approve], [data-reject]');
     if (!t) return;
-    var id = parseInt(t.dataset.edit || t.dataset.archive, 10);
+    var id = parseInt(t.dataset.edit || t.dataset.archive || t.dataset.approve || t.dataset.reject, 10);
+    if (t.dataset.approve || t.dataset.reject) {
+      var action = t.dataset.approve ? 'approve' : 'reject';
+      if (action === 'reject' && !await gs.confirm('Reject this event proposal?')) return;
+      try {
+        await gs.api('/api/admin/events/index.php', { method:'POST', body: JSON.stringify({ action: action, id: id }) });
+        gs.toast(action === 'approve' ? 'Approved' : 'Rejected', 'success'); load();
+      } catch (err) { gs.toast(err.message,'error'); }
+      return;
+    }
     if (t.dataset.edit) { var item = all.find(function (x) { return x.id === id; }); if (item) showForm(item); }
     else {
       if (!await gs.confirm('Archive this event?')) return;
