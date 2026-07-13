@@ -1,9 +1,11 @@
 <?php
 // api/setup/demo_logins.php
-// One-time helper: (re)create a demo login for every role with a known
-// password, plus the linked records each portal needs. Guarded by the setup
-// token. Idempotent — safe to run more than once. Remove/disable demo accounts
-// before real use.
+// One-time helper: (re)create demo logins for the NON-admin roles with a
+// password randomized on every run (returned once in the response), plus the
+// linked records each portal needs. Guarded by the setup token. Idempotent.
+// Security (FABLE_BUG_REPORT #1/#5): this endpoint never creates an admin
+// account, and it archives the legacy demo admin if an earlier version left
+// one behind. Demo admins are CLI-only via scripts/seed_demo_users.php.
 use App\Database;
 use App\Utils\Response;
 
@@ -19,8 +21,18 @@ if ($setupToken === '' || $setupToken === 'CHANGE_ME_SETUP_TOKEN' || !hash_equal
 }
 
 $pdo = (new Database($config['db']))->pdo();
-$PASS = 'demo1234';
+$PASS = bin2hex(random_bytes(6)); // fresh per run; shown once in the response, never stored in the repo
 $hash = password_hash($PASS, PASSWORD_DEFAULT);
+
+// Retire the legacy world-known demo admin if a previous version seeded it.
+$legacyAdminNote = null;
+$la = $pdo->prepare("SELECT u.id FROM users u JOIN roles r ON r.id=u.role_id WHERE u.email=? AND r.name='admin' AND u.is_archived=0 LIMIT 1");
+$la->execute(['demo@mekaneselamss.com']);
+if ($laId = $la->fetchColumn()) {
+    $pdo->prepare("UPDATE users SET is_archived=1, archived_at=NOW(), password_hash=? WHERE id=?")
+        ->execute([password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT), (int)$laId]);
+    $legacyAdminNote = 'legacy demo admin archived and password rotated';
+}
 
 $roles = [];
 foreach ($pdo->query("SELECT id, name FROM roles")->fetchAll() as $r) $roles[$r['name']] = (int)$r['id'];
@@ -40,7 +52,6 @@ function demo_upsert_user(PDO $pdo, string $email, string $hash, int $roleId): i
 }
 
 $accounts = [
-    ['role' => 'admin',   'email' => 'demo@mekaneselamss.com'],
     ['role' => 'teacher', 'email' => 'teacher@demo.mekaneselamss.com'],
     ['role' => 'student', 'email' => 'student@demo.mekaneselamss.com'],
     ['role' => 'parent',  'email' => 'parent@demo.mekaneselamss.com'],
@@ -156,4 +167,9 @@ if (isset($uids['teacher'], $uids['student'])) {
     }
 }
 
-Response::json(['message' => 'Demo logins ready', 'accounts' => $out, 'wiring' => $wiring]);
+Response::json([
+    'message' => 'Demo logins ready (no admin account; password is per-run, save it now)',
+    'accounts' => $out,
+    'wiring' => $wiring,
+    'security' => $legacyAdminNote,
+]);

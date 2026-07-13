@@ -1,8 +1,9 @@
 <?php
 // api/staff/registrations.php — department-head view of registration forms.
-// Same capabilities as the admin endpoint but scoped to the departments the
-// caller heads. Heads can customize fields and status of their forms; they
-// cannot reassign a form's department_id (enforced in registrations_lib.php).
+// Scoped to the departments the caller heads. Heads can customize fields and
+// status of their forms; they cannot CREATE forms (admin-only until event-linked
+// registrations exist) and cannot reassign a form's department_id (enforced in
+// registrations_lib.php).
 //
 // GET  ?resource=forms                                          -> forms in headed depts
 // GET  ?resource=submissions&form_id=&page=&status=            -> submissions (scope-checked)
@@ -38,8 +39,8 @@ if ($method === 'POST') {
     $action = (string)($in['action'] ?? '');
     switch ($action) {
         case 'form.create':
-            $id = reg_create_form($pdo, $in, $scope);
-            Response::json(['data' => ['id' => $id]], 201);
+            // Standalone form creation is admin-only (see SYSTEM_AUDIT_AND_BLUEPRINT.md §4.2).
+            Response::error('Form creation is admin-only', 403);
         case 'form.update':
             reg_update_form($pdo, $in, $scope);
             Response::json(['data' => ['ok' => true]]);

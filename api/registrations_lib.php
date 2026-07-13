@@ -185,7 +185,7 @@ function reg_normalize_options($options): ?string {
 function reg_create_form(\PDO $pdo, array $in, ?array $deptScope): int {
     $titleEn = trim((string)($in['title_en'] ?? ''));
     if ($titleEn === '') Response::error('title_en is required', 422);
-    $status = in_array(($in['status'] ?? 'open'), REG_FORM_STATUSES, true) ? $in['status'] : 'open';
+    $status = in_array(($in['status'] ?? 'open'), REG_FORM_STATUSES, true) ? ($in['status'] ?? 'open') : 'open';
     $deptId = isset($in['department_id']) && $in['department_id'] !== '' && $in['department_id'] !== null
         ? (int)$in['department_id'] : null;
     // Scoped callers may only create forms inside a department they manage.
