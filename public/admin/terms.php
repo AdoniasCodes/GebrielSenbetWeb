@@ -99,18 +99,23 @@ require __DIR__ . '/_partials/page-shell.php';
     var tbody = document.getElementById('tbody');
     if (!all.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-ink-soft py-16">No terms yet.</td></tr>'; return; }
     tbody.innerHTML = all.map(function (t) {
+      var isClosed = t.closed_at != null;
       var pill = t.is_archived == 1 ? '<span class="pill pill-archived">Archived</span>'
               : (t.is_current == 1 ? '<span class="pill pill-active">Current</span>' : '<span class="pill pill-active">Active</span>');
+      var closedPill = isClosed ? ' <span class="pill pill-archived" title="Grades locked">Closed</span>' : '';
       return '<tr>' +
         '<td class="text-ink-soft">'+escHtml(t.academic_year)+'</td>' +
         '<td class="font-medium">'+escHtml(t.name)+'</td>' +
         '<td class="text-ink-soft">'+escHtml(t.start_date)+'</td>' +
         '<td class="text-ink-soft">'+escHtml(t.end_date)+'</td>' +
-        '<td>'+pill+'</td>' +
+        '<td>'+pill+closedPill+'</td>' +
         '<td class="text-right"><div class="inline-flex items-center gap-1">' +
           (t.is_archived == 0 && t.is_current != 1
             ? '<button class="btn-icon" title="Set as current" data-current="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></svg></button>'
             : '') +
+          (t.is_archived == 1 ? '' : (isClosed
+            ? '<button class="btn-icon" title="Reopen term (unlock grades)" data-reopen="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></button>'
+            : '<button class="btn-icon" title="Close term (lock grades)" data-close="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>')) +
           '<button class="btn-icon" title="Edit" data-edit="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
           (t.is_archived == 1 ? '' :
             '<button class="btn-icon danger" title="Archive" data-archive="'+t.id+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>') +
@@ -143,9 +148,9 @@ require __DIR__ . '/_partials/page-shell.php';
   });
 
   document.addEventListener('click', async function (e) {
-    var t = e.target.closest('[data-edit], [data-archive], [data-current]');
+    var t = e.target.closest('[data-edit], [data-archive], [data-current], [data-close], [data-reopen]');
     if (!t) return;
-    var id = parseInt(t.dataset.edit || t.dataset.archive || t.dataset.current, 10);
+    var id = parseInt(t.dataset.edit || t.dataset.archive || t.dataset.current || t.dataset.close || t.dataset.reopen, 10);
     if (t.dataset.edit) { var item = all.find(function (x) { return x.id === id; }); if (item) showForm(item); }
     else if (t.dataset.archive) {
       if (!await gs.confirm('Archive this term?')) return;
@@ -154,6 +159,16 @@ require __DIR__ . '/_partials/page-shell.php';
     }
     else if (t.dataset.current) {
       try { await gs.api('/api/admin/settings/current-term.php', { method:'PUT', body: JSON.stringify({ id: id })}); gs.toast('Set as current','success'); load(); }
+      catch (err) { gs.toast(err.message,'error'); }
+    }
+    else if (t.dataset.close) {
+      if (!await gs.confirm('Close this term? All grades for it will be locked (teachers and admins) until you reopen it.')) return;
+      try { await gs.api('/api/admin/terms/close.php', { method:'POST', body: JSON.stringify({ id: id, action:'close' })}); gs.toast('Term closed. Grades locked.','success'); load(); }
+      catch (err) { gs.toast(err.message,'error'); }
+    }
+    else if (t.dataset.reopen) {
+      if (!await gs.confirm('Reopen this term? Grade editing will be unlocked.')) return;
+      try { await gs.api('/api/admin/terms/close.php', { method:'POST', body: JSON.stringify({ id: id, action:'reopen' })}); gs.toast('Term reopened','success'); load(); }
       catch (err) { gs.toast(err.message,'error'); }
     }
   });

@@ -9,7 +9,10 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../grades_lib.php';
 require_csrf_for_write();
+
+$adminUserId = (int)($_SESSION['user_id'] ?? 0);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $config = app_config();
@@ -25,17 +28,22 @@ if ($method === 'GET') {
 
     $sql = "SELECT g.id, g.student_id, g.subject_id, g.class_id, g.term_id,
                    g.score, g.remarks, g.is_archived, g.created_at, g.updated_at,
+                   g.updated_by_user_id, uu.email AS updated_by_email,
                    s.first_name, s.last_name,
                    sub.name AS subject_name,
                    c.name   AS class_name,
                    lvl.name AS level_name,
-                   t.name   AS term_name, t.academic_year
+                   t.name   AS term_name, t.academic_year, t.closed_at,
+                   (gf.id IS NOT NULL) AS gradebook_finalized
             FROM grades g
             JOIN students s        ON s.id = g.student_id
             JOIN subjects sub      ON sub.id = g.subject_id
             JOIN classes c         ON c.id = g.class_id
             LEFT JOIN class_levels lvl ON lvl.id = c.level_id
             JOIN academic_terms t  ON t.id = g.term_id
+            LEFT JOIN users uu     ON uu.id = g.updated_by_user_id
+            LEFT JOIN grade_finalizations gf
+                   ON gf.class_id = g.class_id AND gf.subject_id = g.subject_id AND gf.term_id = g.term_id
             WHERE 1=1";
     $params = [];
     if ($termId    > 0) { $sql .= ' AND g.term_id=?';    $params[] = $termId; }
@@ -74,9 +82,13 @@ if ($method === 'POST') {
     }
     if ($score < 0 || $score > 100) Response::error('score must be between 0 and 100', 422);
 
+    // Admin bypasses the per-gradebook finalization lock, but a CLOSED term is a
+    // hard lock even for admin (reopen the term first). Phase 2.2.
+    if (grade_is_term_closed($pdo, $termId)) { Response::error(grade_lock_message('term_closed'), 423); }
+
     try {
-        $stmt = $pdo->prepare('INSERT INTO grades (student_id, subject_id, class_id, term_id, score, remarks) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$studentId, $subjectId, $classId, $termId, $score, $remarks]);
+        $stmt = $pdo->prepare('INSERT INTO grades (student_id, subject_id, class_id, term_id, score, remarks, updated_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$studentId, $subjectId, $classId, $termId, $score, $remarks, $adminUserId]);
         $newId = (int)$pdo->lastInsertId();
         \App\Audit::log('grade.create', 'grade', $newId, ['student_id' => $studentId, 'subject_id' => $subjectId, 'class_id' => $classId, 'term_id' => $termId, 'score' => $score]);
         Response::json(['ok' => true, 'id' => $newId], 201);
@@ -91,10 +103,13 @@ if ($method === 'PUT') {
     $id = (int)($input['id'] ?? 0);
     if ($id <= 0) Response::error('id is required', 422);
 
-    $g = $pdo->prepare('SELECT id, score, remarks FROM grades WHERE id=? AND is_archived=0');
+    $g = $pdo->prepare('SELECT id, score, remarks, term_id FROM grades WHERE id=? AND is_archived=0');
     $g->execute([$id]);
     $row = $g->fetch();
     if (!$row) Response::error('Grade not found', 404);
+
+    // Closed term is a hard lock even for admin. Phase 2.2.
+    if (grade_is_term_closed($pdo, (int)$row['term_id'])) { Response::error(grade_lock_message('term_closed'), 423); }
 
     $score = array_key_exists('score', $input)   ? (float)$input['score']   : (float)$row['score'];
     $remarks = array_key_exists('remarks', $input)
@@ -103,8 +118,8 @@ if ($method === 'PUT') {
 
     if ($score < 0 || $score > 100) Response::error('score must be between 0 and 100', 422);
 
-    $upd = $pdo->prepare('UPDATE grades SET score=?, remarks=? WHERE id=?');
-    $upd->execute([$score, $remarks, $id]);
+    $upd = $pdo->prepare('UPDATE grades SET score=?, remarks=?, updated_by_user_id=? WHERE id=?');
+    $upd->execute([$score, $remarks, $adminUserId, $id]);
     \App\Audit::log('grade.update', 'grade', $id, ['score' => $score]);
     Response::json(['ok' => true]);
 }

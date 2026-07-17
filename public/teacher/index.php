@@ -121,6 +121,10 @@ $email = $_SESSION['user_email'] ?? '';
             <label class="text-xs font-semibold uppercase tracking-widestest text-outline ml-auto" data-en="Term" data-am="ወቅት">Term</label>
             <select id="termSel" class="input-sm"></select>
           </div>
+          <div id="gradeLockBanner" class="hidden mb-4 rounded-lg border px-4 py-3 text-sm flex items-center justify-between gap-3">
+            <span id="gradeLockText"></span>
+            <button id="finalizeBtn" class="shrink-0 text-xs font-semibold px-3 py-1.5 rounded border border-current hover:opacity-80"></button>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
@@ -278,6 +282,7 @@ $email = $_SESSION['user_email'] ?? '';
   var TAB='grades';
   var CURRENT=null;        // selected class {class_id,subject_id,label} for grades/attendance
   var ROSTER=[], ATT=[], TASKS=[];
+  var LOCK={term_closed:false,finalized:false,editable:true}; // gradebook lock state (Phase 2.2)
   var RES_GRADES=[], RES_DEPTS=[], RES_DATA=[];
 
   function deptLabel(d){ return isAm()&&d.name_am?d.name_am:d.name; }
@@ -468,16 +473,55 @@ $email = $_SESSION['user_email'] ?? '';
     try{
       var d=await api('/api/teacher/roster/index.php?class_id='+CURRENT.class_id+'&subject_id='+CURRENT.subject_id+'&term_id='+term);
       ROSTER=d.data||[];
+      LOCK=d.lock||{term_closed:false,finalized:false,editable:true};
+      applyGradeLock();
       if(!ROSTER.length){ tb.innerHTML='<tr><td colspan="3" class="py-8 text-center text-ink-soft">'+t('No students in this class.','በዚህ ክፍል ተማሪ የለም።')+'</td></tr>'; return; }
+      var ro=!LOCK.editable?' disabled':'';
       tb.innerHTML=ROSTER.map(function(r){
         return '<tr class="border-b border-outline-soft/15" data-sid="'+r.student_id+'" data-gid="'+(r.grade_id||'')+'">'+
           '<td class="py-2 pr-4 font-medium">'+escHtml(name(r))+'</td>'+
-          '<td class="py-2 pr-4"><input type="number" min="0" max="100" step="0.01" class="input-sm w-24 js-score" value="'+(r.score!=null?escHtml(r.score):'')+'" /></td>'+
-          '<td class="py-2"><input type="text" class="input-sm w-full js-remarks" value="'+escHtml(r.remarks||'')+'" /></td>'+
+          '<td class="py-2 pr-4"><input type="number" min="0" max="100" step="0.01" class="input-sm w-24 js-score"'+ro+' value="'+(r.score!=null?escHtml(r.score):'')+'" /></td>'+
+          '<td class="py-2"><input type="text" class="input-sm w-full js-remarks"'+ro+' value="'+escHtml(r.remarks||'')+'" /></td>'+
         '</tr>';
       }).join('');
     }catch(e){ tb.innerHTML='<tr><td colspan="3" class="py-8 text-center text-error">'+escHtml(e.message)+'</td></tr>'; }
   }
+
+  // Reflect the gradebook lock: banner text, Save enable/disable, Finalize/Reopen button.
+  function applyGradeLock(){
+    var banner=document.getElementById('gradeLockBanner');
+    var text=document.getElementById('gradeLockText');
+    var fbtn=document.getElementById('finalizeBtn');
+    var save=document.getElementById('saveGrades');
+    save.disabled=!LOCK.editable;
+    save.classList.toggle('opacity-40',!LOCK.editable);
+    save.classList.toggle('cursor-not-allowed',!LOCK.editable);
+    if(LOCK.term_closed){
+      banner.className='mb-4 rounded-lg border px-4 py-3 text-sm flex items-center justify-between gap-3 border-error/40 text-error bg-error/5';
+      text.textContent=t('This term is closed by an admin. Grades are locked.','ይህ ወቅት በአስተዳዳሪ ተዘግቷል። ውጤቶች ተቆልፈዋል።');
+      fbtn.classList.add('hidden'); // teacher can't reopen a closed term
+      banner.classList.remove('hidden');
+    } else if(LOCK.finalized){
+      banner.className='mb-4 rounded-lg border px-4 py-3 text-sm flex items-center justify-between gap-3 border-gold/50 text-ink bg-gold/5';
+      text.textContent=t('This gradebook is finalized.','ይህ የውጤት መዝገብ ተጠናቋል።');
+      fbtn.textContent=t('Reopen','እንደገና ክፈት'); fbtn.dataset.action='reopen'; fbtn.classList.remove('hidden');
+      banner.classList.remove('hidden');
+    } else {
+      banner.className='mb-4 rounded-lg border px-4 py-3 text-sm flex items-center justify-between gap-3 border-outline-soft/40 text-ink-soft bg-surface-low';
+      text.textContent=t('Gradebook is open for entry.','የውጤት መዝገብ ለማስገባት ክፍት ነው።');
+      fbtn.textContent=t('Finalize','አጠናቅቅ'); fbtn.dataset.action='finalize'; fbtn.classList.remove('hidden');
+      banner.classList.remove('hidden');
+    }
+  }
+  document.getElementById('finalizeBtn').addEventListener('click', async function(){
+    if(!CURRENT) return;
+    var action=this.dataset.action; var term=parseInt(document.getElementById('termSel').value,10);
+    if(action==='finalize' && !confirm(t('Finalize this gradebook? You can reopen it later.','ይህን የውጤት መዝገብ አጠናቅቅ? በኋላ እንደገና መክፈት ይችላሉ።'))) return;
+    try{
+      await api('/api/teacher/grades/finalize.php',{method:'POST',body:JSON.stringify({class_id:CURRENT.class_id,subject_id:CURRENT.subject_id,term_id:term,action:action})});
+      loadRoster();
+    }catch(e){ alert(e.message); }
+  });
   document.getElementById('saveGrades').addEventListener('click', async function(){
     if(!CURRENT) return;
     var term=parseInt(document.getElementById('termSel').value,10);

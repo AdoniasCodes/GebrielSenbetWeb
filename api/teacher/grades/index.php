@@ -4,6 +4,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../grades_lib.php';
 require_csrf_for_write();
 
 $config = app_config();
@@ -77,9 +78,13 @@ if ($method === 'POST') {
     $enr->execute([$studentId, $classId]);
     if (!$enr->fetch()) { Response::error('Student is not enrolled in this class', 422); }
 
+    // Finalization / term-close lock (Phase 2.2). 423 Locked.
+    $lock = grade_lock_reason($pdo, $classId, $subjectId, $termId, false);
+    if ($lock !== null) { Response::error(grade_lock_message($lock), 423); }
+
     try {
-        $stmt = $pdo->prepare('INSERT INTO grades (student_id, subject_id, class_id, term_id, score, remarks) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$studentId, $subjectId, $classId, $termId, $score, $remarks]);
+        $stmt = $pdo->prepare('INSERT INTO grades (student_id, subject_id, class_id, term_id, score, remarks, updated_by_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$studentId, $subjectId, $classId, $termId, $score, $remarks, $teacherUserId]);
         Response::json(['message' => 'Grade created', 'id' => (int)$pdo->lastInsertId()], 201);
     } catch (\PDOException $e) {
         if ((int)$e->getCode() === 23000) { Response::error('Grade already exists for this student/subject/class/term', 409); }
@@ -96,7 +101,7 @@ if ($method === 'PUT') {
         Response::error('id and at least one of score/remarks required', 422);
     }
     // Ensure the grade belongs to a class/subject that this teacher is assigned to
-    $g = $pdo->prepare('SELECT class_id, subject_id FROM grades WHERE id = ?');
+    $g = $pdo->prepare('SELECT class_id, subject_id, term_id FROM grades WHERE id = ?');
     $g->execute([$id]);
     $row = $g->fetch();
     if (!$row) { Response::error('Grade not found', 404); }
@@ -104,9 +109,14 @@ if ($method === 'PUT') {
     $chk->execute([$teacherId, (int)$row['class_id'], (int)$row['subject_id']]);
     if (!$chk->fetch()) { Response::error('Not assigned to this class/subject', 403); }
 
+    // Finalization / term-close lock (Phase 2.2). 423 Locked.
+    $lock = grade_lock_reason($pdo, (int)$row['class_id'], (int)$row['subject_id'], (int)$row['term_id'], false);
+    if ($lock !== null) { Response::error(grade_lock_message($lock), 423); }
+
     $fields = [];$params = [];
     if ($score !== null) { $fields[] = 'score = ?'; $params[] = $score; }
     if (array_key_exists('remarks', $input)) { $fields[] = 'remarks = ?'; $params[] = $remarks; }
+    $fields[] = 'updated_by_user_id = ?'; $params[] = $teacherUserId;
     $params[] = $id;
     $stmt = $pdo->prepare('UPDATE grades SET ' . implode(', ', $fields) . ' WHERE id = ?');
     $stmt->execute($params);

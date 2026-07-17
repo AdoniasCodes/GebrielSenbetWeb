@@ -5,6 +5,7 @@
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../grades_lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') Response::error('Method not allowed', 405);
 
@@ -27,4 +28,16 @@ $stmt = $pdo->prepare(
      LEFT JOIN grades g ON g.student_id=s.id AND g.class_id=? AND g.subject_id=? AND g.term_id=? AND g.is_archived=0
      ORDER BY s.first_name, s.last_name");
 $stmt->execute([$classId, $classId, $subjectId, $termId]);
-Response::json(['data' => $stmt->fetchAll()]);
+
+// Lock state for this gradebook so the UI can disable entry + show finalize/reopen.
+$termClosed = grade_is_term_closed($pdo, $termId);
+$finalized  = grade_is_finalized($pdo, $classId, $subjectId, $termId);
+Response::json([
+    'data' => $stmt->fetchAll(),
+    'lock' => [
+        'term_closed' => $termClosed,
+        'finalized'   => $finalized,
+        // editable = writable by THIS teacher (admin bypass doesn't apply here).
+        'editable'    => !$termClosed && !$finalized,
+    ],
+]);

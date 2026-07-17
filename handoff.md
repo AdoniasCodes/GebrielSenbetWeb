@@ -1,7 +1,26 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-PHASE 2.1 COMPLETE (2026-07-17): notification engine v1 built + verified locally (21/21 lib E2E, HTTP producer/reader chains green). NOT yet committed or deployed. Migrations 019+020+021 STILL pending on prod, and now 022 too. Next in Phase 2: 2.2 grade finalization, 2.3 term-scoped attendance, 2.4 dept-head announcements (approval-free — decided), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
+PHASE 2.2 COMPLETE (2026-07-17): grade finalization built + verified locally (12/12 HTTP E2E). 2.1 already committed+pushed (96783b9); 2.2 committing now. Prod deploy still pending: migrations 019+020+021+022+023 all unapplied on prod. Next in Phase 2: 2.3 term-scoped attendance, 2.4 dept-head announcements (approval-free), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
+
+## Phase 2.2 summary (2026-07-17) — grade finalization
+Two locks with clear precedence (both consult `api/grades_lib.php`):
+- **Soft lock (per gradebook = class+subject+term):** teacher self-service. Teacher marks their
+  gradebook final (`grade_finalizations` row) → blocks the teacher's writes; ADMIN BYPASSES it.
+  Teacher can reopen their own (while term open). Endpoint `api/teacher/grades/finalize.php`.
+- **Hard lock (per term):** admin closes a term (`academic_terms.closed_at`) → blocks EVERY grade
+  write, teacher AND admin, until admin reopens. Endpoint `api/admin/terms/close.php`; notifies
+  role:teacher on close + reopen via the 2.1 engine.
+- **updated_by:** `grades.updated_by_user_id` stamped on every teacher + admin write; admin grades
+  GET returns updated_by_email + gradebook_finalized + term closed_at.
+- **Migration 023**: grades.updated_by_user_id, grade_finalizations table, academic_terms.closed_at
+  + closed_by_user_id, marker + probe.
+- **Lock check order** (`grade_lock_reason`): term_closed (hard, everyone) beats finalized (soft,
+  teacher only; admin passes isAdmin=true). Teacher writes return **423 Locked** when blocked.
+- **UI**: teacher gradebook shows a lock banner + Finalize/Reopen button, disables inputs when
+  locked; admin Terms page gains a Closed pill + Close/Reopen action.
+- NOTE: gradebook-reopen notification dropped by design — only the finalizing teacher reopens (admin
+  bypasses), so it would be a self-notification. Term close/reopen notifications are the real ones.
 
 ## Phase 2.1 summary (2026-07-17) — notification engine v1
 The pre-2.1 bug: composer target list, UI dropdown, and each portal's reader query were three drifted lists. 5 of 8 composer targets wrote rows no reader could match (admin→Teachers announcements were silently discarded forever); the 2 targets readers supported (department, user) couldn't be written by admin.

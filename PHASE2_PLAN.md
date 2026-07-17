@@ -110,8 +110,59 @@ record of exactly who was notified. Helper: `notif_department_head_user_ids($pdo
 
 ---
 
-## 2.2–2.5 (not started)
-2. Grade finalization: per (class, subject, term) lock + `updated_by`, term-close action.
+## 2.2 Grade finalization (in progress)
+
+### Decisions locked (2026-07-17)
+- **Finalize = teacher self-service.** The teacher who teaches a (class, subject) marks that
+  gradebook final for a term when done entering.
+- **Reopen a gradebook = the finalizing teacher themselves** (while the term is open). Admin
+  writes bypass the gradebook lock entirely (oversight), so admin never needs an explicit
+  gradebook-reopen. Consequence: the only actor who reopens a gradebook is its own teacher, so
+  a "gradebook reopened → notify teacher" message would be a self-notification — **dropped**.
+  The meaningful notifications are term close/reopen (below).
+- **Term-close = hard lock, admin-only.** Closing a term blocks EVERY grade write for it —
+  teacher and admin alike (`academic_terms.closed_at`). To edit a closed term admin must reopen
+  it first. Per-gradebook finalize stays a separate, finer, teacher-level soft lock.
+- **Notifications (lightweight):** term close → notify `role:teacher`; term reopen → notify
+  `role:teacher`. Uses the 2.1 engine.
+
+### Lock precedence
+A (class, subject, term) grade write is blocked if EITHER the term is closed (hard, blocks
+everyone) OR that gradebook is finalized (soft, blocks only the teacher; admin bypasses).
+`grade_lock_reason()` returns `'term_closed'` | `'finalized'` | null.
+
+### Work items
+1. **Migration `023_grade_finalization.sql`**
+   - `grades.updated_by_user_id INT NULL` (FK users, ON DELETE SET NULL) — accountability on
+     every write.
+   - `grade_finalizations(id, class_id, subject_id, term_id, finalized_by_user_id, finalized_at)`,
+     UNIQUE `(class_id, subject_id, term_id)`, cascade FKs. Row present = gradebook locked;
+     reopen deletes the row (Audit::log keeps the trail).
+   - `academic_terms.closed_at DATETIME NULL` + `closed_by_user_id INT NULL`. Non-null closed_at
+     = term closed.
+   - `migration_023_applied` marker + migrate.php probe.
+2. **`api/grades_lib.php`** — `grade_lock_reason($pdo,$class,$subject,$term)`,
+   `grade_is_term_closed()`, `grade_is_finalized()`. One authority both endpoints consult.
+3. **Teacher writes** (`api/teacher/grades/index.php`): POST + PUT reject with 423 when locked
+   (message names the reason), set `updated_by_user_id`. New `api/teacher/grades/finalize.php`
+   POST `{class_id, subject_id, term_id, action:'finalize'|'reopen'}` (guard
+   `teacher_assert_class_subject`; reopen refused if term closed).
+4. **Admin writes** (`api/admin/grades/index.php`): POST + PUT respect term-closed (423), bypass
+   gradebook finalization, set `updated_by_user_id`.
+5. **Admin term-close** (`api/admin/terms/close.php`, new): POST `{id, action:'close'|'reopen'}`,
+   admin-only + CSRF + audit; sets/clears closed_at + closed_by; notifies `role:teacher`.
+6. **Readers surface lock state**: teacher roster (`api/teacher/roster/index.php`) returns a
+   `lock` object (`finalized`, `term_closed`) for the loaded (class,subject,term); admin grades
+   GET returns `updated_by`. Teacher gradebook UI (`public/teacher/index.php`) disables inputs +
+   Save and shows a Finalize/Reopen button per the lock. Admin terms UI gains Close/Reopen.
+
+### Verify
+- Locked gradebook: teacher POST/PUT → 423; teacher reopens → writes succeed again.
+- Closed term: both teacher AND admin writes → 423; admin reopens term → writes succeed.
+- `updated_by_user_id` stamped on every write.
+- Term close notifies a teacher login (bell shows it).
+
+## 2.3–2.5 (not started)
 3. Term-scoped attendance: `term_id` on sessions, per-student percentages to teachers + dept heads.
 4. Dept-head announcements: mirror the events pattern, approval-free per the locked decision.
 5. Tasks/homework: expose to students + parents, or explicitly park.
