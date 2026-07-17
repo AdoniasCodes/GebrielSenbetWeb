@@ -7,6 +7,7 @@
 use App\Utils\Response;
 
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../notifications_lib.php';
 require_csrf_for_write();
 
 $pdo = $GLOBALS['__staff_pdo'];
@@ -47,7 +48,7 @@ if ($method === 'POST') {
         $id = (int)($in['id'] ?? 0);
         if ($id <= 0) Response::error('id is required', 422);
 
-        $chk = $pdo->prepare('SELECT department_id, status FROM events WHERE id=? AND is_archived=0');
+        $chk = $pdo->prepare('SELECT department_id, status, title, created_by_user_id FROM events WHERE id=? AND is_archived=0');
         $chk->execute([$id]);
         $row = $chk->fetch();
         if (!$row) Response::error('Event not found', 404);
@@ -58,6 +59,18 @@ if ($method === 'POST') {
         $newStatus = $action === 'approve' ? 'approved' : 'rejected';
         $upd = $pdo->prepare('UPDATE events SET status=?, approved_by_user_id=?, approved_at=NOW() WHERE id=?');
         $upd->execute([$newStatus, $userId, $id]);
+
+        // Producer: tell the proposer the outcome (skip if a head decided their own).
+        $proposerId = (int)$row['created_by_user_id'];
+        if ($proposerId > 0 && $proposerId !== $userId) {
+            $verb = $action === 'approve' ? 'approved' : 'rejected';
+            notify_user(
+                $pdo, $proposerId,
+                'Event ' . $verb . ' / የመርሐ ግብር ውሳኔ',
+                'Your proposed event "' . (string)$row['title'] . '" was ' . $verb . '.',
+                ['senderUserId' => $userId, 'senderRoleId' => (int)($_SESSION['role_id'] ?? 0)]
+            );
+        }
         Response::json(['message' => $action === 'approve' ? 'Approved' : 'Rejected']);
     }
 

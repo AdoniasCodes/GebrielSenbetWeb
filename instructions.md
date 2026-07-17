@@ -51,6 +51,18 @@ DEMO_PASSWORD='the-password' php scripts/seed_demo_users.php --verify --base-url
     APP_DB_PASS=... DEMO_PASSWORD='...' php scripts/seed_demo_users.php
   DEMO_PASSWORD='...' php scripts/seed_demo_users.php --verify
   ```
+  **GOTCHA — empty DB password won't work.** `config/config.php` uses
+  `getenv('APP_DB_PASS') ?: 'Panda2022!!'`, so an *empty* `APP_DB_PASS=''` is
+  falsy and silently falls back to the PROD password (login then fails). Local
+  MySQL `root` has no password, so you can't use it via the app. Fix once:
+  ```sh
+  mysql -u root -e "CREATE USER IF NOT EXISTS 'gsb'@'localhost' IDENTIFIED BY 'gsblocal';
+    GRANT ALL PRIVILEGES ON eagleerq_gebriel.* TO 'gsb'@'localhost'; FLUSH PRIVILEGES;"
+  # then use APP_DB_USER=gsb APP_DB_PASS='gsblocal' everywhere above.
+  ```
+  Apply a single migration locally: `mysql -u gsb -pgsblocal eagleerq_gebriel < db/migrations/NNN.sql`.
+  CSRF for curl tests: GET `/api/auth/csrf.php` (JSON key is `csrf_token`, not
+  `token`), carry the cookie jar, send it back as the `X-CSRF-Token` header.
 - **Production (cPanel):** after `git push` deploys, open the cPanel Terminal
   (or SSH) and run from the deployed repo root:
   ```sh

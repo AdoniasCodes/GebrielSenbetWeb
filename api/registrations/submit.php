@@ -38,7 +38,7 @@ if (!is_array($answers)) Response::error('answers must be an object / መልሶ�
 $pdo = (new Database($config['db']))->pdo();
 
 $fstmt = $pdo->prepare(
-    'SELECT id, slug, title_en, status, is_archived FROM registration_forms WHERE id = ? LIMIT 1'
+    'SELECT id, slug, title_en, status, is_archived, department_id FROM registration_forms WHERE id = ? LIMIT 1'
 );
 $fstmt->execute([$formId]);
 $form = $fstmt->fetch();
@@ -204,6 +204,27 @@ $ins->execute([
     $ip,
 ]);
 
-\App\Audit::log('registration.submit', 'registration_submission', (int)$pdo->lastInsertId(), ['form_slug' => $form['slug']]);
+$submissionId = (int)$pdo->lastInsertId();
+\App\Audit::log('registration.submit', 'registration_submission', $submissionId, ['form_slug' => $form['slug']]);
+
+// Producer: a public submission needs staff eyes. Notify every admin, plus the
+// head(s) of the form's owning department when it has one. Public endpoint, so
+// there is no sender user. Never let a notification failure break the applicant's
+// success response.
+try {
+    require_once __DIR__ . '/../notifications_lib.php';
+    $formTitle = (string)($form['title_en'] ?? 'a form');
+    $title = 'New registration / አዲስ ምዝገባ';
+    $body = 'A new submission arrived for "' . $formTitle . '". Review it under Registrations.';
+    notify_role($pdo, 'admin', $title, $body);
+    $deptId = (int)($form['department_id'] ?? 0);
+    if ($deptId > 0) {
+        foreach (notif_department_head_user_ids($pdo, $deptId) as $headId) {
+            notify_user($pdo, $headId, $title, $body);
+        }
+    }
+} catch (\Throwable $e) {
+    error_log('registration.submit notify failed: ' . $e->getMessage());
+}
 
 Response::json(['data' => ['ok' => true]]);

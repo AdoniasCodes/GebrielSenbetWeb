@@ -7,6 +7,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../notifications_lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') Response::error('Method not allowed', 405);
 
@@ -38,33 +39,19 @@ if ($studentIds) {
     $classIds = array_map('intval', $cstmt->fetchAll(\PDO::FETCH_COLUMN));
 }
 
-$sql = "SELECT id, title, message, target_type, target_payload, is_public, created_at
-        FROM notifications
-        WHERE is_archived=0
-          AND (
-            is_public=1
-            OR (target_type='role' AND JSON_EXTRACT(target_payload, '$.role') = 'parent')";
-$params = [];
-if ($deptIds) {
-    $dph = implode(',', array_fill(0, count($deptIds), '?'));
-    // JSON_UNQUOTE, not a bare JSON_EXTRACT comparison: PDO sends the bound
-    // param as a typed value (ATTR_EMULATE_PREPARES=false), which a raw
-    // JSON_EXTRACT scalar won't match (see api/teacher/notifications.php).
-    $sql .= " OR (target_type='department' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.department_id')) IN ($dph))";
-    $params = array_merge($params, $deptIds);
-}
-if ($classIds) {
-    $cph = implode(',', array_fill(0, count($classIds), '?'));
-    $sql .= " OR (target_type='class' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.class_id')) IN ($cph))";
-    $params = array_merge($params, $classIds);
-}
-$sql .= "  )
-        ORDER BY created_at DESC
-        LIMIT 100";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$rows = $stmt->fetchAll();
-foreach ($rows as &$r) {
-    $r['target_payload'] = $r['target_payload'] ? json_decode($r['target_payload'], true) : null;
-}
+// Targeting + unread via the shared contract (api/notifications_lib.php).
+$q = notif_inbox_query([
+    'user_id'  => (int)($_SESSION['user_id'] ?? 0),
+    'role'     => 'parent',
+    'dept_ids' => $deptIds,
+    'class_ids'=> $classIds,
+], 100);
+$stmt = $pdo->prepare($q['sql']);
+$stmt->execute($q['params']);
+$rows = array_map(function ($r) {
+    return [
+        'id' => $r['id'], 'title' => $r['title'], 'message' => $r['message'],
+        'created_at' => $r['created_at'], 'is_read' => (bool)$r['is_read'],
+    ];
+}, $stmt->fetchAll());
 Response::json(['data' => $rows]);

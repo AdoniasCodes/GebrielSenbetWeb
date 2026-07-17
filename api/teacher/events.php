@@ -8,6 +8,7 @@
 use App\Utils\Response;
 
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../notifications_lib.php';
 require_csrf_for_write();
 
 $pdo = tch_pdo();
@@ -55,7 +56,20 @@ if ($method === 'POST') {
          VALUES (?, ?, ?, ?, 'pending', ?, ?)"
     );
     $ins->execute([$title, $description, $start, $end, $userId, $deptId]);
-    Response::json(['message' => 'Proposed', 'id' => (int)$pdo->lastInsertId()], 201);
+    $eventId = (int)$pdo->lastInsertId();
+
+    // Producer: notify the department head(s) that a proposal awaits their
+    // decision. Compound audience (heads of this dept) fans out to user rows.
+    foreach (notif_department_head_user_ids($pdo, $deptId) as $headId) {
+        if ($headId === $userId) continue; // a teacher who also heads the dept needn't ping themselves
+        notify_user(
+            $pdo, $headId,
+            'Event proposal to review / የመርሐ ግብር ጥያቄ ይገምግሙ',
+            'A teacher proposed "' . $title . '" for your department. Review it under Events.',
+            ['senderUserId' => $userId, 'senderRoleId' => (int)($_SESSION['role_id'] ?? 0)]
+        );
+    }
+    Response::json(['message' => 'Proposed', 'id' => $eventId], 201);
 }
 
 if ($method === 'DELETE') {

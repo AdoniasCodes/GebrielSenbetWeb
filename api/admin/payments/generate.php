@@ -7,6 +7,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../notifications_lib.php';
 require_csrf_for_write();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') Response::error('Method not allowed', 405);
@@ -51,16 +52,38 @@ try {
     $existing = array_column($eq->fetchAll(), 'student_id');
     $existingSet = array_flip($existing);
 
-    $created = 0; $skipped = 0;
+    $created = 0; $skipped = 0; $createdStudentIds = [];
     $ins = $pdo->prepare('INSERT INTO payments (student_id, term_id, amount, paid_amount, status) VALUES (?, ?, ?, 0.00, ?)');
     foreach ($studentIds as $sid) {
         if (isset($existingSet[$sid])) { $skipped++; continue; }
         $status = $amount > 0 ? 'unpaid' : 'paid';
         $ins->execute([(int)$sid, $termId, $amount, $status]);
         $created++;
+        $createdStudentIds[] = (int)$sid;
     }
     $pdo->commit();
     \App\Audit::log('payment.generate', 'term', $termId, ['class_id' => $classId, 'amount' => $amount, 'created' => $created, 'skipped' => $skipped]);
+
+    // Producer: tell each student a tuition charge was raised. Runs after commit
+    // (outside the transaction) and only for genuinely-created rows; resolves
+    // students.id -> users.id since notifications target the login user. A notify
+    // failure must not fail the generation that already committed.
+    if ($createdStudentIds && $amount > 0) {
+        try {
+            $adminId = (int)($_SESSION['user_id'] ?? 0);
+            $roleId  = (int)($_SESSION['role_id'] ?? 0);
+            $body = 'A tuition charge of ' . number_format($amount, 2) . ' ETB was added to your account for the current term.';
+            $ph = implode(',', array_fill(0, count($createdStudentIds), '?'));
+            $us = $pdo->prepare("SELECT user_id FROM students WHERE id IN ($ph) AND user_id IS NOT NULL");
+            $us->execute($createdStudentIds);
+            foreach (array_map('intval', $us->fetchAll(\PDO::FETCH_COLUMN)) as $uid) {
+                notify_user($pdo, $uid, 'Tuition payment due / የትምህርት ክፍያ', $body,
+                    ['senderUserId' => $adminId, 'senderRoleId' => $roleId]);
+            }
+        } catch (\Throwable $e) {
+            error_log('payment.generate notify failed: ' . $e->getMessage());
+        }
+    }
     Response::json(['ok'=>true, 'created'=>$created, 'skipped'=>$skipped]);
 } catch (\Throwable $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();

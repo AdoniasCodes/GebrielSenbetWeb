@@ -61,6 +61,45 @@
       }
     } catch (e) { /* fail silent */ }
   })();
+
+  // === Admin inbox (role:admin + user-targeted notifications) ===
+  (function () {
+    var bell = document.getElementById('notifBell');
+    var panel = document.getElementById('notifPanel');
+    var list = document.getElementById('notifList');
+    var badge = document.getElementById('notifBadge');
+    if (!bell || !panel || !list) return;
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+    var NOTIFS = [];
+    async function load() {
+      try { var d = await gs.api('/api/admin/inbox/index.php'); NOTIFS = d.data || []; }
+      catch (e) { NOTIFS = []; }
+      var unread = NOTIFS.filter(function (n) { return !n.is_read; }).length;
+      badge.textContent = unread; badge.classList.toggle('hidden', unread === 0);
+      render();
+    }
+    function render() {
+      var am = document.documentElement.getAttribute('data-lang') === 'am';
+      if (!NOTIFS.length) { list.innerHTML = '<li class="py-6 text-center text-ink-soft text-sm">' + (am ? 'ማሳወቂያ የለም።' : 'No notifications.') + '</li>'; return; }
+      list.innerHTML = NOTIFS.map(function (n) {
+        return '<li class="py-3 flex items-start justify-between gap-3' + (n.is_read ? ' opacity-60' : '') + '">' +
+          '<div><p class="font-medium text-xs">' + esc(n.title) + '</p>' +
+          '<p class="text-xs text-ink-soft mt-0.5">' + esc(n.message) + '</p>' +
+          '<p class="text-[10px] text-outline mt-1">' + esc(n.created_at || '') + '</p></div>' +
+          (n.is_read ? '' : '<button class="js-notif-read shrink-0 text-[11px] font-semibold text-primary hover:underline" data-id="' + n.id + '">' + (am ? 'ተነበበ' : 'Read') + '</button>') +
+        '</li>';
+      }).join('');
+    }
+    bell.addEventListener('click', function (e) { e.stopPropagation(); panel.classList.toggle('hidden'); });
+    document.addEventListener('click', function (e) { if (!panel.contains(e.target) && e.target !== bell) panel.classList.add('hidden'); });
+    list.addEventListener('click', async function (e) {
+      var b = e.target.closest('.js-notif-read'); if (!b) return;
+      try { await gs.api('/api/admin/inbox/index.php', { method: 'POST', body: JSON.stringify({ id: parseInt(b.dataset.id, 10) }) }); load(); }
+      catch (err) { gs.toast(err.message, 'error'); }
+    });
+    document.addEventListener('gs:lang-change', render);
+    load();
+  })();
 </script>
 </body>
 </html>

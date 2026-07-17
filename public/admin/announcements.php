@@ -35,10 +35,9 @@ require __DIR__ . '/_partials/page-shell.php';
           <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Send to</label>
           <select id="f_target" class="input-field">
             <option value="role">A role</option>
+            <option value="department">A department</option>
             <option value="class">A class</option>
-            <option value="subject">A subject</option>
-            <option value="payment_defaulters">Payment defaulters</option>
-            <option value="event">Event attendees</option>
+            <option value="user">A specific person</option>
           </select>
         </div>
         <div id="payloadWrap">
@@ -71,7 +70,7 @@ require __DIR__ . '/_partials/page-shell.php';
 </div>
 
 <script>
-  var classes = [], subjects = [], terms = [];
+  var classes = [], departments = [], users = [];
   function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
 
   function renderPayloadForm() {
@@ -79,48 +78,41 @@ require __DIR__ . '/_partials/page-shell.php';
     var w = document.getElementById('payloadWrap');
     if (t === 'role') {
       w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Role</label>' +
-        '<select id="p_role" class="input-field"><option value="student">Students</option><option value="parent">Parents</option><option value="teacher">Teachers</option><option value="admin">Admins</option></select>';
+        '<select id="p_role" class="input-field"><option value="student">Students</option><option value="parent">Parents</option><option value="teacher">Teachers</option><option value="staff">Staff / dept heads</option><option value="admin">Admins</option></select>';
+    } else if (t === 'department') {
+      w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Department</label>' +
+        '<select id="p_dept" class="input-field">' + departments.filter(function(d){return d.is_archived==0;}).map(function(d){
+          return '<option value="'+d.id+'">'+escHtml(d.name + (d.name_am ? ' · ' + d.name_am : ''))+'</option>';
+        }).join('') + '</select>';
     } else if (t === 'class') {
       w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Class</label>' +
         '<select id="p_class" class="input-field">' + classes.filter(function(c){return c.is_archived==0;}).map(function(c){
           return '<option value="'+c.id+'">'+escHtml((c.track_name||'') + ' · ' + (c.level_name||'') + ' · ' + c.name + ' (' + c.academic_year + ')')+'</option>';
         }).join('') + '</select>';
-    } else if (t === 'subject') {
-      w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Subject</label>' +
-        '<select id="p_subject" class="input-field">' + subjects.filter(function(s){return s.is_archived==0;}).map(function(s){
-          return '<option value="'+s.id+'">'+escHtml(s.name)+'</option>';
-        }).join('') + '</select>';
-    } else if (t === 'payment_defaulters') {
-      w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Term</label>' +
-        '<select id="p_term" class="input-field">' + terms.filter(function(t){return t.is_archived==0;}).map(function(t){
-          return '<option value="'+t.id+'"'+(t.is_current==1?' selected':'')+'>'+escHtml(t.academic_year + ' · ' + t.name)+'</option>';
-        }).join('') + '</select>';
     } else {
-      w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Event ID</label>' +
-        '<input id="p_event_id" type="number" class="input-field" placeholder="(optional)" />';
+      w.innerHTML = '<label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Person</label>' +
+        '<select id="p_user" class="input-field">' + users.filter(function(u){return u.is_archived==0;}).map(function(u){
+          return '<option value="'+u.id+'">'+escHtml(u.email + ' (' + u.role + ')')+'</option>';
+        }).join('') + '</select>';
     }
   }
 
   function buildPayload() {
     var t = document.getElementById('f_target').value;
     if (t === 'role') return { role: document.getElementById('p_role').value };
+    if (t === 'department') return { department_id: parseInt(document.getElementById('p_dept').value, 10) };
     if (t === 'class') return { class_id: parseInt(document.getElementById('p_class').value, 10) };
-    if (t === 'subject') return { subject_id: parseInt(document.getElementById('p_subject').value, 10) };
-    if (t === 'payment_defaulters') return { term_id: parseInt(document.getElementById('p_term').value, 10) };
-    if (t === 'event') {
-      var v = document.getElementById('p_event_id').value;
-      return v ? { event_id: parseInt(v, 10) } : null;
-    }
+    if (t === 'user') return { user_id: parseInt(document.getElementById('p_user').value, 10) };
     return null;
   }
 
+  function roleLabel(r) { return { student:'Students', parent:'Parents', teacher:'Teachers', staff:'Staff', admin:'Admins' }[r] || (r + 's'); }
   function describeTarget(n) {
     var p = n.target_payload || {};
-    if (n.target_type === 'role') return 'All ' + (p.role || 'users') + 's';
-    if (n.target_type === 'class') return 'Class #' + (p.class_id || '?');
-    if (n.target_type === 'subject') return 'Subject #' + (p.subject_id || '?');
-    if (n.target_type === 'payment_defaulters') return 'Defaulters · Term #' + (p.term_id || '?');
-    if (n.target_type === 'event') return 'Event #' + (p.event_id || '?');
+    if (n.target_type === 'role') return 'All ' + roleLabel(p.role);
+    if (n.target_type === 'department') { var d = departments.filter(function(x){return x.id==p.department_id;})[0]; return 'Dept · ' + (d ? d.name : '#' + (p.department_id||'?')); }
+    if (n.target_type === 'class') { var c = classes.filter(function(x){return x.id==p.class_id;})[0]; return 'Class · ' + (c ? c.name : '#' + (p.class_id||'?')); }
+    if (n.target_type === 'user') { var u = users.filter(function(x){return x.id==p.user_id;})[0]; return 'Person · ' + (u ? u.email : '#' + (p.user_id||'?')); }
     return n.target_type;
   }
 
@@ -146,12 +138,12 @@ require __DIR__ . '/_partials/page-shell.php';
 
   async function init() {
     try {
-      var [c, s, t] = await Promise.all([
+      var [c, d, u] = await Promise.all([
         gs.api('/api/admin/classes/index.php'),
-        gs.api('/api/admin/subjects/index.php'),
-        gs.api('/api/admin/terms/index.php')
+        gs.api('/api/admin/departments/index.php'),
+        gs.api('/api/admin/users/index.php')
       ]);
-      classes = c.data || []; subjects = s.data || []; terms = t.data || [];
+      classes = c.data || []; departments = d.data || []; users = u.data || [];
       renderPayloadForm();
       loadList();
     } catch (e) { gs.toast(e.message,'error'); }

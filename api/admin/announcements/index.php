@@ -1,15 +1,16 @@
 <?php
 // api/admin/announcements/index.php — admin compose & list of broadcast notifications
 // GET   /api/admin/announcements?include_archived=
-// POST  body: { title, message, target_type, target_payload? }
-//   target_type: role | class | subject | payment_defaulters | event
-//   target_payload: { role?: 'student|teacher|admin', class_id?, subject_id?, term_id?, event_id? }
+// POST  body: { title, message, target_type, target_payload?, is_public? }
+//   target_type: role | department | class | user  (the readable contract — see notifications_lib.php)
+//   target_payload: { role?: 'student|teacher|parent|staff|admin', department_id?, class_id?, user_id? }
 // DELETE body: { id }
 
 use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../notifications_lib.php';
 require_csrf_for_write();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -17,7 +18,7 @@ $config = app_config();
 $db = new Database($config['db']);
 $pdo = $db->pdo();
 
-$validTargets = ['role','class','subject','payment_defaulters','event'];
+$validTargets = array_keys(NOTIFY_TARGETS); // role | department | class | user
 
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
@@ -47,16 +48,28 @@ if ($method === 'POST') {
     $isPublic = !empty($input['is_public']) ? 1 : 0;
 
     if ($title === '' || $message === '') Response::error('title and message are required', 422);
-    if (!in_array($tgt, $validTargets, true)) Response::error('Invalid target_type', 422);
     if ($payload !== null && !is_array($payload)) Response::error('target_payload must be an object', 422);
-    $payloadJson = $payload ? json_encode($payload) : null;
 
     $userId = (int)($_SESSION['user_id'] ?? 0);
     $roleId = (int)($_SESSION['role_id'] ?? 0);
 
-    $ins = $pdo->prepare('INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message, is_public) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    $ins->execute([$userId ?: null, $roleId ?: null, $tgt, $payloadJson, $title, $message, $isPublic]);
-    $newId = (int)$pdo->lastInsertId();
+    // notify() is the single choke point: it validates target_type + payload
+    // shape against NOTIFY_TARGETS, so the composer cannot write a row no reader
+    // can match. Normalise the id-bearing payloads to ints first.
+    if (is_array($payload)) {
+        foreach (['department_id','class_id','user_id'] as $k) {
+            if (isset($payload[$k])) $payload[$k] = (int)$payload[$k];
+        }
+    }
+    try {
+        $newId = notify($pdo, $tgt, $payload, $title, $message, [
+            'senderUserId' => $userId,
+            'senderRoleId' => $roleId,
+            'isPublic'     => (bool)$isPublic,
+        ]);
+    } catch (NotifyError $e) {
+        Response::error($e->getMessage(), 422);
+    }
     \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt, 'is_public' => $isPublic]);
     Response::json(['ok' => true, 'id' => $newId]);
 }

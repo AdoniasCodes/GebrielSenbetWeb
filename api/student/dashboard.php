@@ -5,6 +5,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../notifications_lib.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') Response::error('Method not allowed', 405);
 
@@ -105,33 +106,21 @@ if ($pid > 0) {
 }
 $classId = $class ? (int)$class['class_id'] : 0;
 
-$annSql = "SELECT id, title, message, target_type, target_payload, created_at
-     FROM notifications
-     WHERE is_archived=0
-       AND (
-         is_public=1
-         OR (target_type='role' AND JSON_EXTRACT(target_payload,'$.role')='student')";
-$annParams = [];
-if ($deptIds) {
-    $ph = implode(',', array_fill(0, count($deptIds), '?'));
-    // JSON_UNQUOTE, not a bare JSON_EXTRACT comparison: PDO sends the bound
-    // param as a typed value (ATTR_EMULATE_PREPARES=false), which a raw
-    // JSON_EXTRACT scalar won't match (see api/teacher/notifications.php).
-    $annSql .= " OR (target_type='department' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.department_id')) IN ($ph))";
-    $annParams = array_merge($annParams, $deptIds);
-}
-if ($classId > 0) {
-    $annSql .= " OR (target_type='class' AND JSON_UNQUOTE(JSON_EXTRACT(target_payload,'$.class_id')) = ?)";
-    $annParams[] = $classId;
-}
-$annSql .= ") ORDER BY created_at DESC LIMIT 50";
-$astmt2 = $pdo->prepare($annSql);
-$astmt2->execute($annParams);
-$ann = $astmt2->fetchAll();
-foreach ($ann as &$a) {
-    unset($a['target_type'], $a['target_payload']);
-}
-unset($a);
+// Targeting + unread via the shared contract (api/notifications_lib.php).
+$annQ = notif_inbox_query([
+    'user_id'  => (int)($_SESSION['user_id'] ?? 0),
+    'role'     => 'student',
+    'dept_ids' => $deptIds,
+    'class_ids'=> $classId > 0 ? [$classId] : [],
+], 50);
+$astmt2 = $pdo->prepare($annQ['sql']);
+$astmt2->execute($annQ['params']);
+$ann = array_map(function ($a) {
+    return [
+        'id' => $a['id'], 'title' => $a['title'], 'message' => $a['message'],
+        'created_at' => $a['created_at'], 'is_read' => (bool)$a['is_read'],
+    ];
+}, $astmt2->fetchAll());
 
 Response::json([
     'profile' => $profile,

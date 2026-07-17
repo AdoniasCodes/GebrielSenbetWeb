@@ -60,6 +60,10 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
       <h1 class="font-display text-2xl text-primary" data-en="My Departments" data-am="የእኔ ክፍሎች">My Departments</h1>
     </div>
     <div class="flex items-center gap-3">
+      <button id="notifBell" class="relative p-2 text-ink-soft hover:text-primary" aria-label="Notifications">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <span id="notifBadge" class="hidden absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-error text-white text-[10px] font-bold flex items-center justify-center">0</span>
+      </button>
       <div class="flex items-center bg-surface-mid rounded-full p-0.5 border border-outline-soft/50">
         <button data-lang="en" class="seg-active px-3 py-1 text-xs font-semibold rounded-full">EN</button>
         <button data-lang="am" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft ethiopic">አማ</button>
@@ -68,6 +72,17 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
       <button id="logoutBtn" class="btn-ghost" data-en="Sign out" data-am="ውጣ">Sign out</button>
     </div>
   </header>
+
+  <!-- Notifications panel -->
+  <section id="notifPanel" class="panel hidden mb-6">
+    <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between">
+      <h2 class="font-display text-lg text-ink" data-en="Notifications" data-am="ማሳወቂያዎች">Notifications</h2>
+      <button id="notifClose" class="text-ink-soft hover:text-primary p-1" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </header>
+    <ul id="notifList" class="divide-y divide-outline-soft/20 px-6">
+      <li class="py-6 text-center text-ink-soft text-sm" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</li>
+    </ul>
+  </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <section class="panel lg:col-span-1 self-start">
@@ -565,11 +580,42 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
 
   v('logoutBtn').addEventListener('click', async function(){ try{ await gs.api('/api/auth/logout.php',{method:'POST'}); }catch(e){} window.location.href='/'; });
 
+  // ---------- notifications ----------
+  var NOTIFS=[];
+  function escN(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+  async function loadNotifs(){
+    try{ var d=await gs.api('/api/staff/notifications.php'); NOTIFS=d.data||[]; }catch(e){ NOTIFS=[]; }
+    var unread=NOTIFS.filter(function(n){return !n.is_read;}).length;
+    var badge=v('notifBadge'); badge.textContent=unread; badge.classList.toggle('hidden',unread===0);
+    renderNotifs();
+  }
+  function renderNotifs(){
+    var am=curLang()==='am';
+    var ul=v('notifList');
+    if(!NOTIFS.length){ ul.innerHTML='<li class="py-6 text-center text-ink-soft text-sm">'+(am?'ማሳወቂያ የለም።':'No notifications.')+'</li>'; return; }
+    ul.innerHTML=NOTIFS.map(function(n){
+      return '<li class="py-3 flex items-start justify-between gap-4'+(n.is_read?' opacity-60':'')+'">'+
+        '<div><p class="font-medium text-sm">'+escN(n.title)+'</p>'+
+        '<p class="text-sm text-ink-soft mt-0.5">'+escN(n.message)+'</p>'+
+        '<p class="text-[11px] text-outline mt-1">'+escN(n.created_at||'')+'</p></div>'+
+        (n.is_read?'':'<button class="js-notif-read shrink-0 text-xs font-semibold text-primary hover:underline" data-id="'+n.id+'">'+(am?'እንደተነበበ ምልክት':'Mark read')+'</button>')+
+      '</li>';
+    }).join('');
+  }
+  v('notifBell').addEventListener('click', function(){ v('notifPanel').classList.toggle('hidden'); });
+  v('notifClose').addEventListener('click', function(){ v('notifPanel').classList.add('hidden'); });
+  v('notifList').addEventListener('click', async function(e){
+    var b=e.target.closest('.js-notif-read'); if(!b) return;
+    try{ await gs.api('/api/staff/notifications.php',{method:'POST',body:JSON.stringify({id:parseInt(b.dataset.id,10)})}); loadNotifs(); }
+    catch(err){ gs.toast(err.message,'error'); }
+  });
+
   (async function(){
     try{
       var d=await gs.api('/api/staff/departments.php');
       depts=d.data||[]; renderDeptList();
     }catch(e){ gs.toast(e.message,'error'); }
+    loadNotifs();
   })();
   applyLang('en');
 </script>

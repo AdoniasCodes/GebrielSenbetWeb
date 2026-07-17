@@ -10,6 +10,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../notifications_lib.php';
 require_csrf_for_write();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -66,11 +67,24 @@ if ($method === 'POST' || $method === 'PUT') {
         $eid = (int)($input['id'] ?? 0);
         if ($eid <= 0) Response::error('id is required', 422);
         $newStatus = $action === 'approve' ? 'approved' : 'rejected';
-        $chk = $pdo->prepare('SELECT id FROM events WHERE id=? AND is_archived=0');
+        $chk = $pdo->prepare('SELECT title, created_by_user_id FROM events WHERE id=? AND is_archived=0');
         $chk->execute([$eid]);
-        if (!$chk->fetchColumn()) Response::error('Event not found', 404);
+        $ev = $chk->fetch();
+        if (!$ev) Response::error('Event not found', 404);
+        $adminId = (int)($_SESSION['user_id'] ?? 0);
         $stmt = $pdo->prepare('UPDATE events SET status=?, approved_by_user_id=?, approved_at=NOW() WHERE id=?');
-        $stmt->execute([$newStatus, (int)($_SESSION['user_id'] ?? 0) ?: null, $eid]);
+        $stmt->execute([$newStatus, $adminId ?: null, $eid]);
+
+        // Producer: notify the proposer of the admin's decision.
+        $proposerId = (int)$ev['created_by_user_id'];
+        if ($proposerId > 0 && $proposerId !== $adminId) {
+            notify_user(
+                $pdo, $proposerId,
+                'Event ' . $newStatus . ' / የመርሐ ግብር ውሳኔ',
+                'Your proposed event "' . (string)$ev['title'] . '" was ' . $newStatus . '.',
+                ['senderUserId' => $adminId, 'senderRoleId' => (int)($_SESSION['role_id'] ?? 0)]
+            );
+        }
         Response::json(['ok' => true, 'id' => $eid, 'status' => $newStatus]);
     }
 

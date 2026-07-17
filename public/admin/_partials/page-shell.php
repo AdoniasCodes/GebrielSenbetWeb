@@ -260,9 +260,18 @@ $nav_groups = [
           <button data-lang="am" class="px-3 py-1 text-xs font-semibold rounded-full text-ink-soft hover:text-primary ethiopic">አማ</button>
         </div>
 
-        <button class="bell w-10 h-10 rounded-full bg-surface-mid border border-outline-soft/50 inline-flex items-center justify-center text-ink-soft hover:text-primary transition-colors">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21h4"/></svg>
-        </button>
+        <div class="relative">
+          <button id="notifBell" class="bell relative w-10 h-10 rounded-full bg-surface-mid border border-outline-soft/50 inline-flex items-center justify-center text-ink-soft hover:text-primary transition-colors" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21h4"/></svg>
+            <span id="notifBadge" class="hidden absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-error text-white text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+          <div id="notifPanel" class="hidden absolute right-0 mt-2 w-80 max-h-[420px] overflow-y-auto bg-surface border border-outline-soft/50 rounded-lg shadow-xl z-50">
+            <header class="px-4 py-3 border-b border-outline-soft/40 flex items-center justify-between sticky top-0 bg-surface">
+              <h2 class="font-display text-sm text-ink" data-en="Notifications" data-am="ማሳወቂያዎች">Notifications</h2>
+            </header>
+            <ul id="notifList" class="divide-y divide-outline-soft/20 px-4"></ul>
+          </div>
+        </div>
 
         <a href="/admin/settings.php" class="avatar hover:opacity-90 transition-opacity"><?= htmlspecialchars($initials) ?></a>
       </div>

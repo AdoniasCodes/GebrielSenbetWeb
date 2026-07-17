@@ -184,10 +184,11 @@ try {
         $accounts[] = ['role' => 'staff (head: ' . $d['name'] . ')', 'email' => $email, 'password' => $hu['pw']];
     }
 
-    // A public announcement so dashboards show one.
-    $pdo->prepare("INSERT INTO notifications (sender_user_id, target_type, title, message, is_public)
-                   VALUES (?, 'role', 'Welcome', 'This is a demo announcement created by the reset tool.', 1)")
-        ->execute([$keepAdminId]);
+    // A public announcement so dashboards show one. is_public makes it visible
+    // to everyone; the role payload just satisfies the target contract.
+    require_once __DIR__ . '/../../notifications_lib.php';
+    notify_role($pdo, 'student', 'Welcome', 'This is a demo announcement created by the reset tool.',
+        ['senderUserId' => $keepAdminId, 'isPublic' => true]);
 
     Response::json(['ok' => true, 'action' => 'load_demo', 'deleted' => $deleted,
                     'accounts' => $accounts, 'demo_password_note' => 'Shown once — save now.']);

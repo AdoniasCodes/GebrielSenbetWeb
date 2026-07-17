@@ -350,5 +350,5 @@ Choir module (song catalog, advancement workflow, paid courses + funds) · per-d
 3. **Staff `form.create`**: confirm dept heads must NOT create standalone forms (recommended per your Step 3 spec) so the server-side removal is correct.
 4. **Capacity counting policy** (§4.3): count accepted submissions only (recommended), or all non-archived?
 5. **Pass-mark ownership** (§8): does the minimum passing percentage live per department, per grade-level, or globally with overrides? (Recommended: per grade-level with department override.)
-6. **Announcement moderation policy** (Phase 2.4): teacher and dept-head announcements stay approval-free (current behavior for teachers), or gain head/admin approval to match events?
+6. ~~**Announcement moderation policy** (Phase 2.4)~~ — **RESOLVED 2026-07-15: approval-free.** Both teacher and dept-head announcements post immediately; only events require approval. Consistent with the locked dept-model decision.
 7. **Phase 5 design step**: the Dept Head workspace gets a design pass (ui-ux-pro-max, one page at a time per your standing preference) before build. Confirm tab list in §5 or amend.

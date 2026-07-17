@@ -150,11 +150,9 @@ function notify_department_assignment(
         $message = 'You were assigned to the ' . $joined . ' department.';
     }
 
-    $payload = json_encode(['user_id' => $targetUserId], JSON_UNESCAPED_UNICODE);
-    $ins = $pdo->prepare(
-        'INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message, is_public)
-         VALUES (?, ?, ?, ?, ?, ?, 0)'
-    );
-    $ins->execute([$senderUserId ?: null, $senderRoleId ?: null, 'user', $payload, $title, $message]);
-    return (int)$pdo->lastInsertId();
+    require_once __DIR__ . '/notifications_lib.php';
+    return notify_user($pdo, $targetUserId, $title, $message, [
+        'senderUserId' => $senderUserId,
+        'senderRoleId' => $senderRoleId,
+    ]);
 }

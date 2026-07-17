@@ -1,7 +1,21 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-PHASE 1 COMPLETE (2026-07-13): all four Phase 1 items from `SYSTEM_AUDIT_AND_BLUEPRINT.md` §9 built and verified locally. Awaiting manual cPanel deploy; after deploy hit the migrate endpoint to apply migrations 019 + 020 + 021 (019 from the previous release is still pending on prod too). Next: Phase 2 (workflow consistency: notification engine, grade finalization, term-scoped attendance, dept-head announcements).
+PHASE 2.1 COMPLETE (2026-07-17): notification engine v1 built + verified locally (21/21 lib E2E, HTTP producer/reader chains green). NOT yet committed or deployed. Migrations 019+020+021 STILL pending on prod, and now 022 too. Next in Phase 2: 2.2 grade finalization, 2.3 term-scoped attendance, 2.4 dept-head announcements (approval-free — decided), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
+
+## Phase 2.1 summary (2026-07-17) — notification engine v1
+The pre-2.1 bug: composer target list, UI dropdown, and each portal's reader query were three drifted lists. 5 of 8 composer targets wrote rows no reader could match (admin→Teachers announcements were silently discarded forever); the 2 targets readers supported (department, user) couldn't be written by admin.
+- **`api/notifications_lib.php` (new)**: single target contract. `NOTIFY_TARGETS` (role|department|class|user), `notify()` choke point + typed wrappers, `notif_audience_clause()`/`notif_inbox_query()` reader builders, `notif_mark_read()` (INSERT IGNORE), `notif_department_head_user_ids()` (compound "dept heads" audience fans out to user rows). A writable target is by construction a readable one — drift is now structurally impossible.
+- **Migration `022_notification_reads.sql`**: per-user read state moves from `notifications.read_by` JSON (had a lost-update race) into a join table; JSON_CONTAINS backfill (MariaDB-safe); `migration_022_applied` marker + migrate.php probe. `read_by` left in place (Phase 3 drops it) so release is rollback-safe.
+- **Composer** (`api/admin/announcements/index.php` + `public/admin/announcements.php`): targets → role|department|class|user; dropped subject/payment_defaulters/event (dead), added department + user pickers, role list gained staff. Routes through notify().
+- **Readers**: teacher (was user-only → now user+role:teacher+department+class, the biggest gap), student, parent moved onto shared clause + unread. NEW inboxes: staff (`api/staff/notifications.php`) and admin (`api/admin/inbox/`) — required so new producers land somewhere. UI: bell+panel in staff portal header and admin shell (`page-shell.php`/`page-shell-end.php`, works on every admin page).
+- **Producers via notify()**: event proposed→dept heads; event approved/rejected→proposer (staff + admin); registration submitted→admins+dept heads; payment generated→students (batched after commit); dept assignment migrated onto notify(); demo-reset null-payload row fixed. NOTE: "registration decided→applicant" DEFERRED to Phase 4 (submissions have no user link; status is internal triage new|seen|contacted, not applicant-facing).
+- Decision locked: announcements stay approval-free (blueprint open Q#6 resolved).
+
+## Deploy checklist for Phase 2.1 (after commit)
+1. Eyoel: cPanel → Git Version Control → Update from Remote + Deploy HEAD Commit.
+2. Hit migrate endpoint → expect 019, 020, 021, 022 applied.
+3. Smoke: admin Announcements composer now offers role/department/class/person; send to Teachers → a teacher login sees it in their bell (the headline fix). Staff + admin bells populate.
 
 ## Phase 1 summary (2026-07-13)
 1. **1.3 security**: `form.create` removed from `api/staff/registrations.php` (admin-only, verified 403 + no row). `api/setup/demo_logins.php` hardened: never seeds admin, random per-run password, auto-archives + rotates the legacy `demo@` admin if present (verified). Prod checked: backdoor login already rejected (401). Bonus fix: `reg_create_form` fataled when `status` omitted (bad ternary) — fixed.
