@@ -8,6 +8,7 @@ use App\Database;
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../attendance_lib.php';
 require_csrf_for_write();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -55,8 +56,9 @@ if ($method === 'POST') {
     $title = isset($in['title']) && $in['title'] !== '' ? trim((string)$in['title']) : null;
     $churchId = (int)($in['church_id'] ?? 0) ?: null;
     $uid = (int)($_SESSION['user_id'] ?? 0) ?: null;
-    $ins = $pdo->prepare('INSERT INTO attendance_sessions (context_type, context_id, title, session_date, church_id, created_by_user_id) VALUES (?,?,?,?,?,?)');
-    $ins->execute([$ctype, $cid, $title, $date, $churchId, $uid]);
+    $termId = attendance_term_for_date($pdo, $date); // Phase 2.3: term from the date
+    $ins = $pdo->prepare('INSERT INTO attendance_sessions (context_type, context_id, title, session_date, term_id, church_id, created_by_user_id) VALUES (?,?,?,?,?,?,?)');
+    $ins->execute([$ctype, $cid, $title, $date, $termId, $churchId, $uid]);
     $id = (int)$pdo->lastInsertId();
     \App\Audit::log('attendance.session.create', 'attendance_session', $id, ['context' => "$ctype:$cid", 'date' => $date]);
     Response::json(['ok' => true, 'id' => $id], 201);

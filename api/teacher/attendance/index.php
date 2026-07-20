@@ -5,6 +5,7 @@
 use App\Utils\Response;
 
 require_once __DIR__ . '/../_guard.php';
+require_once __DIR__ . '/../../attendance_lib.php';
 require_csrf_for_write();
 
 $pdo = tch_pdo();
@@ -77,9 +78,10 @@ if ($method === 'POST') {
 
     $sessionId = tch_find_session($pdo, $classId, $date);
     if (!$sessionId) {
-        $ins = $pdo->prepare("INSERT INTO attendance_sessions (context_type, context_id, session_date, created_by_user_id)
-                              VALUES ('class', ?, ?, ?)");
-        $ins->execute([$classId, $date, (int)($_SESSION['user_id'] ?? 0)]);
+        $termId = attendance_term_for_date($pdo, $date); // Phase 2.3: term from the date
+        $ins = $pdo->prepare("INSERT INTO attendance_sessions (context_type, context_id, session_date, term_id, created_by_user_id)
+                              VALUES ('class', ?, ?, ?, ?)");
+        $ins->execute([$classId, $date, $termId, (int)($_SESSION['user_id'] ?? 0)]);
         $sessionId = (int)$pdo->lastInsertId();
     }
     $up = $pdo->prepare("INSERT INTO attendance_records (session_id, person_id, status) VALUES (?,?,?)

@@ -1,7 +1,25 @@
 # Handoff — GebrielSenbetWeb
 
 ## Current phase
-PHASE 2.2 COMPLETE (2026-07-17): grade finalization built + verified locally (12/12 HTTP E2E). 2.1 already committed+pushed (96783b9); 2.2 committing now. Prod deploy still pending: migrations 019+020+021+022+023 all unapplied on prod. Next in Phase 2: 2.3 term-scoped attendance, 2.4 dept-head announcements (approval-free), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
+PHASE 2.3 COMPLETE (2026-07-20): term-scoped attendance built + verified locally (5/5 HTTP E2E). 2.1 (96783b9) + 2.2 (e6a1edb) pushed; 2.3 committing now. Prod deploy still pending: migrations 019-024 all unapplied on prod. Next in Phase 2: 2.4 dept-head announcements (approval-free), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
+
+## Phase 2.3 summary (2026-07-20) — term-scoped attendance
+- **Migration 024**: `attendance_sessions.term_id` (FK academic_terms, ON DELETE SET NULL) + index;
+  backfill by correlated date-range subquery (tie-break is_current, id); marker + probe.
+- **`api/attendance_lib.php`**: `attendance_term_for_date()` (the single term-derivation rule, term
+  whose [start,end] contains the date; gap → NULL) + `attendance_class_summary()` (per-student
+  counts + canonical rate `(present+late)/(present+late+absent)`, excused excluded, class context).
+- **Producers stamp term_id** on session insert: teacher class, teacher dept, admin attendance.
+- **Teacher view**: `api/teacher/attendance/summary.php?class_id=&term_id=`; teacher Attendance tab
+  gained an "Attendance this term" per-student table (class context only, current term).
+- **Dept-head/admin view**: `gs_compute_eligibility($pdo,$dept,$termId)` gained an ADDITIVE
+  `term_attended/term_total/term_rate` per member; `eligible` flag STILL uses all-time rate
+  (no change to who can serve — that's Phase 6). Staff + admin eligibility tables show a
+  "This term" column. New helper `gs_current_term_id()`.
+- Student dashboard left as-is (all-time) by design — 2.3 targets teachers + dept heads only.
+- Note: local dev DB class-84 attendance rows were cleared by the E2E (test data only; prod
+  unaffected). Dept roll-call attendance (context_type='department') remains uncounted by
+  eligibility, same as before — a known dead-end for a later phase.
 
 ## Phase 2.2 summary (2026-07-17) — grade finalization
 Two locks with clear precedence (both consult `api/grades_lib.php`):

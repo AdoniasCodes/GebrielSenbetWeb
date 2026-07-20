@@ -18,6 +18,9 @@ if ($deptId <= 0) {
 if ($deptId <= 0) Response::error('No department available', 404);
 staff_assert_dept($deptId);
 
-$result = gs_compute_eligibility($pdo, $deptId);
+// Phase 2.3: attach a term-scoped rate per member (additive; eligibility flag
+// still uses the all-time rate). Default to the current term.
+$termId = (int)($_GET['term_id'] ?? 0) ?: gs_current_term_id($pdo);
+$result = gs_compute_eligibility($pdo, $deptId, $termId);
 $result['department_id'] = $deptId;
 Response::json($result);

@@ -58,6 +58,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '021_identity_unification.sql'     => "SELECT 1 FROM app_settings WHERE setting_key='migration_021_applied' LIMIT 1",
         '022_notification_reads.sql'       => "SELECT 1 FROM app_settings WHERE setting_key='migration_022_applied' LIMIT 1",
         '023_grade_finalization.sql'       => "SELECT 1 FROM app_settings WHERE setting_key='migration_023_applied' LIMIT 1",
+        '024_attendance_term.sql'          => "SELECT 1 FROM app_settings WHERE setting_key='migration_024_applied' LIMIT 1",
     ];
     if (!isset($checks[$filename])) return null;
     try {

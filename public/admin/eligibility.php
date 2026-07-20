@@ -42,11 +42,12 @@ require __DIR__ . '/_partials/page-shell.php';
       <thead><tr>
         <th data-en="Name" data-am="ስም">Name</th>
         <th data-en="Level" data-am="ደረጃ">Level</th>
-        <th data-en="Attendance" data-am="መገኘት">Attendance</th>
+        <th data-en="Attendance (all-time)" data-am="መገኘት (ጠቅላላ)">Attendance (all-time)</th>
         <th data-en="Rate" data-am="መጠን">Rate</th>
+        <th data-en="This term" data-am="የዚህ ወቅት">This term</th>
         <th data-en="Serving" data-am="አገልግሎት">Serving</th>
       </tr></thead>
-      <tbody id="tbody"><tr><td colspan="5" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
+      <tbody id="tbody"><tr><td colspan="6" class="text-center text-ink-soft py-12">Loading…</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -72,10 +73,11 @@ require __DIR__ . '/_partials/page-shell.php';
       ? (eligible+' ብቁ · '+(withData-eligible)+' ብቁ ያልሆኑ · '+(m.length-withData)+' መረጃ የለም')
       : (eligible+' eligible · '+(withData-eligible)+' not eligible · '+(m.length-withData)+' no data'));
     var tb = v('tbody');
-    if (!m.length) { tb.innerHTML = '<tr><td colspan="5" class="text-center text-ink-soft py-12" data-en="No members." data-am="አባል የለም።">No members.</td></tr>'; return; }
+    if (!m.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center text-ink-soft py-12" data-en="No members." data-am="አባል የለም።">No members.</td></tr>'; return; }
     tb.innerHTML = m.map(function(x){
       var lvl = curLang()==='am' ? (x.level_name_am||x.level_name) : (x.level_name);
       var serving, rateCell;
+      var termCell = (x.term_total && x.term_total>0) ? (x.term_rate+'% ('+x.term_attended+'/'+x.term_total+')') : '—';
       if (!x.has_data) {
         rateCell = '<span class="text-ink-soft">—</span>';
         serving = '<span class="pill pill-archived">'+(curLang()==='am'?'መረጃ የለም':'no data')+'</span>';
@@ -91,6 +93,7 @@ require __DIR__ . '/_partials/page-shell.php';
         '<td class="text-ink-soft ethiopic">'+escHtml(lvl||'—')+'</td>' +
         '<td class="text-ink-soft text-sm">'+x.attended+' / '+x.total+'</td>' +
         '<td>'+rateCell+'</td>' +
+        '<td class="text-ink-soft text-sm">'+termCell+'</td>' +
         '<td>'+serving+'</td>' +
       '</tr>';
     }).join('');

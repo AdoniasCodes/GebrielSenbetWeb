@@ -163,6 +163,20 @@ $email = $_SESSION['user_email'] ?? '';
             <p class="text-xs font-semibold uppercase tracking-widestest text-outline mb-2" data-en="Past sessions" data-am="ያለፉ ክፍለ ጊዜያት">Past sessions</p>
             <ul id="attPastList" class="text-sm divide-y divide-outline-soft/15"></ul>
           </div>
+          <div id="attSummary" class="mt-6 hidden border-t border-outline-soft/30 pt-5">
+            <p class="text-xs font-semibold uppercase tracking-widestest text-outline mb-3">
+              <span data-en="Attendance this term" data-am="የዚህ ወቅት መገኘት">Attendance this term</span>
+              <span id="attSummaryTerm" class="text-ink-soft normal-case tracking-normal"></span>
+            </p>
+            <div class="overflow-x-auto"><table class="w-full text-sm">
+              <thead><tr class="text-left text-[11px] uppercase tracking-widestest text-outline border-b border-outline-soft/30">
+                <th class="py-2 pr-4" data-en="Student" data-am="ተማሪ">Student</th>
+                <th class="py-2 pr-4 w-20" data-en="Rate" data-am="መጠን">Rate</th>
+                <th class="py-2" data-en="P / L / A / E" data-am="ተ / ዘ / ቀ / ፍ">P / L / A / E</th>
+              </tr></thead>
+              <tbody id="attSummaryBody"></tbody>
+            </table></div>
+          </div>
         </div>
       </div>
 
@@ -582,6 +596,7 @@ $email = $_SESSION['user_email'] ?? '';
   });
 
   async function loadDeptAttendance(){
+    document.getElementById('attSummary').classList.add('hidden'); // class-only summary
     var ul=document.getElementById('attBody'); document.getElementById('attMsg').textContent='';
     var dt=document.getElementById('attDate');
     if(!dt.value) dt.value=todayStr();
@@ -610,9 +625,31 @@ $email = $_SESSION['user_email'] ?? '';
     try{
       var d=await api('/api/teacher/attendance/index.php?class_id='+CURRENT.class_id+'&date='+dt.value);
       ATT=d.roster||[];
-      if(!ATT.length){ ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+t('No students in this class.','በዚህ ክፍል ተማሪ የለም።')+'</li>'; return; }
+      if(!ATT.length){ ul.innerHTML='<li class="py-8 text-center text-ink-soft text-sm">'+t('No students in this class.','በዚህ ክፍል ተማሪ የለም።')+'</li>'; loadClassSummary(); return; }
       renderAtt();
+      loadClassSummary();
     }catch(e){ ul.innerHTML='<li class="py-8 text-center text-error text-sm">'+escHtml(e.message)+'</li>'; }
+  }
+  // Per-student attendance % for the class this term (Phase 2.3). Class context only.
+  async function loadClassSummary(){
+    var box=document.getElementById('attSummary'); var tb=document.getElementById('attSummaryBody');
+    if(!CURRENT||(SEL&&SEL.type==='dept')){ box.classList.add('hidden'); return; }
+    var term=(TERMS.find(function(x){return Number(x.is_current)===1;})||TERMS[0]);
+    if(!term){ box.classList.add('hidden'); return; }
+    document.getElementById('attSummaryTerm').textContent=' · '+escHtml(term.name+' '+term.academic_year);
+    box.classList.remove('hidden');
+    tb.innerHTML='<tr><td colspan="3" class="py-4 text-center text-ink-soft">'+t('Loading…','በመጫን ላይ…')+'</td></tr>';
+    try{
+      var d=await api('/api/teacher/attendance/summary.php?class_id='+CURRENT.class_id+'&term_id='+term.id);
+      var rows=d.data||[];
+      if(!rows.length){ tb.innerHTML='<tr><td colspan="3" class="py-4 text-center text-ink-soft">'+t('No students.','ተማሪ የለም።')+'</td></tr>'; return; }
+      tb.innerHTML=rows.map(function(r){
+        var rate=(r.rate!=null)?(r.rate+'%'):'—';
+        return '<tr class="border-b border-outline-soft/15"><td class="py-2 pr-4 font-medium">'+escHtml(r.first_name+' '+r.last_name)+'</td>'+
+          '<td class="py-2 pr-4">'+rate+'</td>'+
+          '<td class="py-2 text-ink-soft">'+r.present+' / '+r.late+' / '+r.absent+' / '+r.excused+'</td></tr>';
+      }).join('');
+    }catch(e){ tb.innerHTML='<tr><td colspan="3" class="py-4 text-center text-error">'+escHtml(e.message)+'</td></tr>'; }
   }
   function renderAtt(){
     var ul=document.getElementById('attBody');
@@ -650,7 +687,7 @@ $email = $_SESSION['user_email'] ?? '';
         r=await api('/api/teacher/attendance/index.php',{method:'POST',body:JSON.stringify({class_id:CURRENT.class_id,date:document.getElementById('attDate').value,records:records})});
       }
       msg.className='text-sm text-olive'; msg.textContent=(isAm()?'ተቀምጧል: ':'Saved ')+(r.saved||0);
-      if(SEL.type==='dept') loadDeptAttendance();
+      if(SEL.type==='dept') loadDeptAttendance(); else loadClassSummary();
     }catch(e){ msg.className='text-sm text-error'; msg.textContent=e.message; }
   });
 

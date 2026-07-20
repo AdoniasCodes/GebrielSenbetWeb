@@ -162,7 +162,43 @@ everyone) OR that gradebook is finalized (soft, blocks only the teacher; admin b
 - `updated_by_user_id` stamped on every write.
 - Term close notifies a teacher login (bell shows it).
 
-## 2.3–2.5 (not started)
-3. Term-scoped attendance: `term_id` on sessions, per-student percentages to teachers + dept heads.
+## 2.3 Term-scoped attendance (in progress)
+
+### Decisions locked (2026-07-17)
+- **% formula unchanged:** `(present + late) / (present + late + absent)`, excused excluded from
+  the denominator, `context_type='class'` only. This is the canonical formula already shared by
+  `api/student/dashboard.php` and `api/eligibility_lib.php` — one definition everywhere.
+- **New-session term = auto-derived from `session_date`:** the term whose `[start_date, end_date]`
+  contains the date (deterministic — terms can't overlap). Date in a gap → NULL term_id.
+- **Eligibility stays all-time.** Term-scoping is ADDITIVE: eligibility keeps its current all-time
+  calculation (no change to who can serve). A per-member term rate is shown alongside as new info.
+  Eligibility redesign belongs to Phase 6.
+- **Student dashboard left as-is** (all-time): 2.3 targets teachers + dept heads, so we don't
+  silently change the number students already see.
+
+### Work items
+1. **Migration `024_attendance_term.sql`**: `attendance_sessions.term_id INT NULL` + FK
+   `academic_terms(id)` ON DELETE SET NULL, index. Backfill via correlated subquery
+   (`session_date BETWEEN start_date AND end_date`, tie-break `is_current DESC, id`) so overlap
+   can't multi-count. Marker 024 + probe.
+2. **`api/attendance_lib.php`**: `attendance_term_for_date($pdo,$date)` (the derivation, reused by
+   all producers); `attendance_class_summary($pdo,$classId,$termId)` (per-student counts + rate,
+   canonical formula, term-scoped).
+3. **Producers set term_id at insert** (all three session-create paths): teacher class
+   (`api/teacher/attendance/index.php`), teacher dept (`api/teacher/dept-attendance.php`), admin
+   (`api/admin/attendance/index.php`).
+4. **Teacher view**: new `api/teacher/attendance/summary.php?class_id=&term_id=` → per-student term
+   rate; Attendance tab gains a term selector + a "% this term" summary.
+5. **Dept-head view**: `gs_compute_eligibility()` gains an optional `$termId` → each member row also
+   carries `term_attended/term_total/term_rate` (class attendance, that term). The `eligible` flag
+   still uses the all-time rate. Staff + admin eligibility UIs show a "This term" column.
+
+### Verify
+- Backfill: existing sessions get the term containing their date; gap-dated sessions stay NULL.
+- New session (teacher/admin) stamps the derived term_id.
+- Teacher summary rate matches the formula for a known fixture; term filter actually narrows it.
+- Eligibility `eligible` flag unchanged vs pre-2.3; `term_rate` present and correct.
+
+## 2.4–2.5 (not started)
 4. Dept-head announcements: mirror the events pattern, approval-free per the locked decision.
 5. Tasks/homework: expose to students + parents, or explicitly park.

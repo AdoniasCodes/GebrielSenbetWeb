@@ -112,8 +112,8 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
           <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Serving eligibility" data-am="የአገልግሎት ብቁነት">Serving eligibility</span> · <span id="eligNote" class="text-ink-soft text-sm"></span></h3></header>
           <div class="p-4">
             <div style="overflow-x:auto"><table class="data">
-              <thead><tr><th data-en="Name" data-am="ስም">Name</th><th data-en="Level" data-am="ደረጃ">Level</th><th data-en="Attendance" data-am="መገኘት">Attendance</th><th data-en="Serving" data-am="አገልግሎት">Serving</th></tr></thead>
-              <tbody id="eligBody"><tr><td colspan="4" class="text-center text-ink-soft py-6">—</td></tr></tbody>
+              <thead><tr><th data-en="Name" data-am="ስም">Name</th><th data-en="Level" data-am="ደረጃ">Level</th><th data-en="Attendance (all-time)" data-am="መገኘት (ጠቅላላ)">Attendance (all-time)</th><th data-en="This term" data-am="የዚህ ወቅት">This term</th><th data-en="Serving" data-am="አገልግሎት">Serving</th></tr></thead>
+              <tbody id="eligBody"><tr><td colspan="5" class="text-center text-ink-soft py-6">—</td></tr></tbody>
             </table></div>
           </div>
         </div>
@@ -318,7 +318,8 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
       else if(x.eligible){ serving='<span class="pill pill-active">'+(curLang()==='am'?'ብቁ':'eligible')+'</span>'; }
       else { serving='<span class="pill" style="background:rgba(186,26,26,0.1);color:#ba1a1a">'+(curLang()==='am'?'ብቁ አይደለም':'not eligible')+'</span>'; }
       var rate=x.has_data?(x.rate+'% ('+x.attended+'/'+x.total+')'):'—';
-      return '<tr><td class="font-medium">'+escHtml(x.name)+'</td><td class="ethiopic text-ink-soft">'+escHtml(lvl||'—')+'</td><td class="text-ink-soft text-sm">'+rate+'</td><td>'+serving+'</td></tr>';
+      var termRate=(x.term_total&&x.term_total>0)?(x.term_rate+'% ('+x.term_attended+'/'+x.term_total+')'):'—';
+      return '<tr><td class="font-medium">'+escHtml(x.name)+'</td><td class="ethiopic text-ink-soft">'+escHtml(lvl||'—')+'</td><td class="text-ink-soft text-sm">'+rate+'</td><td class="text-ink-soft text-sm">'+termRate+'</td><td>'+serving+'</td></tr>';
     }).join('');
   }
 
