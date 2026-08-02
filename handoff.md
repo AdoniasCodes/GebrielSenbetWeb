@@ -1,5 +1,39 @@
 # Handoff — GebrielSenbetWeb
 
+## Last completed task (2026-08-02) — feature film on the landing gallery
+`IMG_1671.MOV` (110 MB, 1080p30, 74s) optimized and placed in the **"Our family, in worship." /
+ቤተሰባችን ፣ በአምልኮ።** section (`#life`), directly **above** the photo mosaic.
+- **Assets (new dir `public/media/`)**: `life-together-720.mp4` — 720p H.264 high, CRF 28, preset
+  slow, AAC 96k, `+faststart` (moov at byte 36) → **12 MB, 89% smaller** than source.
+  `life-together-poster.webp` (103 KB, frame @54.5s, the blessing shot).
+  VP9/WebM was encoded and **discarded** — libvpx came out at 18 MB, larger than the H.264, so
+  shipping it would have been pure weight. Do not re-add it without re-measuring.
+- **Markup** (`public/index.php`): `<figure>` with `preload="none"` + poster, so the section costs
+  ~103 KB until someone presses play. Custom overlay play button (`#lifeFilmPlay`), bilingual
+  label + figcaption.
+- **`controls` is NOT in the HTML** — JS sets `film.controls = true` on play. First attempt left it
+  on and the native control bar painted on top of the poster.
+- **`.film-scrim` / `.film-label`** added to the `<style>` block. First attempt used `bg-ink/40`,
+  then a weak linear gradient; both were far too light against a bright frame and the white label
+  was illegible. Final scrim is a radial vignette over a linear gradient. Verified by screenshot,
+  not by assumption.
+- **Verified** with puppeteer-core against the local server: video sits before the mosaic in
+  document order; pre-play `controls=false` + overlay visible; click → `paused=false`,
+  1280x720 decoded, duration 74.35s, controls on, overlay hidden; `ended` → overlay returns,
+  controls off, `currentTime` reset to 0; **zero console/page errors**. Desktop + 390px mobile
+  screenshots both good.
+- CSP needed no change (`default-src 'self'` covers self-hosted media; there is no `media-src`).
+
+## PROD IS STALE — migrations 019–024 never applied (verified 2026-08-02)
+`GET https://mekaneselamss.com/api/registrations/index.php` → **HTTP 500** (site root is 200).
+That endpoint reads the `registration_forms` table from migration 019, so **019 through 024 are all
+still unapplied on prod**. Live consequence: the landing page's `#register` section and the whole
+public registration flow are broken in production, and everything Phase 2.1-2.3 added (notification
+reads table, grade finalization, term-scoped attendance) is not live either.
+**Unblock:** cPanel → Git Version Control → Update from Remote + Deploy HEAD Commit, then hit the
+migrate endpoint with `X-DEPLOY-TOKEN` (see `instructions.md` / `reference_deployment_artifacts`
+memory) → expect 019, 020, 021, 022, 023, 024 applied. Then re-check the URL above returns 3 forms.
+
 ## Current phase
 PHASE 2.3 COMPLETE (2026-07-20): term-scoped attendance built + verified locally (5/5 HTTP E2E). 2.1 (96783b9) + 2.2 (e6a1edb) pushed; 2.3 committing now. Prod deploy still pending: migrations 019-024 all unapplied on prod. Next in Phase 2: 2.4 dept-head announcements (approval-free), 2.5 tasks/homework exposure. Full plan in `PHASE2_PLAN.md`.
 

@@ -119,6 +119,16 @@ $year = date('Y');
 
     .ethiopic { font-family: 'Noto Sans Ethiopic', serif; font-size: 1.08em; line-height: 1.65; }
 
+    /* Feature film overlay: dark enough to carry white type, light enough to keep the frame readable */
+    .film-scrim {
+      background:
+        radial-gradient(ellipse 46% 58% at 50% 50%, rgba(20,24,36,0.62) 0%, rgba(20,24,36,0.22) 62%, rgba(20,24,36,0) 100%),
+        linear-gradient(180deg, rgba(20,24,36,0.34) 0%, rgba(20,24,36,0.22) 45%, rgba(20,24,36,0.52) 100%);
+      transition: opacity 300ms ease;
+    }
+    .film-scrim:hover { opacity: 0.82; }
+    .film-label { text-shadow: 0 1px 14px rgba(20,24,36,0.85); }
+
     .link-arrow svg { transition: transform 200ms ease; }
     .link-arrow:hover svg { transform: translateX(4px); }
 
@@ -376,6 +386,31 @@ $year = date('Y');
           <p class="mt-4 text-lg text-ink-soft leading-relaxed" data-en="Feast days, learning, and service. Moments from the life of our Sunday School." data-am="የበዓል ቀናት፣ በትምህርት እና በአገልግሎት ላይ ከሰንብት ትምህርት ቤታችን የተወሰዱ ቅጽበቶች።">Feast days, learning, and service. Moments from the life of our Sunday School.</p>
         </div>
 
+        <!-- Feature film: poster only until the visitor presses play (preload="none" keeps the page light) -->
+        <figure class="mb-8 lg:mb-10">
+          <div id="lifeFilmFrame" class="group/vid relative overflow-hidden rounded-lg border border-outline-soft/40 bg-ink shadow-[0_1px_2px_rgba(20,24,36,0.08)]">
+            <!-- controls are added by JS on first play, so they never sit on top of the poster -->
+            <video id="lifeFilm" class="block w-full aspect-video bg-ink object-cover"
+                   poster="/media/life-together-poster.webp" preload="none" playsinline
+                   width="1280" height="720">
+              <source src="/media/life-together-720.mp4" type="video/mp4" />
+            </video>
+
+            <button id="lifeFilmPlay" type="button"
+                    class="film-scrim absolute inset-0 flex flex-col items-center justify-center gap-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-warm"
+                    aria-controls="lifeFilm">
+              <span class="flex h-16 w-16 lg:h-20 lg:w-20 items-center justify-center rounded-full bg-surface/95 ring-1 ring-gold-soft/60 shadow-lg transition-transform duration-300 group-hover/vid:scale-105">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#16357e" aria-hidden="true" class="translate-x-[2px]"><path d="M6 4.5v15l13-7.5z"/></svg>
+              </span>
+              <span class="film-label text-[11px] font-semibold uppercase tracking-widestest text-surface"
+                    data-en="Watch the film" data-am="ቪዲዮውን ይመልከቱ">Watch the film</span>
+            </button>
+          </div>
+          <figcaption class="mt-3 text-sm text-ink-soft"
+                      data-en="A feast day at the parish: the choir, the procession, and the blessing."
+                      data-am="በቤተ ክርስቲያናችን የበዓል ቀን፦ መዘምራን፣ ሰልፍ እና ቡራኬ።">A feast day at the parish: the choir, the procession, and the blessing.</figcaption>
+        </figure>
+
         <!-- Mosaic: a flush rectangle on desktop (4×4 tiled), tiles vary in size; 2-col stack on mobile -->
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4 lg:[grid-auto-rows:11rem]">
           <?php
@@ -403,6 +438,22 @@ $year = date('Y');
         </div>
       </div>
     </section>
+
+    <script>
+    (function(){
+      var film = document.getElementById('lifeFilm'), btn = document.getElementById('lifeFilmPlay');
+      if(!film || !btn) return;
+      function hideOverlay(){ btn.classList.add('hidden'); film.controls = true; }
+      function showOverlay(){ btn.classList.remove('hidden'); film.controls = false; }
+      btn.addEventListener('click', function(){
+        hideOverlay();
+        var p = film.play();
+        if (p && typeof p.catch === 'function') { p.catch(function(){ showOverlay(); }); }
+      });
+      film.addEventListener('play', hideOverlay);
+      film.addEventListener('ended', function(){ film.currentTime = 0; showOverlay(); });
+    })();
+    </script>
 
     <!-- ============ LIGHTBOX ============ -->
     <div id="lightbox" class="fixed inset-0 z-[60] hidden items-center justify-center bg-ink/90 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-label="Photo viewer">
