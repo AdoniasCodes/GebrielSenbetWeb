@@ -1,6 +1,38 @@
 # Handoff — GebrielSenbetWeb
 
-## Last completed task (2026-08-02) — feature film on the landing gallery
+## Last completed task (2026-08-02) — feature & data-flow test matrix
+QA companion to `DEVELOPER_HANDOVER.md`, for walking every user flow and checking data
+consistency end to end. Built by reading the actual endpoints (every `INSERT` target mapped, plus
+the core libs and each portal's write paths) — not from the handover doc.
+- **Repo:** `FEATURE_TEST_MATRIX.md`. **Google Doc:** "Mekane Selam Senbet School - Feature & Data
+  Flow Test Matrix" — https://docs.google.com/document/d/12GPCphROe-BfVgJVEFLAOBkcUe9C5VVSt9FOluQYkOo/edit
+- **Shape:** 16 sections, 19 tables, ~165 rows. Four columns: Feature / Data in / Data out /
+  Test it + edge cases. Every value carries an origin tag — **[U]** user input, **[P]** from a
+  previous process, **[A]** auto-generated, **[S]** settings or seed. The `[P]` values are the
+  consistency-test targets.
+- Sections 14 (7 cross-module chains), 15 (19 known inconsistencies), 16 (permission matrix).
+- **Regenerating the Doc:** scratchpad `md2html.py` converts the .md (headings, tables, inline
+  code, blockquotes, lists) → HTML, then Drive `create_file` with `contentMimeType: text/html`.
+  Strip the repeated per-cell inline styles first (the file drops 78 KB → 59 KB) since the whole
+  HTML has to be inlined in the tool call. Note: `<strong>` inside a table cell DOES import as real
+  bold — the Drive read-back tool escapes it as `\*\*`, which is an export artifact, verified with
+  a probe doc. **A stray probe doc "zz-probe-delete-me" is in Eyoel's Drive root; no MCP delete
+  tool exists, so it needs deleting by hand.**
+
+### Findings worth acting on (from writing the matrix)
+1. **Archived students still get bulk-generated payment rows.** `api/admin/payments/generate.php`
+   selects from `student_class_assignments` alone and never joins `students`; archiving a user
+   archives `users` + the role profile but NOT the enrolment, `people` row, or dept memberships.
+2. **Two different payment-status rules.** Inline ternary in `generate.php` (amount 0 → `paid`) vs
+   `derive_status()` in `payments/index.php` (amount 0, paid 0 → `unpaid`). Same inputs, different
+   status.
+3. **`payments.status` can contradict the amounts** — a client-supplied status is never checked
+   against `amount`/`paid_amount`.
+4. **`api/teacher/announcements.php` writes to `notifications` with a raw INSERT** instead of
+   going through `notify()`. The row shape is currently correct, but it sits outside the 2.1
+   choke point, so it is exactly the drift 2.1 was built to prevent.
+
+## Previous completed task (2026-08-02) — feature film on the landing gallery
 `IMG_1671.MOV` (110 MB, 1080p30, 74s) optimized and placed in the **"Our family, in worship." /
 ቤተሰባችን ፣ በአምልኮ።** section (`#life`), directly **above** the photo mosaic.
 - **Assets (new dir `public/media/`)**: `life-together-720.mp4` — 720p H.264 high, CRF 28, preset
