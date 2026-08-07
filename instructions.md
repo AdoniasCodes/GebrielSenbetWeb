@@ -146,3 +146,59 @@ this kind of handheld crowd footage, and every browser we support plays H.264.
 **Verifying playback locally** — headless Chrome alone cannot click. Install `puppeteer-core` in the
 scratchpad (system Chrome is the executable) and assert the real states: pre-play `controls=false`,
 post-click `paused=false` + `videoWidth` non-zero, and `ended` → overlay restored.
+
+## Social accounts: changing a handle, or debugging the YouTube feed
+
+Both handles live in **one place**: the `social` block in `config/config.php`. Change them there
+and the landing band, both footers, and the JSON-LD `sameAs` all follow. Nothing is in the DB.
+
+### Getting a YouTube channel id from a handle
+The Atom feed needs the `UC…` id, not the `@handle`:
+```bash
+UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+curl -sL -A "$UA" "https://www.youtube.com/@THEHANDLE" | grep -oE '"externalId":"UC[A-Za-z0-9_-]{22}"' | head -1
+```
+
+### The two traps in the YouTube Atom feed
+1. **It is gated on User-Agent.** No UA gets you HTTP 500, a custom bot UA (`MySite/1.0`) gets you
+   404, and only a normal browser UA gets 200. `api/social/youtube.php` sends a browser UA for
+   this reason; do not "clean it up" into a polite bot string.
+2. **YouTube soft-blocks your IP after roughly ten feed requests in a few minutes**, and the block
+   returns 404, which reads exactly like a wrong channel id. Before you go hunting for a bad id,
+   test a control channel:
+   ```bash
+   curl -sL -A "$UA" "https://www.youtube.com/feeds/videos.xml?channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw" -o /dev/null -w "%{http_code}\n"
+   ```
+   If Google's own developer channel also 404s, you are rate limited, not misconfigured. Wait it
+   out. The endpoint caches for 6h in `tmp/social/` (gitignored) and serves the stale cache when a
+   fetch fails, so production absorbs this without the section going blank.
+
+### Testing the feed without the network
+The parser can be exercised on a saved feed without touching the endpoint's execution path:
+```bash
+php -r '
+$src = file_get_contents("api/social/youtube.php");
+preg_match("/function yt_parse_feed.*?\n}/s", $src, $m); eval($m[0]);
+var_dump(yt_parse_feed(file_get_contents("/path/to/saved-feed.xml")));'
+```
+To see the landing page render with real videos while blocked, write
+`tmp/social/youtube-<CHANNELID>.json` as `{"fetched_at": <now>, "videos": [...]}` and the endpoint
+serves it straight from cache.
+
+### TikTok
+There is no public feed. The profile HTML carries the account stats but **no video ids** (the list
+is lazy-loaded from an internal API), so the "Latest on TikTok" section can only be filled by
+pasting video URLs in admin → Videos with section `tiktok_latest`. The follow link and the footer
+icons are static and need nothing.
+
+### Screenshotting a section during UI work
+Zero-dependency CDP driver (system Chrome, no puppeteer install) lives in the session scratchpad as
+`shot.mjs`; node 22+ has a global `WebSocket`, so it needs no packages:
+```bash
+php -S 127.0.0.1:8899 -t public &
+W=390 CLICK='[data-lang-toggle] button[data-lang="am"]' \
+  node shot.mjs http://127.0.0.1:8899/ ./out "#follow" "body > footer"
+```
+`W` sets the emulated viewport width, `CLICK` clicks a selector before capture (used for the
+Amharic pass). It clips to each element's bounding box, so a `hidden` section reports height 0
+instead of producing a blank PNG.

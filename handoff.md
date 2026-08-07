@@ -1,6 +1,47 @@
 # Handoff — GebrielSenbetWeb
 
-## Last completed task (2026-08-02) — feature & data-flow test matrix
+## Last completed task (2026-08-07): YouTube + TikTok linked back onto the site
+Commit `3620d40`, pushed to main. **Not deployed yet** (manual cPanel deploy still needed).
+
+**Why they had disappeared:** nothing broke. `#tiktokSection` and `#youtubeSection` in
+`public/index.php` ship with the `hidden` class and only unhide when `/api/videos/index.php`
+returns a curated row from `video_embeds`. That table is operational data, so the admin Reset
+tool wipes it, and after the last reset nobody re-pasted the links. The sections have been
+silently empty ever since.
+
+**What was built**
+- `config/config.php` gained a `social` block: the single source of truth for both handles.
+  YouTube `@MekaneSelam-m3j` (channel id `UC-Ybr6jVi_zCJ2wPdWv8H3A`), TikTok `@mekaneselamm`.
+- New **Follow us** band directly above the footer on the landing page (`#follow`), using the
+  existing `.scripture` dark treatment so it reads as native. Bilingual, two platform cards.
+  Verified at 1440px and 390px, in EN and አማ.
+- Icon links added to the landing footer's brand column and to the `blog.php` footer.
+- `api/social/youtube.php` (+ `public/api/social/` delegate): reads the channel's **public Atom
+  feed**, no API key and no OAuth. 6h disk cache in gitignored `tmp/social/`; if YouTube is
+  unreachable it serves the stale cache rather than blanking the section.
+- The YouTube section now prefers a curated `video_embeds` row and otherwise renders the three
+  newest uploads from the channel: lead video as an embed, next two as thumbnail cards.
+  This closes the long-standing "YouTube channel RSS auto-fetch" open item.
+- `EducationalOrganization` JSON-LD with `sameAs` in the landing `<head>`, so search and AI
+  answer engines tie both accounts to the school.
+
+**Gotchas found (also in instructions.md)**
+- The Atom feed is gated on User-Agent: no UA returns **500**, a custom bot UA returns **404**.
+  Only a normal browser UA gets 200. The endpoint sends one.
+- YouTube soft-blocks an IP after ~10 feed requests in a few minutes; a known-good control
+  channel 404s too while blocked. It clears on its own. The dev machine was blocked at the end
+  of the session, so the *live* fetch is unverified from here; the parser was unit-tested against
+  real captured feed XML (4 videos, Amharic titles intact) and the full page was rendered from a
+  primed cache.
+- **TikTok cannot be auto-fetched.** The profile page ships no video IDs (the list is lazy-loaded
+  via an internal API), so that section still needs curated URLs pasted in admin → Videos with
+  section `tiktok_latest`. The follow link and footer icons work regardless.
+
+**After deploying:** confirm the follow band renders, then check whether the YouTube section
+populates from the server (`/api/social/youtube.php?limit=3` should return 3 rows). If the host's
+IP is blocked or `tmp/` is not writable, the section just stays hidden, exactly as it is today.
+
+## Previous completed task (2026-08-02): feature & data-flow test matrix
 QA companion to `DEVELOPER_HANDOVER.md`, for walking every user flow and checking data
 consistency end to end. Built by reading the actual endpoints (every `INSERT` target mapped, plus
 the core libs and each portal's write paths) — not from the handover doc.
@@ -153,7 +194,11 @@ Landing content overhaul + customizable public registrations + new logo (multi-a
 
 ## Open items
 1. Optional: run `scripts/seed_demo_users.php` in cPanel Terminal after next prod deploy if a `test-admin` demo login is ever wanted on prod.
-2. YouTube channel RSS auto-fetch — still to build (long-standing).
+2. ~~YouTube channel RSS auto-fetch~~ DONE 2026-08-07 (`api/social/youtube.php`).
+3. TikTok has no public feed, so `tiktok_latest` still needs URLs pasted in admin → Videos.
+4. Landing page has no OG/Twitter card tags at all, so shares to Facebook/Telegram/X render bare.
+   Small fix, worth doing next to the JSON-LD block already in the `<head>`.
+5. Footer contact email is still the old host: `hello@gebriel.eagleeyebgp.com`.
 
 ## Developer handover doc (2026-07-20)
 Full onboarding doc for the new developer, grounded in the actual code (3 parallel audits: data model / API / frontend). Two forms:
