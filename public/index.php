@@ -19,6 +19,13 @@ elseif ($role === 'parent')  { $dashboard_href = '/parent/index.php';  $dashboar
 elseif ($role === 'staff')   { $dashboard_href = '/staff/index.php';   $dashboard_label_en = 'Staff dashboard';   $dashboard_label_am = 'የሠራተኞች ዳሽቦርድ'; }
 
 $year = date('Y');
+
+// Official social accounts (config/config.php is the single source of truth).
+$social     = $config['social'] ?? [];
+$ytUrl      = $social['youtube_url']    ?? '';
+$ytHandle   = $social['youtube_handle'] ?? '';
+$tiktokUrl  = $social['tiktok_url']     ?? '';
+$ttHandle   = $social['tiktok_handle']  ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-lang="en" class="scroll-smooth">
@@ -31,6 +38,18 @@ $year = date('Y');
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="/images/favicon-64.png" />
   <link rel="apple-touch-icon" href="/images/logo-mekane-selam-192.png" />
+
+  <!-- Ties the social accounts to this entity for search and AI answer engines. -->
+  <script type="application/ld+json"><?= json_encode([
+    '@context'    => 'https://schema.org',
+    '@type'       => 'EducationalOrganization',
+    'name'        => 'Mekane Selam Senbet School',
+    'alternateName' => 'መካነ ሰላም ሰንበት ት/ቤት',
+    'url'         => 'https://mekaneselamss.com/',
+    'logo'        => 'https://mekaneselamss.com/images/logo-mekane-selam-192.png',
+    'address'     => ['@type' => 'PostalAddress', 'addressLocality' => 'Addis Ababa', 'addressCountry' => 'ET'],
+    'sameAs'      => array_values(array_filter([$ytUrl, $tiktokUrl])),
+  ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -769,7 +788,7 @@ $year = date('Y');
           <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Social" data-am="ማኅበራዊ">Social</span><span class="rule-gold-tiny"></span></p>
           <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Latest on TikTok." data-am="በቲክቶክ ላይ የቅርብ ጊዜ።">Latest on TikTok.</h2>
         </div>
-        <a href="https://www.tiktok.com/@mekaneselamm" target="_blank" rel="noopener" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary">
+        <a href="<?= htmlspecialchars($tiktokUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary">
           <span data-en="Follow on TikTok" data-am="በቲክቶክ ይከተሉ">Follow on TikTok</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
@@ -784,8 +803,12 @@ $year = date('Y');
           <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Watch" data-am="ይመልከቱ">Watch</span><span class="rule-gold-tiny"></span></p>
           <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Latest on YouTube." data-am="በዩቲዩብ ላይ የቅርብ ጊዜ።">Latest on YouTube.</h2>
         </div>
+        <a href="<?= htmlspecialchars($ytUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary">
+          <span data-en="Visit the channel" data-am="ቻናሉን ይጎብኙ">Visit the channel</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
       </div>
-      <div id="youtubeGrid" class="max-w-3xl mx-auto"></div>
+      <div id="youtubeGrid" class="max-w-4xl mx-auto"></div>
     </section>
 
     <!-- ============ FINAL CTA ============ -->
@@ -816,6 +839,52 @@ $year = date('Y');
       <div id="regFormHost" class="max-w-2xl"></div>
     </section>
 
+    <!-- ============ FOLLOW US / SOCIAL ============ -->
+    <section id="follow" class="scripture relative overflow-hidden">
+      <svg class="absolute -left-16 -bottom-16 opacity-[0.07]" width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="#c9a14a" stroke-width="0.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+        <circle cx="12" cy="12" r="2.5"/>
+      </svg>
+
+      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20 relative">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+          <div>
+            <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="Follow us" data-am="ይከተሉን">Follow us</span></p>
+            <h2 class="font-display text-3xl lg:text-4xl text-surface mt-5 leading-tight" data-en="Find us where you already watch." data-am="በምትመለከቱበት ስፍራ ያግኙን።">Find us where you already watch.</h2>
+            <p class="mt-5 text-surface/80 leading-relaxed max-w-md" data-en="Services, teachings, and moments from the school year go up on our YouTube channel and our TikTok page. Follow along, and share them with someone who should see them." data-am="የትምህርት ዓመቱ አገልግሎቶች፣ ትምህርቶችና ቅጽበቶች በዩቲዩብ ቻናላችንና በቲክቶክ ገጻችን ላይ ይወጣሉ። ይከተሉን፤ ሊያዩት ለሚገባቸውም ያጋሩ።">
+              Services, teachings, and moments from the school year go up on our YouTube channel and our TikTok page. Follow along, and share them with someone who should see them.
+            </p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <a href="<?= htmlspecialchars($ytUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" class="social-card group flex items-center gap-4 rounded-lg border border-surface/20 bg-surface/[0.06] p-5 hover:bg-surface/[0.12] hover:border-gold-warm/60 transition-colors">
+              <span class="flex-shrink-0 grid place-items-center w-12 h-12 rounded-full bg-surface" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </span>
+              <span class="min-w-0">
+                <span class="block font-display text-lg text-surface">YouTube</span>
+                <span class="block text-xs text-surface/65 truncate mt-0.5"><?= htmlspecialchars($ytHandle) ?></span>
+              </span>
+              <svg class="ml-auto flex-shrink-0 text-gold-warm opacity-0 group-hover:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+
+            <a href="<?= htmlspecialchars($tiktokUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" class="social-card group flex items-center gap-4 rounded-lg border border-surface/20 bg-surface/[0.06] p-5 hover:bg-surface/[0.12] hover:border-gold-warm/60 transition-colors">
+              <span class="flex-shrink-0 grid place-items-center w-12 h-12 rounded-full bg-surface" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#141824"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+              </span>
+              <span class="min-w-0">
+                <span class="block font-display text-lg text-surface">TikTok</span>
+                <span class="block text-xs text-surface/65 truncate mt-0.5"><?= htmlspecialchars($ttHandle) ?></span>
+              </span>
+              <svg class="ml-auto flex-shrink-0 text-gold-warm opacity-0 group-hover:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- ============ REGISTRATION RESULT MODAL ============ -->
     <div id="regModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-ink/70 backdrop-blur-sm p-4" role="alertdialog" aria-modal="true" aria-label="Registration result">
       <div id="regModalCard" class="bg-surface rounded-lg max-w-sm w-full p-8 text-center shadow-2xl border-t-4 border-primary">
@@ -838,6 +907,15 @@ $year = date('Y');
           </div>
           <p class="text-sm text-ink-soft leading-relaxed mb-4" data-en="Mekane Selam Senbet School. A modern home for our community of faith and learning." data-am="መካነ ሰላም ሰንበት ት/ቤት። ለእምነት እና ለትምህርት ማኅበረሰባችን ዘመናዊ ቤት።">Mekane Selam Senbet School. A modern home for our community of faith and learning.</p>
           <p class="ethiopic text-sm text-outline">መካነ ሰላም ሰንበት ት/ቤት</p>
+
+          <div class="flex items-center gap-3 mt-5">
+            <a href="<?= htmlspecialchars($ytUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" aria-label="Mekane Selam on YouTube" title="YouTube" class="grid place-items-center w-9 h-9 rounded-full border border-outline-soft/60 text-outline hover:text-primary hover:border-primary transition-colors">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="<?= htmlspecialchars($tiktokUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener" aria-label="Mekane Selam on TikTok" title="TikTok" class="grid place-items-center w-9 h-9 rounded-full border border-outline-soft/60 text-outline hover:text-primary hover:border-primary transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+          </div>
         </div>
 
         <div>
@@ -957,6 +1035,50 @@ $year = date('Y');
       '</div>';
     }
 
+    // ---- YouTube channel feed (public Atom feed via /api/social/youtube.php) ----
+    // Used when no video has been curated in admin, so the section keeps itself
+    // current without anyone pasting links.
+    function youtubeThumbHtml(v) {
+      var iso = v.published || '';
+      return '<a href="'+escHtml(v.url)+'" target="_blank" rel="noopener" class="group block">' +
+        '<div class="relative rounded-lg overflow-hidden border border-outline-soft/40 bg-black" style="aspect-ratio:16/9;">' +
+          '<img src="'+escHtml(v.thumbnail)+'" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />' +
+          '<span class="absolute inset-0 grid place-items-center">' +
+            '<span class="grid place-items-center w-12 h-12 rounded-full bg-ink/60">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff"><path d="M8 5v14l11-7z"/></svg>' +
+            '</span>' +
+          '</span>' +
+        '</div>' +
+        '<p class="font-display text-base text-ink mt-3 leading-snug line-clamp-2 group-hover:text-primary transition-colors">'+escHtml(v.title || '')+'</p>' +
+        (iso ? '<p class="text-[11px] uppercase tracking-widestest text-outline mt-1" data-iso="'+escHtml(iso)+'" data-fmt-style="long">'+escHtml(iso)+'</p>' : '') +
+      '</a>';
+    }
+
+    function youtubeFeedHtml(rows) {
+      if (!rows.length) return '';
+      var lead = rows[0];
+      var rest = rows.slice(1, 3);
+      var html = '<div class="relative bg-black rounded-lg overflow-hidden border border-outline-soft/40" style="aspect-ratio:16/9;">' +
+          '<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(lead.id)+'" title="'+escHtml(lead.title || 'YouTube video')+'" class="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>' +
+        '</div>';
+      if (lead.title) html += '<p class="font-display text-lg text-ink mt-4 line-clamp-2">'+escHtml(lead.title)+'</p>';
+      if (rest.length) html += '<div class="grid sm:grid-cols-2 gap-6 mt-10">' + rest.map(youtubeThumbHtml).join('') + '</div>';
+      return html;
+    }
+
+    function showYoutube(html) {
+      if (!html) return;
+      document.getElementById('youtubeSection').classList.remove('hidden');
+      document.getElementById('youtubeGrid').innerHTML = html;
+      if (window.EC) EC.rerenderIsoNodes();
+    }
+
+    function loadYoutubeChannel() {
+      return fetch('/api/social/youtube.php?limit=3').then(function (r) { return r.json(); }).then(function (d) {
+        showYoutube(youtubeFeedHtml((d && d.data) || []));
+      }).catch(function () {});
+    }
+
     function loadLiveContent() {
       fetch('/api/events/index.php?limit=8').then(function (r) { return r.json(); }).then(function (d) {
         var grid = document.getElementById('liveEventsGrid');
@@ -993,14 +1115,12 @@ $year = date('Y');
         document.getElementById('tiktokGrid').innerHTML = html;
       }).catch(function () {});
 
+      // A curated embed wins; otherwise show whatever the channel posted last.
       fetch('/api/videos/index.php?section=youtube_latest&limit=1').then(function (r) { return r.json(); }).then(function (d) {
-        var rows = (d && d.data) || [];
-        if (!rows.length) return;
-        var html = rows.map(youtubeCardHtml).filter(Boolean).join('');
-        if (!html) return;
-        document.getElementById('youtubeSection').classList.remove('hidden');
-        document.getElementById('youtubeGrid').innerHTML = html;
-      }).catch(function () {});
+        var html = ((d && d.data) || []).map(youtubeCardHtml).filter(Boolean).join('');
+        if (html) { showYoutube(html); return; }
+        return loadYoutubeChannel();
+      }).catch(function () { loadYoutubeChannel(); });
     }
 
     (function () {

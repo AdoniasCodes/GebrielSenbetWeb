@@ -19,4 +19,15 @@ return [
         // Deployment token used by CI/CD (GitHub Actions) to trigger safe DB migrations
         'deploy_token' => getenv('APP_DEPLOY_TOKEN') ?: '2wDRdMDeEv14D47u0UI8RLZ037CGkPR5',
     ],
+    // Official social accounts. Single source of truth for the landing page
+    // links and for the YouTube channel feed reader (api/social/youtube.php).
+    'social' => [
+        'youtube_handle'     => '@MekaneSelam-m3j',
+        'youtube_url'        => 'https://www.youtube.com/@MekaneSelam-m3j',
+        // Channel UC id, needed for the public Atom feed. Find it in the channel
+        // page source under "externalId" if the handle ever changes.
+        'youtube_channel_id' => 'UC-Ybr6jVi_zCJ2wPdWv8H3A',
+        'tiktok_handle'      => '@mekaneselamm',
+        'tiktok_url'         => 'https://www.tiktok.com/@mekaneselamm',
+    ],
 ];
