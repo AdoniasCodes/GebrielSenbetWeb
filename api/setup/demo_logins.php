@@ -78,9 +78,13 @@ foreach ($accounts as $a) {
         if (!$pid) { $pdo->prepare("INSERT INTO people (user_id, first_name, last_name) VALUES (?,?,?)")->execute([$uid, 'Demo', 'Staff']); $pid = (int)$pdo->lastInsertId(); }
         $deptId = (int)($pdo->query("SELECT id FROM departments WHERE is_archived=0 ORDER BY id LIMIT 1")->fetchColumn() ?: 0);
         if ($deptId) {
-            $mc = $pdo->prepare("SELECT id FROM department_memberships WHERE person_id=? AND department_id=?");
+            // Target exactly one row: migration 025 allows only one ACTIVE
+            // membership per (person, department), so un-archiving every
+            // matching row would trip the constraint whenever archived
+            // siblings exist. Prefer a row that is already active.
+            $mc = $pdo->prepare("SELECT id FROM department_memberships WHERE person_id=? AND department_id=? ORDER BY is_archived, id LIMIT 1");
             $mc->execute([$pid, $deptId]);
-            if ($mc->fetch()) $pdo->prepare("UPDATE department_memberships SET is_head=1, is_archived=0 WHERE person_id=? AND department_id=?")->execute([$pid, $deptId]);
+            if ($mid = $mc->fetchColumn()) $pdo->prepare("UPDATE department_memberships SET is_head=1, is_archived=0, archived_at=NULL WHERE id=?")->execute([(int)$mid]);
             else $pdo->prepare("INSERT INTO department_memberships (person_id, department_id, is_head, title) VALUES (?,?,1,'Head')")->execute([$pid, $deptId]);
         }
     }

@@ -55,6 +55,12 @@ if ($method === 'POST') {
             $chk->execute([$classId, $subjectId, $start]);
             if ($chk->fetch()) { $pdo->rollBack(); Response::error('Primary teacher already assigned for this class and subject', 409); }
         }
+        // Migration 025 enforces one ACTIVE row per (teacher, class, subject).
+        // Check it here too so the caller gets a 409 with a real explanation
+        // rather than the generic 500 from the duplicate-key throw below.
+        $dup = $pdo->prepare('SELECT id FROM teacher_subject_assignments WHERE teacher_id=? AND class_id=? AND subject_id=? AND is_archived=0 LIMIT 1');
+        $dup->execute([$teacherId, $classId, $subjectId]);
+        if ($dup->fetch()) { $pdo->rollBack(); Response::error('This teacher is already assigned to that subject in that class', 409); }
         $ins = $pdo->prepare('INSERT INTO teacher_subject_assignments (teacher_id, class_id, subject_id, role, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)');
         $ins->execute([$teacherId, $classId, $subjectId, $role, $start, $end]);
         $id = (int)$pdo->lastInsertId();

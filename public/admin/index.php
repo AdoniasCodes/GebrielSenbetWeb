@@ -26,7 +26,7 @@ require __DIR__ . '/_partials/page-shell.php';
 
   <div class="stat-card border-t-gold-soft">
     <p class="text-[10px] font-semibold uppercase tracking-widestest text-ink-soft flex items-center justify-between">
-      <span data-en="Active Classes" data-am="ንቁ ክፍሎች">Active Classes</span>
+      <span data-en="Active Classes" data-am="ንቁ የተማሪ ክፍሎች">Active Classes</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7690" stroke-width="1.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     </p>
     <p class="font-display text-5xl text-ink mt-3 mb-3 leading-none" data-stat="active_classes">—</p>

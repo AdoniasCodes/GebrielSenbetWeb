@@ -131,7 +131,7 @@ require __DIR__ . '/_partials/page-shell.php';
       <thead><tr>
         <th data-en="Name" data-am="ስም">Name</th>
         <th data-en="Church" data-am="ቤተክርስቲያን">Church</th>
-        <th data-en="Departments" data-am="ክፍሎች">Departments</th>
+        <th data-en="Departments" data-am="የአገልግሎት ክፍሎች">Departments</th>
         <th data-en="Status" data-am="ሁኔታ">Status</th>
         <th data-en="Last Communion" data-am="የመጨረሻ ቁርባን">Last Communion</th>
         <th class="text-right">&nbsp;</th>

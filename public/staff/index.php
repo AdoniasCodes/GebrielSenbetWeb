@@ -160,6 +160,21 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
         </div>
 
         <div class="panel">
+          <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Announcements" data-am="ማስታወቂያዎች">Announcements</span> · <span id="annCount" class="text-ink-soft text-sm"></span></h3></header>
+          <div class="p-4">
+            <form id="annCreateForm" class="grid sm:grid-cols-2 gap-2 bg-surface-low rounded p-3 border border-outline-soft/30 mb-4">
+              <p class="sm:col-span-2 lbl" data-en="Post an announcement (goes out immediately)" data-am="ማስታወቂያ ይለጥፉ (ወዲያውኑ ይላካል)">Post an announcement (goes out immediately)</p>
+              <input id="ann_title" class="input-field sm:col-span-2" placeholder="Title" />
+              <textarea id="ann_message" class="input-field sm:col-span-2" rows="3" placeholder="Message"></textarea>
+              <div><label class="lbl" data-en="Send to" data-am="ላክ ወደ">Send to</label>
+                <select id="ann_class" class="input-field"></select></div>
+              <div class="flex items-end"><button type="submit" class="btn-primary w-full" data-en="Post" data-am="ለጥፍ">Post</button></div>
+            </form>
+            <div id="annList" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="panel">
           <header class="px-6 py-4 border-b border-outline-soft/40 flex items-center justify-between"><h3 class="font-display text-base"><span data-en="Members" data-am="አባላት">Members</span> · <span id="memCount" class="text-ink-soft text-sm">—</span></h3></header>
           <div class="p-4">
             <div class="mb-4 space-y-3">
@@ -244,7 +259,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     v('empty').classList.add('hidden'); v('detail').classList.remove('hidden');
     v('detName').textContent=dlabel(current); v('detSub').textContent=current.description||'';
     renderDeptList();
-    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id), loadEvents(id), loadRegForms(id)]);
+    await Promise.all([loadLevels(id), loadRoster(id), loadEligibility(id), loadResources(id), loadEvents(id), loadAnnouncements(id), loadRegForms(id)]);
     setMode('existing');
   }
 
@@ -300,6 +315,70 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
       await gs.api('/api/staff/events.php',{method:'POST',body:JSON.stringify(body)});
       v('evt_title').value='';v('evt_desc').value='';v('evt_start').value='';v('evt_end').value='';
       await loadEvents(current.id); gs.toast(curLang()==='am'?'ተፈጠረ':'Created','success');
+    }catch(err){gs.toast(err.message,'error');}
+  });
+
+  // ---- Announcements (approval-free; posts land in the department's inboxes) ----
+  var announcements=[], annClasses=[];
+  async function loadAnnouncements(id){
+    try{ var r=await gs.api('/api/staff/announcements.php?department_id='+id);
+         announcements=r.data||[]; annClasses=r.classes||[]; }
+    catch(e){ announcements=[]; annClasses=[]; }
+    renderAnnouncements();
+  }
+  function annWhen(iso){
+    if(!iso) return '';
+    var d=new Date(String(iso).replace(' ','T'));
+    if(isNaN(d)) return escHtml(iso);
+    return (window.EC && curLang()==='am') ? EC.fmtDate(iso,'long')
+      : d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+  function renderAnnouncements(){
+    var w=v('annList'); if(!w) return;
+    v('annCount').textContent=announcements.length;
+
+    var sel=v('ann_class');
+    if(sel){
+      var keep=sel.value;
+      sel.innerHTML='<option value="">'+(curLang()==='am'?'መላው ክፍል':'Whole department')+'</option>'+
+        annClasses.map(function(c){return '<option value="'+c.id+'">'+escHtml(c.name)+'</option>';}).join('');
+      sel.value=keep;
+    }
+
+    w.innerHTML=announcements.length?announcements.map(function(a){
+      var scope=a.class_name
+        ? (curLang()==='am'?'ክፍል: ':'Class: ')+escHtml(a.class_name)
+        : (curLang()==='am'?'መላው ክፍል':'Whole department');
+      return '<div class="bg-surface-low rounded px-3 py-2 border border-outline-soft/30">'+
+        '<div class="flex items-center justify-between gap-2 flex-wrap">'+
+          '<span class="font-medium text-sm">'+escHtml(a.title)+'</span>'+
+          (a.is_mine?'<button class="text-xs font-semibold text-error hover:underline" data-ann-del="'+a.id+'">'+(curLang()==='am'?'መልስ':'Retract')+'</button>':'')+
+        '</div>'+
+        '<p class="text-xs text-ink-soft mt-1 whitespace-pre-wrap">'+escHtml(a.message)+'</p>'+
+        '<p class="text-[11px] text-ink-soft mt-1">'+scope+' · '+annWhen(a.created_at)+
+          (a.sender_email?(' · '+escHtml(a.sender_email)):'')+
+          (a.sender_role?(' ('+escHtml(a.sender_role)+')'):'')+'</p>'+
+      '</div>';
+    }).join('') : '<p class="text-sm text-ink-soft" data-en="Nothing posted yet." data-am="ገና የተለጠፈ የለም።">'+(curLang()==='am'?'ገና የተለጠፈ የለም።':'Nothing posted yet.')+'</p>';
+  }
+  v('annCreateForm').addEventListener('submit', async function(e){ e.preventDefault(); if(!current)return;
+    var body={department_id:current.id,title:v('ann_title').value.trim(),message:v('ann_message').value.trim()};
+    var cid=v('ann_class').value; if(cid) body.class_id=parseInt(cid,10);
+    if(!body.title||!body.message){gs.toast(curLang()==='am'?'ርዕስና መልእክት ያስፈልጋሉ':'Title and message are required','error');return;}
+    try{
+      await gs.api('/api/staff/announcements.php',{method:'POST',body:JSON.stringify(body)});
+      v('ann_title').value=''; v('ann_message').value=''; v('ann_class').value='';
+      await loadAnnouncements(current.id);
+      gs.toast(curLang()==='am'?'ተለጠፈ':'Posted','success');
+    }catch(err){gs.toast(err.message,'error');}
+  });
+  document.addEventListener('click', async function(e){
+    var del=e.target.closest&&e.target.closest('[data-ann-del]'); if(!del)return;
+    if(!current)return;
+    try{
+      await gs.api('/api/staff/announcements.php',{method:'DELETE',body:JSON.stringify({id:parseInt(del.getAttribute('data-ann-del'),10)})});
+      await loadAnnouncements(current.id);
+      gs.toast(curLang()==='am'?'ተመልሷል':'Retracted','success');
     }catch(err){gs.toast(err.message,'error');}
   });
 

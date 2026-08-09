@@ -22,9 +22,13 @@ $validTargets = array_keys(NOTIFY_TARGETS); // role | department | class | user
 
 if ($method === 'GET') {
     $includeArchived = isset($_GET['include_archived']) && $_GET['include_archived'] === '1';
-    $sql = "SELECT n.id, n.title, n.message, n.target_type, n.target_payload, n.read_by, n.is_public,
+    // read_count comes from notification_reads (the Phase 2.1 source of truth).
+    // This used to return the legacy notifications.read_by JSON array, which no
+    // caller consumed and which migration 028 drops.
+    $sql = "SELECT n.id, n.title, n.message, n.target_type, n.target_payload, n.is_public,
                    n.is_archived, n.created_at, n.updated_at,
-                   u.email AS sender_email, r.name AS sender_role
+                   u.email AS sender_email, r.name AS sender_role,
+                   (SELECT COUNT(*) FROM notification_reads nr WHERE nr.notification_id = n.id) AS read_count
             FROM notifications n
             LEFT JOIN users u ON u.id=n.sender_user_id
             LEFT JOIN roles r ON r.id=n.sender_role_id
@@ -34,7 +38,7 @@ if ($method === 'GET') {
     $rows = $pdo->query($sql)->fetchAll();
     foreach ($rows as &$r) {
         $r['target_payload'] = $r['target_payload'] ? json_decode($r['target_payload'], true) : null;
-        $r['read_by']        = $r['read_by'] ? json_decode($r['read_by'], true) : [];
+        $r['read_count']     = (int)$r['read_count'];
     }
     Response::json(['data' => $rows]);
 }

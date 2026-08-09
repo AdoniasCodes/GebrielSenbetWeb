@@ -13,7 +13,7 @@ $nav = $active_nav ?? '';
 $nav_groups = [
   ['label_en' => 'Community', 'label_am' => 'ማህበረሰብ', 'items' => [
     ['slug'=>'people','href'=>'/admin/people.php','en'=>'People','am'=>'አባላት','svg'=>'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'],
-    ['slug'=>'departments','href'=>'/admin/departments.php','en'=>'Departments','am'=>'ክፍሎች','svg'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
+    ['slug'=>'departments','href'=>'/admin/departments.php','en'=>'Departments','am'=>'የአገልግሎት ክፍሎች','svg'=>'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
     ['slug'=>'resources','href'=>'/admin/resources.php','en'=>'Resources','am'=>'መርጃዎች','svg'=>'<path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>'],
     ['slug'=>'registrations','href'=>'/admin/registrations.php','en'=>'Registrations','am'=>'ምዝገባዎች','svg'=>'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13l2 2 4-4"/>'],
   ]],
@@ -22,11 +22,11 @@ $nav_groups = [
     ['slug'=>'teachers','href'=>'/admin/teachers.php','en'=>'Teachers','am'=>'መምህራን','svg'=>'<path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 11l-3-3m3 3l-3 3m3-3h-7"/>'],
     ['slug'=>'parents','href'=>'/admin/parents.php','en'=>'Parents','am'=>'ወላጆች','svg'=>'<path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM15 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M15 15h2a4 4 0 0 1 4 4v2"/>'],
   ]],
-  ['label_en' => 'Classroom', 'label_am' => 'ክፍል', 'items' => [
+  ['label_en' => 'Classroom', 'label_am' => 'ትምህርት', 'items' => [
     ['slug'=>'tracks','href'=>'/admin/tracks.php','en'=>'Tracks','am'=>'ኮርሶች','svg'=>'<path d="M2 4h6a4 4 0 0 1 4 4v13M22 4h-6a4 4 0 0 0-4 4v13"/>'],
-    ['slug'=>'levels','href'=>'/admin/levels.php','en'=>'Levels','am'=>'ደረጃዎች','svg'=>'<path d="M3 21V9l9-6 9 6v12M9 21V12h6v9"/>'],
+    ['slug'=>'levels','href'=>'/admin/levels.php','en'=>'Grade levels','am'=>'የክፍል ደረጃዎች','svg'=>'<path d="M3 21V9l9-6 9 6v12M9 21V12h6v9"/>'],
     ['slug'=>'subjects','href'=>'/admin/subjects.php','en'=>'Subjects','am'=>'ትምህርቶች','svg'=>'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'],
-    ['slug'=>'classes','href'=>'/admin/classes.php','en'=>'Classes','am'=>'ክፍሎች','svg'=>'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10"/>'],
+    ['slug'=>'classes','href'=>'/admin/classes.php','en'=>'Classes','am'=>'የተማሪ ክፍሎች','svg'=>'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10"/>'],
     ['slug'=>'terms','href'=>'/admin/terms.php','en'=>'Terms','am'=>'ወቅቶች','svg'=>'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'],
     ['slug'=>'assignments','href'=>'/admin/assignments.php','en'=>'Teacher assignments','am'=>'የመምህር ምድቦች','svg'=>'<path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'],
   ]],

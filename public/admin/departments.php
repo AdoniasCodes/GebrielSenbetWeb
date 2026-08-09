@@ -6,7 +6,7 @@ Csrf::ensureSession($config['app']['session_name']);
 if (($_SESSION['role_name'] ?? null) !== 'admin') { header('Location: /'); exit; }
 
 $page_title    = 'Departments';
-$page_title_am = 'ክፍሎች';
+$page_title_am = 'የአገልግሎት ክፍሎች';
 $page_eyebrow    = 'Community';
 $page_eyebrow_am = 'ማህበረሰብ';
 $active_nav = 'departments';
@@ -49,7 +49,7 @@ require __DIR__ . '/_partials/page-shell.php';
   <!-- LEFT: department list -->
   <section class="panel lg:col-span-1 self-start">
     <header class="px-5 py-4 border-b border-outline-soft/40">
-      <h2 class="font-display text-base text-ink" data-en="All departments" data-am="ሁሉም ክፍሎች">All departments</h2>
+      <h2 class="font-display text-base text-ink" data-en="All departments" data-am="ሁሉም የአገልግሎት ክፍሎች">All departments</h2>
     </header>
     <div id="deptList" class="p-3 space-y-1 max-h-[70vh] overflow-y-auto">
       <p class="text-center text-ink-soft py-8 text-sm">Loading…</p>

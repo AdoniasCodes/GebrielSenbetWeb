@@ -6,7 +6,7 @@ Csrf::ensureSession($config['app']['session_name']);
 if (($_SESSION['role_name'] ?? null) !== 'admin') { header('Location: /'); exit; }
 
 $page_title    = 'Classes';
-$page_title_am = 'ክፍሎች';
+$page_title_am = 'የተማሪ ክፍሎች';
 $page_eyebrow    = 'Classroom';
 $page_eyebrow_am = 'ክፍል';
 $active_nav = 'classes';

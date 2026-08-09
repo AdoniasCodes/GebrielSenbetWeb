@@ -32,7 +32,7 @@ $initials = strtoupper(substr($email, 0, 2));
         ink:'#141824','ink-soft':'#3f4658',outline:'#6b7690','outline-soft':'#c4d0e4',
         primary:'#16357e','primary-soft':'#2f52a6',
         gold:'#795901','gold-soft':'#c9a14a','gold-warm':'#fed175',
-        olive:'#384700','olive-soft':'#a2b665',
+        olive:'#384700','olive-soft':'#a2b665',error:'#9b1c1c',
       },
       fontFamily: { display:['Newsreader','serif'], body:['Plus Jakarta Sans','Noto Sans Ethiopic','sans-serif'] },
       letterSpacing: { widestest: '0.18em' }
@@ -72,6 +72,16 @@ $initials = strtoupper(substr($email, 0, 2));
 
     <section id="childrenWrap" class="grid sm:grid-cols-2 gap-5">
       <p class="text-sm text-ink-soft col-span-full text-center py-8" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</p>
+    </section>
+
+    <section class="panel">
+      <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between gap-3 flex-wrap">
+        <h2 class="font-display text-lg text-ink" data-en="Homework" data-am="የቤት ሥራ">Homework</h2>
+        <select id="taskChild" class="text-xs border border-outline-soft rounded px-2 py-1 bg-surface"></select>
+      </header>
+      <ul id="tasksWrap" class="divide-y divide-outline-soft/20 max-h-[480px] overflow-y-auto">
+        <li class="px-6 py-12 text-center text-ink-soft text-sm" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</li>
+      </ul>
     </section>
 
     <section class="panel">
@@ -126,6 +136,76 @@ $initials = strtoupper(substr($email, 0, 2));
     }
   }
 
+  // ---- Homework (Phase 2.5). Same resolution rules as the child's own view. ----
+  var taskChildren = null;
+
+  function curLang(){ return document.documentElement.getAttribute('data-lang') || 'en'; }
+
+  function daysUntil(dateStr){
+    if (!dateStr) return null;
+    var d = new Date(String(dateStr) + 'T00:00:00');
+    if (isNaN(d)) return null;
+    var today = new Date(); today.setHours(0,0,0,0);
+    return Math.round((d - today) / 86400000);
+  }
+
+  function dueChip(dateStr, am){
+    var n = daysUntil(dateStr);
+    if (n === null) return '';
+    var cls, label;
+    if (n < 0)        { cls = 'bg-error/10 text-error';       label = am ? 'አልፏል' : 'Overdue'; }
+    else if (n === 0) { cls = 'bg-gold-warm/25 text-gold';    label = am ? 'ዛሬ'    : 'Due today'; }
+    else if (n <= 7)  { cls = 'bg-gold-warm/20 text-gold';    label = am ? ('በ' + n + ' ቀን') : ('In ' + n + ' day' + (n === 1 ? '' : 's')); }
+    else              { cls = 'bg-surface-mid text-ink-soft'; label = am ? ('በ' + n + ' ቀን') : ('In ' + n + ' days'); }
+    return '<span class="text-[10px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full ' + cls + '">' + label + '</span>';
+  }
+
+  async function loadTasks(){
+    var ul = document.getElementById('tasksWrap');
+    var sel = document.getElementById('taskChild');
+    try {
+      var q = sel && sel.value ? ('?student_id=' + encodeURIComponent(sel.value)) : '';
+      var d = await api('/api/parent/tasks/index.php' + q);
+      var rows = d.data || [];
+      var am = curLang() === 'am';
+
+      // Child filter is only worth showing when there is more than one child.
+      if (taskChildren === null) {
+        taskChildren = d.students || [];
+        if (taskChildren.length > 1) {
+          sel.innerHTML = '<option value="">' + (am ? 'ሁሉም ልጆች' : 'All children') + '</option>' +
+            taskChildren.map(function(s){ return '<option value="' + s.id + '">' + escHtml(s.name) + '</option>'; }).join('');
+        } else {
+          sel.classList.add('hidden');
+        }
+      }
+
+      var nameById = {};
+      taskChildren.forEach(function(s){ nameById[s.id] = s.name; });
+
+      if (!rows.length){
+        ul.innerHTML = '<li class="px-6 py-12 text-center text-ink-soft text-sm">' + (am ? 'ገና የቤት ሥራ የለም።' : 'No homework yet.') + '</li>';
+        return;
+      }
+      ul.innerHTML = rows.map(function(t){
+        var scope = t.scope_label ? escHtml(am && t.scope_label_am ? t.scope_label_am : t.scope_label) : '';
+        var who = (taskChildren.length > 1 && t.student_ids)
+          ? t.student_ids.map(function(id){ return escHtml(nameById[id] || ''); }).filter(Boolean).join(', ')
+          : '';
+        var meta = [who, scope, t.posted_by ? escHtml(t.posted_by) : ''].filter(Boolean).join(' · ');
+        return '<li class="px-6 py-4">' +
+          '<div class="flex items-start justify-between gap-3 flex-wrap">' +
+            '<p class="font-medium leading-tight">' + escHtml(t.title) + '</p>' + dueChip(t.due_date, am) +
+          '</div>' +
+          (t.description ? '<p class="text-sm text-ink-soft mt-1 whitespace-pre-wrap">' + escHtml(t.description) + '</p>' : '') +
+          (meta ? '<p class="text-xs text-outline mt-1">' + meta + '</p>' : '') +
+        '</li>';
+      }).join('');
+    } catch(e){
+      ul.innerHTML = '<li class="px-6 py-12 text-center text-error text-sm">' + escHtml(e.message) + '</li>';
+    }
+  }
+
   async function loadAnnouncements(){
     var ul = document.getElementById('annWrap');
     try {
@@ -159,6 +239,7 @@ $initials = strtoupper(substr($email, 0, 2));
       });
       try { localStorage.setItem('gs_lang', lang); } catch(e){}
       if (window.EC) EC.rerenderIsoNodes();
+      if (taskChildren !== null) loadTasks();
     }
     document.querySelectorAll('[data-lang-toggle] button').forEach(function(btn){
       btn.addEventListener('click', function(){ applyLang(btn.dataset.lang); });
@@ -172,7 +253,10 @@ $initials = strtoupper(substr($email, 0, 2));
     catch(e) { alert(e.message); }
   });
 
+  document.getElementById('taskChild').addEventListener('change', loadTasks);
+
   loadChildren();
+  loadTasks();
   loadAnnouncements();
 </script>
 </body>

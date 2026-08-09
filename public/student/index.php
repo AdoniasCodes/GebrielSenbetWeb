@@ -129,6 +129,16 @@ $email = $_SESSION['user_email'] ?? '';
     </div>
 
     <section class="panel">
+      <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between gap-3">
+        <h2 class="font-display text-lg text-ink" data-en="Homework" data-am="የቤት ሥራ">Homework</h2>
+        <span id="tasksCount" class="text-xs uppercase tracking-widestest text-outline"></span>
+      </header>
+      <ul id="tasksWrap" class="divide-y divide-outline-soft/20">
+        <li class="px-6 py-10 text-center text-ink-soft text-sm" data-en="Loading…" data-am="በመጫን ላይ…">Loading…</li>
+      </ul>
+    </section>
+
+    <section class="panel">
       <header class="px-6 py-5 border-b border-outline-soft/40">
         <h2 class="font-display text-lg text-ink" data-en="Resources / ግብዓቶች" data-am="Resources / ግብዓቶች">Resources / ግብዓቶች</h2>
       </header>
@@ -234,6 +244,16 @@ $email = $_SESSION['user_email'] ?? '';
       }).join('');
     }
 
+    // ---- Homework (Phase 2.5: tasks used to be teacher-write-only) ----
+    var tw = document.getElementById('tasksWrap');
+    var tasks = STATE.tasks || [];
+    document.getElementById('tasksCount').textContent = tasks.length ? String(tasks.length) : '';
+    if (!tasks.length){
+      tw.innerHTML = '<li class="px-6 py-10 text-center text-ink-soft text-sm">' + (am ? 'ገና የቤት ሥራ የለም።' : 'No homework yet.') + '</li>';
+    } else {
+      tw.innerHTML = tasks.map(function(t){ return taskRowHtml(t, am); }).join('');
+    }
+
     var rw = document.getElementById('resourcesWrap');
     var res = STATE.resources || [];
     if (!res.length){
@@ -254,6 +274,38 @@ $email = $_SESSION['user_email'] ?? '';
     if (window.EC) EC.rerenderIsoNodes();
   }
 
+  // Days until due; negative means overdue. Null when the task has no due date.
+  function daysUntil(dateStr){
+    if (!dateStr) return null;
+    var d = new Date(String(dateStr) + 'T00:00:00');
+    if (isNaN(d)) return null;
+    var today = new Date(); today.setHours(0,0,0,0);
+    return Math.round((d - today) / 86400000);
+  }
+
+  function dueChip(dateStr, am){
+    var n = daysUntil(dateStr);
+    if (n === null) return '';
+    var cls, label;
+    if (n < 0)        { cls = 'bg-error/10 text-error';        label = am ? 'አልፏል'      : 'Overdue'; }
+    else if (n === 0) { cls = 'bg-gold-warm/25 text-gold';     label = am ? 'ዛሬ'         : 'Due today'; }
+    else if (n <= 7)  { cls = 'bg-gold-warm/20 text-gold';     label = am ? ('በ' + n + ' ቀን') : ('In ' + n + ' day' + (n === 1 ? '' : 's')); }
+    else              { cls = 'bg-surface-mid text-ink-soft';  label = am ? ('በ' + n + ' ቀን') : ('In ' + n + ' days'); }
+    return '<span class="text-[10px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full ' + cls + '">' + label + '</span>';
+  }
+
+  function taskRowHtml(t, am){
+    var scope = t.scope_label ? escHtml(am && t.scope_label_am ? t.scope_label_am : t.scope_label) : '';
+    var meta = [scope, t.posted_by ? escHtml(t.posted_by) : ''].filter(Boolean).join(' · ');
+    return '<li class="px-6 py-4">' +
+      '<div class="flex items-start justify-between gap-3 flex-wrap">' +
+        '<p class="font-medium text-ink">' + escHtml(t.title) + '</p>' + dueChip(t.due_date, am) +
+      '</div>' +
+      (t.description ? '<p class="text-sm text-ink-soft mt-1 whitespace-pre-wrap">' + escHtml(t.description) + '</p>' : '') +
+      (meta ? '<p class="text-xs text-outline mt-1">' + meta + '</p>' : '') +
+    '</li>';
+  }
+
   async function load(){
     try {
       STATE = await api('/api/student/dashboard.php');
@@ -262,6 +314,12 @@ $email = $_SESSION['user_email'] ?? '';
         STATE.resources = resData.data || [];
       } catch(e) {
         STATE.resources = [];
+      }
+      try {
+        var taskData = await api('/api/student/tasks.php');
+        STATE.tasks = taskData.data || [];
+      } catch(e) {
+        STATE.tasks = [];
       }
       render();
     } catch(e){

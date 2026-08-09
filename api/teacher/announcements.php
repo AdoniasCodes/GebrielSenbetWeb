@@ -7,6 +7,7 @@
 use App\Utils\Response;
 
 require_once __DIR__ . '/_guard.php';
+require_once __DIR__ . '/../notifications_lib.php';
 require_csrf_for_write();
 
 $pdo = tch_pdo();
@@ -93,14 +94,13 @@ if ($method === 'POST') {
         $payload = ['class_id' => $classId];
     }
 
-    $userId = (int)($_SESSION['user_id'] ?? 0);
-    $roleId = (int)($_SESSION['role_id'] ?? 0);
-    $ins = $pdo->prepare(
-        'INSERT INTO notifications (sender_user_id, sender_role_id, target_type, target_payload, title, message, is_public)
-         VALUES (?, ?, ?, ?, ?, ?, 0)'
-    );
-    $ins->execute([$userId ?: null, $roleId ?: null, $targetType, json_encode($payload), $title, $message]);
-    Response::json(['message' => 'Posted', 'id' => (int)$pdo->lastInsertId()], 201);
+    // Routed through notify() rather than a raw INSERT so this producer stays on
+    // the Phase 2.1 choke point and cannot drift from what the readers consume.
+    $newId = notify($pdo, $targetType, $payload, $title, $message, [
+        'senderUserId' => (int)($_SESSION['user_id'] ?? 0),
+        'senderRoleId' => (int)($_SESSION['role_id'] ?? 0),
+    ]);
+    Response::json(['message' => 'Posted', 'id' => $newId], 201);
 }
 
 Response::error('Method not allowed', 405);
