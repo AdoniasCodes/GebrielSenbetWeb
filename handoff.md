@@ -1,6 +1,97 @@
 # Handoff — GebrielSenbetWeb
 
-## Last completed task (2026-08-07): YouTube + TikTok linked back onto the site
+## Last completed task (2026-08-09): Phase 2 and Phase 3 finished
+Commit `58a3b4b`, pushed to main. **Migrations 019 through 028 are all still
+unapplied on production** (see the deploy section below; this is now the single
+biggest open item).
+
+**Prod state as checked on 2026-08-09:** the *code* is deployed and current
+(the follow band, JSON-LD and the YouTube feed endpoint all answer on
+mekaneselamss.com, serving a real video from Aug 8). The *migrations* have never
+run: `GET /api/registrations/index.php` still returns 500 because
+`registration_forms` does not exist. Code deploy and migrate are two separate
+steps and only the first has been done.
+
+### Phase 2.4, dept-head announcements (approval-free, blueprint Q6)
+`api/staff/announcements.php` is new: post to a headed department or to a class
+inside it, list the whole department's traffic (teachers' posts included, each
+tagged `is_mine`), retract your own. `is_public` is deliberately not exposed:
+publishing to the public landing feed stays admin-only. The GET also returns the
+department's classes so the class picker needs no second endpoint.
+The listing reuses `notif_audience_clause()` instead of hand-rolling target
+matching, so it cannot drift from how those rows are read elsewhere.
+`api/teacher/announcements.php` was moved off its raw INSERT onto `notify()`,
+which removes the last producer sitting outside the Phase 2.1 choke point.
+
+### Phase 2.5, homework is no longer write-only
+Teachers had been creating `tasks` that no student or parent could see.
+`api/tasks_lib.php` is now the single definition of which tasks a student is
+addressed by (class, grade and department scopes), and both the new student and
+parent endpoints read through it, so the two views cannot disagree. Panels added
+to both portals with overdue / due-today / due-soon chips, bilingual. The parent
+view shows a child filter only when there is more than one child.
+Read-only by design: there is no turn-in or submission flow.
+
+### Phase 3.1, migration 025, join-table integrity
+One active row per pair on `student_class_assignments`,
+`teacher_subject_assignments` and `department_memberships`.
+**The non-obvious part:** a plain `UNIQUE` would have permanently broken the
+archive-then-re-add flow this schema depends on, because soft-deleted rows stay
+in the table. Each table instead gets a generated `active_guard` column that is
+1 while active and NULL once archived; MySQL treats NULLs as distinct inside a
+unique index, so the constraint reads "at most one ACTIVE row, unlimited
+archived history". Verified all three ways: duplicate active blocked, re-add
+after archive allowed, re-add with two archived siblings allowed.
+Duplicates are archived defensively first (local data was already clean).
+
+Two paths needed hardening for this constraint, both fixed in the same commit:
+- `api/setup/demo_logins.php` un-archived **every** matching membership row with
+  no LIMIT, which would trip the constraint whenever archived siblings existed.
+- Duplicate teacher assignments now return 409 with a real message instead of
+  the generic 500 the duplicate-key throw would have produced.
+
+**Delete policy: audited and deliberately left alone.** All 11 ON DELETE CASCADE
+constraints are genuine owned-children and all 6 SET NULL are nullable actor
+references; the other 44 are NO ACTION. That is already coherent, so churning it
+on production would be risk without benefit. This closes the blueprint's
+"inconsistent delete policy" item as "checked, nothing to do".
+
+### Phase 3.2, migration 026, registration schema deltas
+Columns only, per the blueprint: origin + event linkage, card presentation,
+windowing, capacity (+ `capacity_counts` so the still-open counting policy is
+data, not code), decision workflow kept as separate columns so the existing
+triage `status` enum stays intact, person/student linkage, and explicit
+`maps_to` applicant mapping replacing the English-label "name" heuristic.
+`file` and `image` field types are **deliberately excluded** until the upload
+pipeline exists. Everything stays inert because `REG_FIELD_TYPES` in
+`api/registrations_lib.php` still gates what can be set.
+
+### Phase 3.3, migration 027, eligibility tables
+`eligibility_rules` + `eligibility_evaluations`. Rules carry their own
+(context_type, context_id), so blueprint Q5 (pass-mark ownership: per
+department, per grade-level, or global with overrides) is answerable as **data**
+whichever way you decide, with no further migration. Seeded with the threshold
+already sitting in `app_settings`, so the future engine starts life agreeing
+with the current eligibility page rather than contradicting it. Nothing reads
+these tables yet; `gs_compute_eligibility()` is untouched.
+
+### Phase 3.4, migration 028 + label cleanup
+Dropped `notifications.read_by` (migration 022 explicitly deferred this to
+"Phase 3's column-debris pass") after re-running its backfill defensively, and
+narrowed `target_type` to the four values `notify()` can actually produce.
+Admin announcements now returns a real `read_count` from `notification_reads`
+instead of the legacy JSON array no UI consumed.
+Amharic label collision resolved: Departments and Classes both read **ክፍሎች**.
+Now የአገልግሎት ክፍሎች vs የተማሪ ክፍሎች, and the nav says Grade levels / የክፍል ደረጃዎች,
+matching the page it links to. Verified zero duplicate nav labels.
+
+### Verification
+Migrations 025-028 applied locally and inspected. 37 endpoint checks green
+across admin, staff, teacher, student, parent and the public site. Headless
+renders of every changed page in EN and አማርኛ, no console errors.
+Test harnesses live in the session scratchpad (`api_test.py`, `portal.mjs`).
+
+## Previous completed task (2026-08-07): YouTube + TikTok linked back onto the site
 Commit `3620d40`, pushed to main. **Not deployed yet** (manual cPanel deploy still needed).
 
 **Why they had disappeared:** nothing broke. `#tiktokSection` and `#youtubeSection` in
@@ -193,12 +284,27 @@ Landing content overhaul + customizable public registrations + new logo (multi-a
 - Prod verify: 15/16 demo logins PASS with the TESTER_LOGINS.md password. `test-admin@` fails BY DESIGN — the Reset tool never creates a demo admin (only the seeder does, and it hasn't been run on prod). Testers don't need it; TESTER_LOGINS.md lists no admin account.
 
 ## Open items
-1. Optional: run `scripts/seed_demo_users.php` in cPanel Terminal after next prod deploy if a `test-admin` demo login is ever wanted on prod.
-2. ~~YouTube channel RSS auto-fetch~~ DONE 2026-08-07 (`api/social/youtube.php`).
-3. TikTok has no public feed, so `tiktok_latest` still needs URLs pasted in admin → Videos.
-4. Landing page has no OG/Twitter card tags at all, so shares to Facebook/Telegram/X render bare.
+1. **PROD IS 10 MIGRATIONS BEHIND (019-028). This is the top priority.** Code is
+   deployed and current; only the migrate step is outstanding. Until it runs,
+   registrations 500 on prod and none of Phase 2.1-3.4 exists there. Deploy, then
+   POST the migrate endpoint with `X-DEPLOY-TOKEN` and expect 019 through 028 in
+   `applied`. 025 rebuilds three join tables and 026 alters the registration
+   tables, so take a DB backup from cPanel first.
+2. Blueprint decisions still open and now *cheap* to answer, because 027 made them
+   data rather than schema: Q4 capacity counting (026 defaults to `accepted`) and
+   Q5 pass-mark ownership.
+3. Next blueprint phase is **Phase 4, the registration system redesign**, which is
+   what 026's columns were laid down for.
+4. Optional: run `scripts/seed_demo_users.php` in cPanel Terminal after the next
+   prod deploy if a `test-admin` demo login is ever wanted on prod.
+5. ~~YouTube channel RSS auto-fetch~~ DONE 2026-08-07 (`api/social/youtube.php`).
+6. TikTok has no public feed, so `tiktok_latest` still needs URLs pasted in admin → Videos.
+7. Landing page has no OG/Twitter card tags at all, so shares to Facebook/Telegram/X render bare.
    Small fix, worth doing next to the JSON-LD block already in the `<head>`.
-5. Footer contact email is still the old host: `hello@gebriel.eagleeyebgp.com`.
+8. Footer contact email is still the old host: `hello@gebriel.eagleeyebgp.com`.
+9. Cosmetic: several admin/staff count placeholders still use a literal em dash as
+   their loading glyph (`lvlCount`, `resCount`, `evtCount`, `memCount`). Pre-existing,
+   against the workspace no-em-dash rule, worth a sweep when someone is next in there.
 
 ## Developer handover doc (2026-07-20)
 Full onboarding doc for the new developer, grounded in the actual code (3 parallel audits: data model / API / frontend). Two forms:

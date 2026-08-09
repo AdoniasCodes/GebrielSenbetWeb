@@ -202,3 +202,71 @@ W=390 CLICK='[data-lang-toggle] button[data-lang="am"]' \
 `W` sets the emulated viewport width, `CLICK` clicks a selector before capture (used for the
 Amharic pass). It clips to each element's bounding box, so a `hidden` section reports height 0
 instead of producing a blank PNG.
+
+## Adding a migration (the pattern this repo actually uses)
+
+1. Write `db/migrations/0NN_name.sql`. Start with `SET NAMES utf8mb4`, end with a
+   marker row so the runner can prove it landed:
+   ```sql
+   INSERT INTO app_settings (setting_key, setting_value)
+   VALUES ('migration_0NN_applied', '1')
+   ON DUPLICATE KEY UPDATE setting_value = '1';
+   ```
+2. Register the probe in `_migration_artifact_present()` in
+   `api/admin/deploy/migrate.php`. **Skipping this is not cosmetic:** the runner
+   uses probes to self-heal a tracker row whose schema artifact is missing, and an
+   unregistered migration returns null and loses that protection.
+3. Apply locally: `curl -s -X POST -H "X-DEPLOY-TOKEN: <token>" http://127.0.0.1:8899/api/admin/deploy/migrate.php`
+   The token is `app.deploy_token` in `config/config.php`.
+4. The runner splits statements on `;` followed by a newline, so never put a
+   semicolon mid-statement before a line break. It also skips the transaction
+   wrapper whenever the file contains DDL, because MySQL implicitly commits DDL.
+
+### Unique constraints on soft-deleted tables
+Everything here soft-deletes with `is_archived`, so a plain `UNIQUE(a, b)` is
+almost always wrong: it permanently blocks the normal "archive the old row, add a
+new one" flow. Use the guard-column pattern from `025_join_table_integrity.sql`:
+```sql
+ALTER TABLE t ADD COLUMN active_guard TINYINT
+  GENERATED ALWAYS AS (IF(is_archived = 0, 1, NULL)) STORED;
+ALTER TABLE t ADD UNIQUE KEY uq_t_active (a, b, active_guard);
+```
+NULLs are distinct inside a MySQL unique index, so archived rows never collide
+while at most one active row survives. STORED (not VIRTUAL) keeps it indexable on
+both MySQL and MariaDB. Dedup the existing actives in the same migration first.
+
+**After adding any constraint, sweep the write paths.** Adding 025 turned two
+latent bugs into real ones: an un-archive `UPDATE ... WHERE person_id=? AND
+department_id=?` with no LIMIT, and an insert whose only duplicate check covered
+one enum value. Grep every `INSERT INTO <table>` and every `SET is_archived=0`
+before shipping, and make duplicates return 409 rather than a generic 500.
+
+## Testing endpoints and portals locally
+
+Chained curl subshells flake on this machine, so HTTP tests go through Python
+with a cookie jar. Both harnesses live in the session scratchpad and are worth
+recreating if a session starts without them:
+
+- `api_test.py`: a `Client` with login + CSRF handling. Note that the session id
+  rotates on login, so the CSRF token must be re-read *after* logging in.
+- `portal.mjs`: zero-dependency CDP driver over system Chrome (node 22+ has a
+  global `WebSocket`, so no puppeteer install). Logs in inside the page, opens a
+  portal, optionally runs an in-page script, clips a screenshot to one selector,
+  and reports console errors. `W=390` emulates mobile.
+
+```sh
+APP_DB_HOST=127.0.0.1 APP_DB_NAME=eagleerq_gebriel APP_DB_USER=eagleerq_gebriel \
+  APP_DB_PASS=gebrieldbpw php -S 127.0.0.1:8899 -t public &
+DEMO_PASSWORD='demo1234' php scripts/seed_demo_users.php   # fixes local logins
+node portal.mjs test-admin@mekaneselamss.com demo1234 /admin/index.php nav out.png
+```
+
+Demo accounts are `test-<role>@mekaneselamss.com` and `head-<slug>@mekaneselamss.com`.
+`teacher@demo.mekaneselamss.com` style addresses come from the *setup endpoint*,
+not the seeder, and will 401 if only the seeder has been run.
+
+### The public registrations feed has a frozen contract
+`GET /api/registrations/index.php` returns fields as `type` and `required`, NOT
+`field_type` and `is_required` like the lib does. It is documented as a frozen
+contract at the top of the file because the landing JS consumes it. A test that
+reads the lib's key names off the public feed will silently see nulls.
