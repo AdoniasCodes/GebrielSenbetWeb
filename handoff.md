@@ -1,5 +1,41 @@
 # Handoff — GebrielSenbetWeb
 
+## Deploy readiness (2026-08-10): dry-run against the real prod backup, 2 blockers fixed
+Commit `7d42048`. Eyoel supplied a JetBackup dump of live `mekanefh_RealDb`; it was
+restored into a scratch DB and the migrate endpoint was run against it for real.
+
+**Prod baseline from the dump:** MariaDB 10.11.18, 35 tables, `schema_migrations`
+holds 001-018, and the whole database is only ~134 rows (1 student, 1 teacher,
+1 class, 1 enrolment; the rest is reference data). Events and blog_posts are empty.
+
+**Two blockers found and fixed before any prod run:**
+1. `CAST(x AS JSON)` is not valid MariaDB (its CAST has no JSON target type), and
+   it sits in migration **022**'s backfill. The runner breaks on first hard
+   failure, so 022 would have died and taken 023-028 with it. 022's own comment
+   wrongly claimed the construct was MariaDB-safe. Both 022 and 028 now cast to
+   CHAR, correct on both engines.
+2. Migration **008**'s probe looked for a seeded row (`events.title='Sabbath
+   Morning Service'`). Prod had been through the Reset tool so that row was gone,
+   the self-heal read it as "008 never ran", pruned the tracker row and
+   re-applied it: **5 fake events and 5 fake blog posts onto the live public
+   site.** Proven against the backup. Seed migrations need a structural probe;
+   008 now checks the events table exists.
+
+**Result after the fixes, from a fresh restore:** 019-028 applied, `pruned: []`,
+`failed: []`, events/blog_posts still 0, zero FK orphans, all operational data
+preserved, and 12/12 endpoint checks pass (including the registrations endpoint
+that 500s on prod today). A second run is a clean no-op, so the batch is idempotent.
+
+Expected data changes on prod, both intended: `class_levels` 24 -> 11 (migration
+020 purges the archived Era-1 levels) and `people` 15 -> 16 (021 links a missing
+person). 019 seeds the 3 real registration forms; 027 seeds 1 eligibility rule.
+
+**To deploy:** cPanel Update from Remote + Deploy HEAD Commit, then POST the
+migrate endpoint with `X-DEPLOY-TOKEN`. Expect exactly 019-028 in `applied`.
+The backup already taken (`download_mekanefh_1786391069_32910.tar.gz`) is the
+rollback point.
+
+
 ## Last completed task (2026-08-09): Phase 2 and Phase 3 finished
 Commit `58a3b4b`, pushed to main. **Migrations 019 through 028 are all still
 unapplied on production** (see the deploy section below; this is now the single
