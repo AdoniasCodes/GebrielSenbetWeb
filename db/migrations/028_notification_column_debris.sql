@@ -17,6 +17,10 @@
 --    only writer, so these three cannot be produced and no reader matches them.
 --    Verified zero rows before narrowing.
 --
+-- The candidate below is cast to CHAR, not JSON: production is MariaDB, whose
+-- CAST() has no JSON target type. '257' is valid JSON for the number 257, so this
+-- is correct on both engines.
+--
 -- The backfill below re-runs 022's logic defensively. It is a no-op on any
 -- database where 022 already ran, but it means the drop can never lose read
 -- state even if the two migrations are applied in the same batch on a database
@@ -33,7 +37,7 @@ SELECT n.id, u.id, COALESCE(n.updated_at, n.created_at, NOW())
   JOIN users u
     ON n.read_by IS NOT NULL
    AND JSON_VALID(n.read_by)
-   AND JSON_CONTAINS(n.read_by, CAST(u.id AS JSON));
+   AND JSON_CONTAINS(n.read_by, CAST(u.id AS CHAR));
 
 ALTER TABLE notifications DROP COLUMN read_by;
 

@@ -20,8 +20,11 @@ CREATE TABLE IF NOT EXISTS notification_reads (
 
 CREATE INDEX idx_notifread_user ON notification_reads(user_id);
 
--- Backfill from the legacy read_by array. JSON_CONTAINS(read_by, CAST(u.id AS
--- JSON)) tests membership without JSON_TABLE (which MariaDB lacks before 10.6).
+-- Backfill from the legacy read_by array, testing membership without JSON_TABLE
+-- (which MariaDB lacks before 10.6). The candidate is cast to CHAR, NOT to JSON:
+-- production is MariaDB, whose CAST() has no JSON target type, so CAST(x AS JSON)
+-- is a syntax error there. '257' is itself valid JSON for the number 257, so
+-- CAST(u.id AS CHAR) is both correct and portable across MySQL and MariaDB.
 -- The read_at we never stored, so it defaults to now(); INSERT IGNORE makes the
 -- backfill re-runnable against the unique key.
 INSERT IGNORE INTO notification_reads (notification_id, user_id)
@@ -30,7 +33,7 @@ SELECT n.id, u.id
   JOIN users u
     ON n.read_by IS NOT NULL
    AND JSON_VALID(n.read_by)
-   AND JSON_CONTAINS(n.read_by, CAST(u.id AS JSON));
+   AND JSON_CONTAINS(n.read_by, CAST(u.id AS CHAR));
 
 -- Stable marker for the migration runner's artifact probe.
 INSERT INTO app_settings (setting_key, setting_value)

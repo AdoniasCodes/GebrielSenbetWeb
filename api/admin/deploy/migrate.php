@@ -42,7 +42,14 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '005_payments_extensions.sql'      => "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='payments' AND column_name='paid_amount' LIMIT 1",
         '006_audit_log.sql'                => "SHOW TABLES LIKE 'audit_log'",
         '007_notifications_public_flag.sql'=> "SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name='is_public' LIMIT 1",
-        '008_seed_demo_content.sql'        => "SELECT 1 FROM events WHERE title='Sabbath Morning Service' LIMIT 1",
+        // 008 seeds demo events and blog posts. Its probe MUST be structural, not
+        // a check for the seeded rows themselves: deleting demo content (the admin
+        // Reset tool does exactly that) is a legitimate action, and a data probe
+        // reads that as "migration never ran", prunes the tracker row and re-seeds
+        // 5 fake events + 5 fake blog posts onto the live public site. Caught on a
+        // dry run against the 2026-08-10 production backup, which had already been
+        // reset. The events table itself is the real precondition.
+        '008_seed_demo_content.sql'        => "SHOW TABLES LIKE 'events'",
         '009_parents.sql'                  => "SELECT 1 FROM roles WHERE name='parent' LIMIT 1",
         '010_video_embeds.sql'             => "SHOW TABLES LIKE 'video_embeds'",
         '011_churches_and_people.sql'      => "SHOW TABLES LIKE 'people'",
