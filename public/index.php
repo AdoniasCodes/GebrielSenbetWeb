@@ -1,5 +1,5 @@
 <?php
-// public/index.php — Public landing page (Sacred Scholarly Minimalist), bilingual EN/አማ
+// public/index.php: public landing page (Sacred Scholarly Minimalist), bilingual EN/አማ
 
 use App\Utils\Csrf;
 
@@ -19,6 +19,9 @@ elseif ($role === 'parent')  { $dashboard_href = '/parent/index.php';  $dashboar
 elseif ($role === 'staff')   { $dashboard_href = '/staff/index.php';   $dashboard_label_en = 'Staff dashboard';   $dashboard_label_am = 'የሠራተኞች ዳሽቦርድ'; }
 
 $year = date('Y');
+// Ethiopian academic year that enrollment is currently open for.
+// Bump once a year (Ethiopian new year, Meskerem 1, falls around 11 September).
+$enrollment_year_et = 2019;
 
 // Official social accounts (config/config.php is the single source of truth).
 $social     = $config['social'] ?? [];
@@ -28,11 +31,11 @@ $tiktokUrl  = $social['tiktok_url']     ?? '';
 $ttHandle   = $social['tiktok_handle']  ?? '';
 ?>
 <!DOCTYPE html>
-<html lang="en" data-lang="en" class="scroll-smooth">
+<html lang="am" data-lang="am" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mekane Selam Senbet School — Sabbath School</title>
+  <title>Mekane Selam Senbet School · Sabbath School</title>
   <meta name="description" content="Mekane Selam Senbet School. A modern home for our Sunday school: curriculum, grading, payments, and community announcements in one reverent place." />
 
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png" />
@@ -175,17 +178,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
     }
 
-    /* Paschal greeting — a typed call-and-response between two Christians */
-    #paschalGreeting { min-height: 7.5rem; }
-    .pg-line { opacity: 0; transition: opacity .5s ease, transform .5s ease; }
-    .pg-l { transform: translateX(-22px); }
-    .pg-r { transform: translateX(22px); text-align: right; }
-    .pg-line.pg-show { opacity: 1; transform: translateX(0); }
-    .pg-l .pg-text { color: #fed175; }            /* speaker A — gold */
-    .pg-r .pg-text { color: #fffdf8; }            /* speaker B — light */
-    .pg-text::after { content: '▏'; color: #c9a14a; opacity: .8; }
-    .pg-line.pg-done .pg-text::after { content: ''; }
-    @media (prefers-reduced-motion: reduce) { .pg-line { transition: none; } }
   </style>
 </head>
 <body class="bg-surface text-ink font-body antialiased">
@@ -201,7 +193,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       <nav class="hidden md:flex items-center gap-8 text-[15px] text-ink-soft">
         <a class="hover:text-primary transition-colors" href="#about" data-en="About" data-am="ስለ እኛ">About</a>
         <a class="text-primary font-semibold hover:text-primary-soft transition-colors" href="#build" data-en="Our Building" data-am="ሕንፃችን">Our Building</a>
-        <a class="hover:text-primary transition-colors" href="#programs" data-en="Programs" data-am="ፕሮግራሞች">Programs</a>
+        <a class="hover:text-primary transition-colors" href="#programs" data-en="Programs" data-am="የትምህርት መርሃግብሮች">Programs</a>
         <a class="hover:text-primary transition-colors" href="#calendar" data-en="Calendar" data-am="የቀን መቁጠሪያ">Calendar</a>
         <a class="hover:text-primary transition-colors" href="/blog.php" data-en="Blog" data-am="ብሎግ">Blog</a>
       </nav>
@@ -232,25 +224,24 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
     <section class="relative overflow-hidden">
       <!-- full-bleed feast-day choir photo + readability gradients -->
       <div class="absolute inset-0">
-        <img src="/images/photo_2026-06-14-17.28.07.webp" width="1280" height="853" fetchpriority="high" decoding="async"
-             alt="The Mekane Selam Senbet School choir gathered in blue and white robes on a feast day"
-             class="w-full h-full object-cover object-[50%_30%]" />
+        <img src="/images/choir-church-front.webp" width="1920" height="1304" fetchpriority="high" decoding="async"
+             alt="The Mekane Selam Senbet School choir assembled in blue and gold robes on the steps of St Gabriel Church"
+             class="w-full h-full object-cover object-[50%_62%]" />
         <div class="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/75 to-primary/35"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-ink/25"></div>
       </div>
 
       <div class="relative max-w-[1280px] mx-auto px-6 lg:px-8 py-24 lg:py-36">
         <div class="max-w-2xl">
-          <div class="inline-flex items-center gap-2 rounded-full bg-surface/15 border border-surface/25 px-3 py-1 mb-7 backdrop-blur-sm">
+          <a href="#register" class="group/enr inline-flex items-center gap-2 rounded-full bg-surface/15 border border-surface/25 hover:bg-surface/25 hover:border-gold-warm/60 transition-colors px-3 py-1 mb-7 backdrop-blur-sm">
             <span class="w-1.5 h-1.5 rounded-full bg-gold-warm animate-pulse"></span>
-            <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold-warm" data-en="Enrollment open · <?= $year ?>" data-am="ምዝገባ ክፍት ነው · <?= $year ?>">Enrollment open · <?= $year ?></span>
-          </div>
+            <span class="text-[11px] font-semibold uppercase tracking-widestest text-gold-warm" data-en="Enrollment open · <?= $enrollment_year_et ?>" data-am="ምዝገባ ክፍት ነው · <?= $enrollment_year_et ?>">Enrollment open · <?= $enrollment_year_et ?></span>
+            <svg class="text-gold-warm transition-transform group-hover/enr:translate-x-0.5" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
 
           <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.04] tracking-tight text-surface font-semibold drop-shadow-sm" data-en="Raising a Generation Rooted in Orthodox Faith." data-am="በኦርቶዶክሳዊት እምነት የታነጸ ትውልድን ማፍራት።">Raising a Generation Rooted in Orthodox Faith.</h1>
 
-          <div id="paschalGreeting" class="mt-6 max-w-md font-display ethiopic text-lg lg:text-xl leading-relaxed" aria-label="Paschal greeting — ክርስቶስ ተንሥአ እሙታን"></div>
-
-          <p class="mt-7 text-lg leading-relaxed text-surface/85 max-w-xl" data-en="Welcome to Mekane Selam Sunday School, where we learn, live, and defend our Holy Orthodox Tewahedo Faith." data-am="እንኳን ወደ መካነ ሰላም ሰንበት ትምህርት ቤት በሰላም መጡ፤ እምነታችንን የምንማርበት፣ የምንኖርበትና የምንመሰክርበት ቅዱስ ስፍራ።">
+          <p class="mt-7 text-lg lg:text-xl font-semibold leading-relaxed text-surface max-w-xl" data-en="Welcome to Mekane Selam Sunday School, where we learn, live, and defend our Holy Orthodox Tewahedo Faith." data-am="እንኳን ወደ መካነ ሰላም ሰንበት ትምህርት ቤት በሰላም መጡ፤ እምነታችንን የምንማርበት፣ የምንኖርበትና የምንመሰክርበት ቅዱስ ስፍራ።">
             Welcome to Mekane Selam Sunday School, where we learn, live, and defend our Holy Orthodox Tewahedo Faith.
           </p>
 
@@ -270,7 +261,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
           </div>
 
           <div class="mt-10 flex items-center gap-6 text-sm text-surface/75">
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="Two tracks" data-am="ሁለት ኮርሶች">Two tracks</span></div>
             <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="13 levels" data-am="13 ደረጃዎች">13 levels</span></div>
             <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="One faith" data-am="አንድ እምነት">One faith</span></div>
           </div>
@@ -302,8 +292,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
             <h2 class="ethiopic font-display text-3xl lg:text-5xl text-surface mt-5 leading-tight">የጀመርነውን እንጨርሰው።</h2>
             <p class="mt-3 text-gold-warm text-lg font-medium" data-en="Let's finish what we started." data-am="የጀመርነውን እንጨርሰው።">Let's finish what we started.</p>
 
-            <p class="mt-7 text-surface/85 leading-relaxed" data-en="For 49 years — as one of the oldest Sabbath schools in Addis Ababa — we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more — designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains — gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary." data-am="ለ49 ዓመታት — በአዲስ አበባ ካሉት ጥንታዊ ሰንበት ት/ቤቶች አንዱ ሆነን — የራሳችን ቤት ሳይኖረን አስተምረናል፣ አገልግለናል። ለአንድ አስርት ዓመት የራሳችንን እየገነባን ነው፦ በመማሪያ ክፍሎች፣ ባለ ሁለት ፎቅ አዳራሽና በሌሎችም የተሟላ ዘመናዊ ጂ+2 ሕንፃ — በራሳችን አባላት ተነድፎ በህንፃ አሰሪ ኮሚቴያችን እየተመራ። ለዓመታት ከቆመ በኋላ ሥራው የመጨረሻ ደረጃ ላይ ደርሷል፤ የቀረው የማጠናቀቂያ ሥራ ብቻ ነው — ጂፕሰም፣ ቀለም፣ ተከላዎች፣ የውስጥ ዲዛይንና ፈርኒቸር። ለ50ኛ ዓመት ኢዮቤልዩ ለማጠናቀቅ ቆርጠናል።">
-              For 49 years — as one of the oldest Sabbath schools in Addis Ababa — we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more — designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains — gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary.
+            <p class="mt-7 text-surface/85 leading-relaxed" data-en="For 49 years, as one of the oldest Sabbath schools in Addis Ababa, we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more, designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains: gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary." data-am="ለ49 ዓመታት፣ በአዲስ አበባ ካሉት ጥንታዊ ሰንበት ት/ቤቶች አንዱ ሆነን፣ የራሳችን ቤት ሳይኖረን አስተምረናል፣ አገልግለናል። ለአንድ አስርት ዓመት የራሳችንን እየገነባን ነው፦ በመማሪያ ክፍሎች፣ ባለ ሁለት ፎቅ አዳራሽና በሌሎችም የተሟላ ዘመናዊ ጂ+2 ሕንፃ፣ በራሳችን አባላት ተነድፎ በህንፃ አሰሪ ኮሚቴያችን እየተመራ። ለዓመታት ከቆመ በኋላ ሥራው የመጨረሻ ደረጃ ላይ ደርሷል፤ የቀረው የማጠናቀቂያ ሥራ ብቻ ነው፦ ጂፕሰም፣ ቀለም፣ ተከላዎች፣ የውስጥ ዲዛይንና ፈርኒቸር። ለ50ኛ ዓመት ኢዮቤልዩ ለማጠናቀቅ ቆርጠናል።">
+              For 49 years, as one of the oldest Sabbath schools in Addis Ababa, we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more, designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains: gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary.
             </p>
 
             <div class="mt-9 grid grid-cols-3 gap-4 max-w-md">
@@ -314,7 +304,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
             <blockquote class="mt-8 border-l-2 border-gold-warm/60 pl-5">
               <p class="ethiopic text-surface/90 text-lg leading-relaxed">“የምንማርበትን፣ የምናድገበትን፣ የምናገለግልበትን፣ የምንኖርበትን ሰንበት ት/ቤታችን ጨርሱልን”</p>
-              <footer class="mt-2 text-xs uppercase tracking-widestest text-surface/50" data-en="— our children" data-am="— ልጆቻችን">— our children</footer>
+              <footer class="mt-2 text-xs uppercase tracking-widestest text-surface/50" data-en="our children" data-am="ልጆቻችን">our children</footer>
             </blockquote>
           </div>
 
@@ -339,7 +329,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
               <div class="mt-5 flex flex-wrap gap-2">
                 <span class="ethiopic text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-outline-soft/50">አስራቴን ለሰንበት ት/ቤቴ</span>
-                <span class="ethiopic text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-outline-soft/50">ቁርሴን ለሰንበቴ</span>
+                <span class="ethiopic text-xs px-3 py-1.5 rounded-full bg-primary/5 text-primary border border-outline-soft/50">ቁርሴን ለሰንበት ት/ቤቴ</span>
               </div>
 
               <div class="mt-6 pt-5 border-t border-outline-soft/40">
@@ -356,7 +346,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
         </div>
 
-        <!-- Building progress / final design slider — touch-swipeable, native scroll-snap -->
+        <!-- Building progress / final design slider: touch-swipeable, native scroll-snap -->
         <div class="mt-16 lg:mt-20">
           <div class="flex items-end justify-between gap-4 mb-5">
             <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="Watch it rise" data-am="ግንባታውን ይመልከቱ">Watch it rise</span></p>
@@ -438,12 +428,12 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               ['photo-2026-06-21-09-51-04.w800.webp', 'Choristers playing sistrums and holding prayer staffs against the sky', 'lg:[grid-area:1/1/3/3]'],
               ['img_7799.w800.webp', 'A young chorister singing during the feast', 'lg:[grid-area:1/3/2/4]'],
               ['img_6443.w800.webp', 'A moment of worship at the parish', 'lg:[grid-area:1/4/2/5]'],
-              ['dsc-1689.w800.webp', 'A row of choir members singing in patterned robes and caps', 'lg:[grid-area:2/3/3/5]'],
-              ['dsc-1619.w800.webp', 'A soloist singing into the microphone in a red and gold cape', 'lg:[grid-area:3/1/5/2]'],
+              ['begena-ensemble.w800.webp', 'The begena ensemble seated in white robes with their instruments', 'lg:[grid-area:2/3/3/5]'],
+              ['choir-portrait.w800.webp', 'Members of the Sunday school gathered in white ceremonial robes', 'lg:[grid-area:3/1/5/2]'],
               ['img-7791.w800.webp', 'Young women of the choir singing with hands raised in praise', 'lg:[grid-area:3/2/4/4]'],
-              ['dsc-1634.w800.webp', 'Choir members standing in prayer during the celebration', 'lg:[grid-area:3/4/4/5]'],
+              ['parish-feast-1.w800.webp', 'The parish gathered together on a feast day', 'lg:[grid-area:3/4/4/5]'],
               ['img_7755.w800.webp', 'Choir members in procession seen from behind beneath the flags', 'lg:[grid-area:4/2/5/3]'],
-              ['img_7758.w800.webp', 'The choir in procession with prayer staffs and festival flags', 'lg:[grid-area:4/3/5/4]'],
+              ['parish-feast-2.w800.webp', 'Worshippers together during the feast day celebration', 'lg:[grid-area:4/3/5/4]'],
               ['img_7795.w800.webp', 'A chorister holding a prayer staff', 'lg:[grid-area:4/4/5/5]'],
             ];
             foreach ($gallery as $g):
@@ -573,8 +563,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
         <div class="flex items-end justify-between mb-12 gap-6 flex-wrap">
           <div>
-            <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Two Tracks" data-am="ሁለት ኮርሶች">Two Tracks</span><span class="rule-gold-tiny"></span></p>
-            <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Programs." data-am="ፕሮግራሞች።">Programs.</h2>
+            <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Programs." data-am="የትምህርት መርሃግብሮች።">Programs.</h2>
           </div>
           <p class="max-w-md text-ink-soft" data-en="Every member of the parish has a place. Our curriculum begins in the nursery and continues through the five traditional stages of adult formation." data-am="የቤተ ክርስቲያኒቱ አባል ሁሉ ቦታ አለው። ሥርዓተ ትምህርታችን ከሕፃናት ክፍል ይጀምር እና በአምስቱ ባህላዊ የአዋቂ ምስረታ ደረጃዎች ይቀጥላል።">Every member of the parish has a place. Our curriculum begins in the nursery and continues through the five traditional stages of adult formation.</p>
         </div>
@@ -591,7 +580,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
             <div class="p-7">
               <h3 class="font-display text-2xl text-primary mb-1" data-en="Children's Track" data-am="የልጆች ኮርስ">Children's Track</h3>
               <p class="text-sm text-outline mb-5" data-en="Nursery → Grade 6" data-am="ሕጻናት → 6ኛ ክፍል">Nursery → Grade 6</p>
-              <p class="text-ink-soft leading-relaxed mb-6" data-en="Foundational catechesis through stories, song, and sacred text — paced for young hearts and curious minds." data-am="በታሪኮች፣ በመዝሙር እና በቅዱስ ጽሑፍ የተመሠረተ መሠረታዊ ትምህርት — ለልጆች ልብ እና ለማወቅ ለሚፈልጉ አእምሮዎች።">Foundational catechesis through stories, song, and sacred text — paced for young hearts and curious minds.</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="Foundational catechesis through stories, song, and sacred text, paced for young hearts and curious minds." data-am="በታሪኮች፣ በመዝሙር እና በቅዱስ ጽሑፍ የተመሠረተ መሠረታዊ ትምህርት፣ ለልጆች ልብ እና ለማወቅ ለሚፈልጉ አእምሮዎች።">Foundational catechesis through stories, song, and sacred text, paced for young hearts and curious minds.</p>
               <div class="flex flex-wrap gap-1.5 mb-6">
                 <?php
                   $children_levels_en = ['Nursery','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6'];
@@ -620,7 +609,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
             <div class="p-7">
               <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth &amp; Adult Track" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adult Track</h3>
               <p class="ethiopic text-sm text-outline mb-5">ቀዳማይ → ሃምሳይ</p>
-              <p class="text-ink-soft leading-relaxed mb-6" data-en="The five traditional stages of formation — taught in Amharic and Tigrinya — for youth, parents, and elders alike." data-am="የአምስቱ ባህላዊ የምስረታ ደረጃዎች — በአማርኛ እና በትግርኛ የሚሰጥ — ለወጣቶች፣ ለወላጆች እና ለአዛውንቶች።">The five traditional stages of formation — taught in Amharic and Tigrinya — for youth, parents, and elders alike.</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="The five traditional stages of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike." data-am="የአምስቱ ባህላዊ የምስረታ ደረጃዎች፣ በአማርኛ እና በትግርኛ የሚሰጥ፣ ለወጣቶች፣ ለወላጆች እና ለአዛውንቶች።">The five traditional stages of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike.</p>
               <div class="flex flex-wrap gap-1.5 mb-6">
                 <?php foreach (['ቀዳማይ','ካላዓይ','ሳልሳይ','ራብዓይ','ሃምሳይ'] as $lvl): ?>
                   <span class="ethiopic text-xs px-2.5 py-1 rounded-full bg-surface-mid text-ink-soft border border-outline-soft/50"><?= $lvl ?></span>
@@ -730,7 +719,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <p class="font-display text-[28px] lg:text-[36px] leading-[1.3] italic text-surface mb-7" data-en="&ldquo;Train up a child in the way he should go, and when he is old he will not depart from it.&rdquo;" data-am="&ldquo;ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜም ከእርሱ አይለይም።&rdquo;">
           &ldquo;Train up a child in the way he should go, and when he is old he will not depart from it.&rdquo;
         </p>
-        <p class="ethiopic text-xl text-gold-warm/90 mb-10" data-en="ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜ ከዚያ አይለይም።" data-am="—">
+        <p class="ethiopic text-xl text-gold-warm/90 mb-10" data-en="ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜ ከዚያ አይለይም።" data-am="__skip__">
           ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜ ከዚያ አይለይም።
         </p>
         <p class="eyebrow text-gold-warm/80"><span class="rule-gold-tiny"></span><span data-en="Proverbs 22:6" data-am="ምሳሌ 22፥6">Proverbs 22:6</span><span class="rule-gold-tiny"></span></p>
@@ -919,7 +908,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         </div>
 
         <div>
-          <h4 class="text-[11px] font-semibold uppercase tracking-widestest text-gold mb-4" data-en="Programs" data-am="ፕሮግራሞች">Programs</h4>
+          <h4 class="text-[11px] font-semibold uppercase tracking-widestest text-gold mb-4" data-en="Programs" data-am="የትምህርት መርሃግብሮች">Programs</h4>
           <ul class="space-y-2.5 text-sm text-ink-soft">
             <li><a href="#programs" class="hover:text-primary transition-colors" data-en="Children's Track" data-am="የልጆች ኮርስ">Children's Track</a></li>
             <li><a href="#programs" class="hover:text-primary transition-colors" data-en="Youth &amp; Adult Track" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adult Track</a></li>
@@ -1131,7 +1120,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
         document.querySelectorAll('[data-en], [data-am]').forEach(function (el) {
           var attr = el.getAttribute('data-' + lang);
-          if (attr !== null && attr !== '—') {
+          if (attr !== null && attr !== '__skip__') {
             el.innerHTML = attr;
           }
         });
@@ -1147,60 +1136,21 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         try { localStorage.setItem('gs_lang', lang); } catch (e) {}
       }
       window._applyLang = applyLang;
-      // (paschal greeting animation is set up separately below)
 
       document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
         btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
       });
 
-      var saved = 'en';
-      try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
+      var saved = 'am';
+      try { saved = localStorage.getItem('gs_lang') || 'am'; } catch (e) {}
       applyLang(saved);
       loadLiveContent();
     })();
   </script>
 
-  <script>
-    // Paschal greeting: a typed call-and-response between two Christians.
-    // Speaker A (gold) types in from the left, speaker B (light) from the right.
-    (function () {
-      var host = document.getElementById('paschalGreeting');
-      if (!host) return;
-      var lines = [
-        'ክርስቶስ ተንሥአ እሙታን', 'በዓቢይ ኃይል ወሥልጣን',
-        'አሠሮ ለሰይጣን', 'አግዓዞ ለአዳም',
-        'ሰላም', 'እምይዕዜሰ', 'ኮነ', 'ፍሥሐ ወሰላም ! !'
-      ];
-      var nodes = lines.map(function (t, i) {
-        var d = document.createElement('div');
-        d.className = 'pg-line ' + (i % 2 === 0 ? 'pg-l' : 'pg-r');
-        d.innerHTML = '<span class="pg-text"></span>';
-        d.dataset.t = t;
-        host.appendChild(d);
-        return d;
-      });
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) {
-        nodes.forEach(function (n) { n.classList.add('pg-show', 'pg-done'); n.querySelector('.pg-text').textContent = n.dataset.t; });
-        return;
-      }
-      var li = 0;
-      function typeLine() {
-        if (li >= nodes.length) return;
-        var node = nodes[li], span = node.querySelector('.pg-text'), txt = node.dataset.t, ci = 0;
-        node.classList.add('pg-show');
-        setTimeout(function step() {
-          span.textContent = txt.slice(0, ci);
-          if (ci++ < txt.length) { setTimeout(step, 55); }
-          else { node.classList.add('pg-done'); li++; setTimeout(typeLine, 320); }
-        }, 260); // let the slide-in settle before typing
-      }
-      typeLine();
-    })();
-  </script>
 
   <script>
-    // Building progress / final design slider — native overflow-x scroll-snap
+    // Building progress / final design slider: native overflow-x scroll-snap
     // (touch-swipeable by default), with prev/next arrows + dots on desktop.
     (function () {
       var slider = document.getElementById('buildSlider');
@@ -1257,7 +1207,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
   <script>
     // Public registration: dynamic multi-form renderer against /api/registrations/*.
-    // Frozen contract — see spec. Hides gracefully if the backend isn't deployed yet.
+    // Frozen contract, see spec. Hides gracefully if the backend isn't deployed yet.
     (function () {
       var section = document.getElementById('register');
       var tabsHost = document.getElementById('regTabs');

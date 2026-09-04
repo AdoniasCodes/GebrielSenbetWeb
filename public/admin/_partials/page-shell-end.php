@@ -32,8 +32,8 @@
     document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
       btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
     });
-    var saved = 'en';
-    try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
+    var saved = 'am';
+    try { saved = localStorage.getItem('gs_lang') || 'am'; } catch (e) {}
     applyLang(saved);
   })();
 

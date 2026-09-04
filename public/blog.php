@@ -9,7 +9,7 @@ $ytUrl     = $social['youtube_url'] ?? '';
 $tiktokUrl = $social['tiktok_url']  ?? '';
 ?>
 <!DOCTYPE html>
-<html lang="en" data-lang="en" class="scroll-smooth">
+<html lang="am" data-lang="am" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -131,8 +131,8 @@ $tiktokUrl = $social['tiktok_url']  ?? '';
       document.querySelectorAll('[data-lang-toggle] button').forEach(function (btn) {
         btn.addEventListener('click', function () { applyLang(btn.dataset.lang); });
       });
-      var saved = 'en';
-      try { saved = localStorage.getItem('gs_lang') || 'en'; } catch (e) {}
+      var saved = 'am';
+      try { saved = localStorage.getItem('gs_lang') || 'am'; } catch (e) {}
       applyLang(saved);
     })();
 

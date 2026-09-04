@@ -24,7 +24,7 @@ if (!$child) { http_response_code(403); echo 'Not your child.'; exit; }
 $childName = trim($child['first_name'] . ' ' . $child['last_name']);
 $email = $_SESSION['user_email'] ?? '';
 ?><!DOCTYPE html>
-<html lang="en" data-lang="en">
+<html lang="am" data-lang="am">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -208,7 +208,7 @@ $email = $_SESSION['user_email'] ?? '';
     document.querySelectorAll('[data-lang-toggle] button').forEach(function(btn){
       btn.addEventListener('click', function(){ applyLang(btn.dataset.lang); });
     });
-    var saved = 'en'; try { saved = localStorage.getItem('gs_lang') || 'en'; } catch(e){}
+    var saved = 'am'; try { saved = localStorage.getItem('gs_lang') || 'am'; } catch(e){}
     applyLang(saved);
   })();
 

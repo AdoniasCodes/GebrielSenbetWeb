@@ -8,7 +8,7 @@ if ($role !== 'staff' && $role !== 'admin') { header('Location: /'); exit; }
 $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
 ?>
 <!DOCTYPE html>
-<html lang="en" data-lang="en">
+<html lang="am" data-lang="am">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -697,7 +697,7 @@ $initials = strtoupper(substr($_SESSION['user_email'] ?? 'GS', 0, 2));
     }catch(e){ gs.toast(e.message,'error'); }
     loadNotifs();
   })();
-  applyLang('en');
+  applyLang('am');
 </script>
 </body>
 </html>
