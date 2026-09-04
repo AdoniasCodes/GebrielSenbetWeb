@@ -1,4 +1,4 @@
-# Project Instructions — GebrielSenbetWeb
+# Project Instructions: GebrielSenbetWeb
 
 ## Seed demo users
 
@@ -6,8 +6,8 @@
 resets one demo login per role (admin, teacher, student, parent) plus one
 department-head (staff) login per non-archived department
 (`head-<slug>@mekaneselamss.com`), so per-department scoping is testable.
-It re-hashes with `password_hash(..., PASSWORD_DEFAULT)` — exactly what
-`api/auth/login.php` verifies — which is the fix for the recurring
+It re-hashes with `password_hash(..., PASSWORD_DEFAULT)`, exactly what
+`api/auth/login.php` verifies, which is the fix for the recurring
 "invalid credentials" breakage. It never wipes data and never stores a
 password in the repo. Each run regenerates `DEMO_LOGINS.md` from the database.
 
@@ -17,7 +17,7 @@ password in the repo. Each run regenerates `DEMO_LOGINS.md` from the database.
 # Choose the shared demo password yourself:
 DEMO_PASSWORD='pick-something' php scripts/seed_demo_users.php
 
-# Or let it generate one (printed once at the end — save it):
+# Or let it generate one (printed once at the end, so save it):
 php scripts/seed_demo_users.php
 
 # Optionally write the actual password into DEMO_LOGINS.md (default is a placeholder):
@@ -29,7 +29,7 @@ env vars when needed: `APP_DB_HOST`, `APP_DB_NAME`, `APP_DB_USER`, `APP_DB_PASS`
 
 ### Verify (smoke-test every login over HTTP)
 
-Verify mode needs no DB access — it reads the account emails from
+Verify mode needs no DB access: it reads the account emails from
 `DEMO_LOGINS.md` and POSTs each `{email, password}` to `/api/auth/login.php`,
 printing PASS/FAIL per account (non-zero exit if any fail).
 
@@ -51,7 +51,7 @@ DEMO_PASSWORD='the-password' php scripts/seed_demo_users.php --verify --base-url
     APP_DB_PASS=... DEMO_PASSWORD='...' php scripts/seed_demo_users.php
   DEMO_PASSWORD='...' php scripts/seed_demo_users.php --verify
   ```
-  **GOTCHA — empty DB password won't work.** `config/config.php` uses
+  **GOTCHA, empty DB password won't work.** `config/config.php` uses
   `getenv('APP_DB_PASS') ?: 'Panda2022!!'`, so an *empty* `APP_DB_PASS=''` is
   falsy and silently falls back to the PROD password (login then fails). Local
   MySQL `root` has no password, so you can't use it via the app. Fix once:
@@ -66,7 +66,7 @@ DEMO_PASSWORD='the-password' php scripts/seed_demo_users.php --verify --base-url
 - **Production (cPanel):** after `git push` deploys, open the cPanel Terminal
   (or SSH) and run from the deployed repo root:
   ```sh
-  # .cpanel.yml rsyncs the repo to /home/mekanefh/public_html — run from there
+  # .cpanel.yml rsyncs the repo to /home/mekanefh/public_html, so run from there
   cd /home/mekanefh/public_html
   DEMO_PASSWORD='...' php scripts/seed_demo_users.php
   ```
@@ -95,7 +95,7 @@ DEMO_PASSWORD='the-password' php scripts/seed_demo_users.php --verify --base-url
 
 - Migration: `db/migrations/019_registrations.sql` (tables `registration_forms`, `registration_form_fields`, `registration_submissions` + seeded forms). Apply on prod via the migrate endpoint after deploy.
 - Public API: `GET /api/registrations/index.php` (forms + fields, frozen contract used by landing JS), `POST /api/registrations/submit.php` (JSON `{form_id, answers:{fieldId:value}, website:""}`, header `X-CSRF-Token` from `/api/auth/csrf.php`; honeypot field `website`; 5/hour/IP/form flood guard).
-- Admin: `/admin/registrations.php` (nav Community → Registrations). Actions API `api/admin/registrations/index.php` — POST `{action: 'form.create'|'form.update'|'form.archive'|'field.create'|'field.update'|'field.archive'|'field.reorder'|'submission.status'|'submission.archive', ...}`; GET `?resource=submissions&form_id=N`.
+- Admin: `/admin/registrations.php` (nav Community → Registrations). Actions API `api/admin/registrations/index.php`, POST `{action: 'form.create'|'form.update'|'form.archive'|'field.create'|'field.update'|'field.archive'|'field.reorder'|'submission.status'|'submission.archive', ...}`; GET `?resource=submissions&form_id=N`.
 - Dept heads: same actions via `api/staff/registrations.php`, scoped to departments they head, EXCEPT `form.create` which is admin-only server-side since Phase 1.3 (heads customize existing forms; they cannot create forms or reassign a form's department). UI section "Public registrations" in `/staff/`.
 - Form ownership defaults: sunday-school → timhirt, begena → mezmur, gishen-pilgrimage → guzo (Pilgrimage & Travel). Admin can reassign via form.update.
 
@@ -122,7 +122,7 @@ ffmpeg -y -i "$SRC" -vf "scale=-2:720" \
 ffmpeg -y -v error -ss 54.5 -i "$SRC" -frames:v 1 -vf "scale=1280:-2" -q:v 4 /tmp/poster.jpg
 cwebp -q 80 /tmp/poster.jpg -o public/media/$NAME-poster.webp
 
-# 4. Verify faststart — moov must appear BEFORE mdat
+# 4. Verify faststart: moov must appear BEFORE mdat
 python3 -c "d=open('public/media/$NAME-720.mp4','rb').read(4000000); print('moov',d.find(b'moov'),'mdat',d.find(b'mdat'))"
 ```
 
@@ -136,14 +136,14 @@ this kind of handheld crowd footage, and every browser we support plays H.264.
 
 **Markup rules** (see the `#life` section of `public/index.php` for the reference implementation):
 - `preload="none"` + `poster=` so the page pays only the poster's weight until someone presses play.
-- Do NOT put `controls` in the HTML — the native control bar paints on top of the poster. Set
+- Do NOT put `controls` in the HTML: the native control bar paints on top of the poster. Set
   `video.controls = true` in the play handler, and back to `false` on `ended`.
 - An overlay scrim over a bright frame needs a radial vignette, not a flat tint; `bg-ink/40` and a
   weak linear gradient both left white label text illegible. Screenshot it, never assume.
 - Bilingual `data-en`/`data-am` on the button label and figcaption. `applyLang()` assigns
   `el.innerHTML`, so only ever put those attributes on leaf elements.
 
-**Verifying playback locally** — headless Chrome alone cannot click. Install `puppeteer-core` in the
+**Verifying playback locally.** Headless Chrome alone cannot click. Install `puppeteer-core` in the
 scratchpad (system Chrome is the executable) and assert the real states: pre-play `controls=false`,
 post-click `paused=false` + `videoWidth` non-zero, and `ended` → overlay restored.
 
@@ -240,6 +240,43 @@ latent bugs into real ones: an un-archive `UPDATE ... WHERE person_id=? AND
 department_id=?` with no LIMIT, and an insert whose only duplicate check covered
 one enum value. Grep every `INSERT INTO <table>` and every `SET is_archived=0`
 before shipping, and make duplicates return 409 rather than a generic 500.
+
+## Applying migrations to production (added 2026-09-04)
+
+There is no Supabase and no separate DB console step here: the database is plain
+MySQL/MariaDB on the cPanel account, and migrations are applied by hitting an
+endpoint in the app itself.
+
+**Normal path, one call for everything.** The runner applies every pending
+migration in file order in a single request, so there is never a need to run
+them one at a time:
+
+```sh
+curl -X POST -H "X-DEPLOY-TOKEN: <token>" \
+  https://mekaneselamss.com/api/admin/deploy/migrate.php
+```
+
+The token is `app.deploy_token` in `config/config.php` (value also recorded in
+the `reference_new_host_mekaneselamss` memory). It returns
+`{applied, skipped, failed, bootstrapped, pruned}`. Deploy the code first, since
+the runner reads the `db/migrations` files that the deploy just copied up.
+
+**Fallback path, phpMyAdmin.** If the endpoint cannot be reached, import
+`db/bundles/019-029_combined.sql` into `mekanefh_RealDb` from phpMyAdmin's
+Import tab. The bundle concatenates the pending migrations *and* writes their
+`schema_migrations` rows with each file's real sha256, so the endpoint afterwards
+reports them as `skipped` rather than trying to apply them twice. Regenerate it
+whenever a migration is added or edited, then re-verify by restoring a
+001-018 baseline, importing the bundle, and confirming the endpoint answers
+`applied: [], failed: []`.
+
+**Checksums are why you never edit an applied migration.** The runner compares
+each file's sha256 against the tracker row and reports
+`checksum_mismatch_already_applied` when they differ. That is non-fatal (it
+`continue`s), but the entry then shows up as `failed` on *every* future run and
+hides real failures. Ship a new migration instead. For this reason 006, 010 and
+015 keep their em dashes in comments: they are already applied on prod, so
+touching them would trade a cosmetic fix for permanent noise.
 
 ## Testing endpoints and portals locally
 

@@ -531,8 +531,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               <span data-en="Open" data-am="ክፍት ነው">Open</span>
             </span>
           </div>
-          <h3 class="font-display text-xl text-primary mb-2" data-en="Begena Classes" data-am="የበገና ስልጠና ምዝገባ">Begena Classes</h3>
-          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Learn the sacred harp of David with our begena instructors." data-am="ከበገና አስተማሪዎቻችን ጋር የዳዊትን በገና ይማሩ።">Learn the sacred harp of David with our begena instructors.</p>
+          <h3 class="font-display text-xl text-primary mb-2" data-en="Sacred Instrument Training" data-am="የዜማ መሳሪያ ስልጠና ምዝገባ">Sacred Instrument Training</h3>
+          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Learn our sacred liturgical instruments with our instructors." data-am="ከመምህራኖቻችን ጋር ቅዱሳን የዜማ መሳሪያዎችን ይማሩ።">Learn our sacred liturgical instruments with our instructors.</p>
           <button type="button" class="reg-cta-btn mt-6 inline-flex justify-center items-center gap-2 bg-primary text-surface px-5 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
             <span data-en="Sign Up" data-am="ይመዝገቡ">Sign Up</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -548,8 +548,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               <span data-en="Limited Spots" data-am="ውስን ቦታዎች">Limited Spots</span>
             </span>
           </div>
-          <h3 class="font-display text-xl text-primary mb-2" data-en="Spiritual Pilgrimage to Gishen Mariam" data-am="የግሸን ማርያም ጉዞ ምዝገባ">Spiritual Pilgrimage to Gishen Mariam</h3>
-          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Join our community pilgrimage to the holy mount of Gishen Mariam." data-am="ወደ ቅዱስ ግሸን ማርያም ተራራ ከማኅበረሰባችን ጋር ይጓዙ።">Join our community pilgrimage to the holy mount of Gishen Mariam.</p>
+          <h3 class="font-display text-xl text-primary mb-2" data-en="Spiritual Pilgrimage" data-am="የመንፈሳዊ ጉዞ ምዝገባ">Spiritual Pilgrimage</h3>
+          <p class="text-sm text-ink-soft leading-relaxed flex-1" data-en="Join our community on our spiritual pilgrimage." data-am="ከማኅበረሰባችን ጋር በመንፈሳዊ ጉዞ ላይ ይሳተፉ።">Join our community on our spiritual pilgrimage.</p>
           <button type="button" class="reg-cta-btn mt-6 inline-flex justify-center items-center gap-2 bg-primary text-surface px-5 py-3 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-primary-soft transition-colors">
             <span data-en="Reserve Seat" data-am="ቦታ ይያዙ">Reserve Seat</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>

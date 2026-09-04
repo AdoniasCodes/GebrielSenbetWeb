@@ -70,6 +70,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '026_registration_schema_deltas.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_026_applied' LIMIT 1",
         '027_eligibility_tables.sql'       => "SELECT 1 FROM app_settings WHERE setting_key='migration_027_applied' LIMIT 1",
         '028_notification_column_debris.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_028_applied' LIMIT 1",
+        '029_registration_form_renames.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_029_applied' LIMIT 1",
     ];
     if (!isset($checks[$filename])) return null;
     try {

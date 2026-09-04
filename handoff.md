@@ -65,16 +65,25 @@ This file is current state only.
 
 ## Next up (agreed 2026-09-04)
 
-1. Apply migrations 019-029 on prod (see the deploy checklist above). Verified this
-   session: prod is still on 001-018, local dev DB `eagleerq_gebriel` has all 28.
-   `GET /api/registrations/index.php` still returns 500 on mekaneselamss.com, which
-   is the read-only proof that 019 never ran.
-2. Registration form renames, which are DB seed data and so need a new migration
-   `029` (019 is applied locally, so editing it in place would trip the runner's
-   `checksum_mismatch_already_applied` guard): `የበገና ስልጠና ምዝገባ` becomes
-   `የዜማ መሳሪያ ስልጠና ምዝገባ`, and `የግሸን ማርያም ጉዞ ምዝገባ` becomes `የመንፈሳዊ ጉዞ ምዝገባ`.
-3. The hero's new `#register` link lands on a section that is `hidden` until the
-   registrations API returns forms, so it is inert on prod until step 1 is done.
+**Everything is written and tested; the only remaining step is on prod.**
+Migrations 019-029 are ready to apply. Verified this session: prod is still on
+001-018, local dev `eagleerq_gebriel` is on 029.
+
+Two ways to apply them, both verified against a rebuilt 001-018 replica of prod:
+
+1. **Endpoint (preferred, one call applies all of 019-029):**
+   `curl -X POST -H "X-DEPLOY-TOKEN: <token>" https://mekaneselamss.com/api/admin/deploy/migrate.php`
+   Test result: applies exactly 019-029, `failed: []`, second run a clean no-op.
+2. **phpMyAdmin fallback:** import `db/bundles/019-029_combined.sql`. It carries
+   the `schema_migrations` rows with each file's real sha256, so the endpoint
+   afterwards reports `applied: [], failed: [], skipped: 29`.
+
+Deploy the code first either way, since the runner reads the migration files the
+deploy copies up. Take a DB backup first (025 rebuilds three join tables, 026
+alters the registration tables).
+
+Expected deltas on real prod data: `class_levels` 24 -> 11, `people` 15 -> 16,
+3 registration forms seeded by 019 then renamed by 029, 1 eligibility rule.
 
 ## Open decisions / next work
 
