@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-08-17 (handoff pruned; project state as of the 2026-08-10 deploy dry-run)
+**Last updated:** 2026-09-04 (landing page refresh pushed; prod migrate still pending)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -63,6 +63,19 @@ This file is current state only.
 - Housekeeping: a stray probe doc "zz-probe-delete-me" sits in Eyoel's Drive root; no MCP
   delete tool exists, so it needs deleting by hand.
 
+## Next up (agreed 2026-09-04)
+
+1. Apply migrations 019-029 on prod (see the deploy checklist above). Verified this
+   session: prod is still on 001-018, local dev DB `eagleerq_gebriel` has all 28.
+   `GET /api/registrations/index.php` still returns 500 on mekaneselamss.com, which
+   is the read-only proof that 019 never ran.
+2. Registration form renames, which are DB seed data and so need a new migration
+   `029` (019 is applied locally, so editing it in place would trip the runner's
+   `checksum_mismatch_already_applied` guard): `የበገና ስልጠና ምዝገባ` becomes
+   `የዜማ መሳሪያ ስልጠና ምዝገባ`, and `የግሸን ማርያም ጉዞ ምዝገባ` becomes `የመንፈሳዊ ጉዞ ምዝገባ`.
+3. The hero's new `#register` link lands on a section that is `hidden` until the
+   registrations API returns forms, so it is inert on prod until step 1 is done.
+
 ## Open decisions / next work
 
 - Blueprint Q4 (registration capacity counting; 026 defaults to `accepted`) and Q5
@@ -72,6 +85,16 @@ This file is current state only.
 
 ## Recent work (full detail in the archive)
 
+- **2026-09-04** (commit `8a0ac82`, pushed, NOT yet deployed): landing page refresh.
+  Amharic is now the default language site-wide (public pages plus admin/staff/
+  teacher/student/parent shells: both `<html lang/data-lang>` and the localStorage
+  fallback start at `am`). New hero photo (`choir-church-front.webp`), paschal
+  greeting removed entirely, welcome line bolded, and the gold pill is now a link to
+  `#register` carrying the Ethiopian year from the new `$enrollment_year_et`
+  constant. Copy: `ቁርሴን ለሰንበት ት/ቤቴ`, `የትምህርት መርሃግብሮች`, "Two tracks" dropped.
+  Four gallery tiles swapped for new WebP photos with the 4x4 grid areas untouched.
+  All 12 pre-existing em dashes on the page cleared; the "no translation" sentinel
+  is now `__skip__` (was an em dash) in both `data-am` and the `applyLang` check.
 - **2026-08-10:** deploy dry-run against the real prod backup + the two migration fixes above.
 - **2026-08-09** (commit `58a3b4b`): Phase 2.4 dept-head announcements (approval-free),
   2.5 homework visibility for students/parents (`api/tasks_lib.php`, read-only), and
