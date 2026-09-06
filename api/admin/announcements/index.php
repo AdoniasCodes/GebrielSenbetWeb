@@ -1,8 +1,8 @@
 <?php
-// api/admin/announcements/index.php — admin compose & list of broadcast notifications
+// api/admin/announcements/index.php: admin compose and list of broadcast notifications
 // GET   /api/admin/announcements?include_archived=
 // POST  body: { title, message, target_type, target_payload?, is_public? }
-//   target_type: role | department | class | user  (the readable contract — see notifications_lib.php)
+//   target_type: role | department | class | user  (the readable contract, see notifications_lib.php)
 //   target_payload: { role?: 'student|teacher|parent|staff|admin', department_id?, class_id?, user_id? }
 // DELETE body: { id }
 
