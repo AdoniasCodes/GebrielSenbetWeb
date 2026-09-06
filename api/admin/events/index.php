@@ -1,5 +1,5 @@
 <?php
-// api/admin/events/index.php — events with optional recurrence rule
+// api/admin/events/index.php: events with optional recurrence rule
 // GET    /api/admin/events?upcoming=1&include_archived=&status=pending|approved|rejected
 // POST   body: { title, description?, start_datetime, end_datetime?, is_recurring?, recurrence?{ freq, interval_num, by_day?, until_date? } }
 //        or   { action: 'approve'|'reject', id }   (oversight of dept/teacher proposals)
@@ -91,8 +91,21 @@ if ($method === 'POST' || $method === 'PUT') {
     $id = $method === 'PUT' ? (int)($input['id'] ?? 0) : 0;
     if ($method === 'PUT' && $id <= 0) Response::error('id is required', 422);
 
+    $optStr = static function ($v, int $max) {
+        if ($v === null) return null;
+        $v = trim((string)$v);
+        if ($v === '') return null;
+        return mb_substr($v, 0, $max);
+    };
+
     $title = trim($input['title'] ?? '');
+    $titleAm = $optStr($input['title_am'] ?? null, 200);
     $description = isset($input['description']) ? (string)$input['description'] : null;
+    $descriptionAm = isset($input['description_am']) && trim((string)$input['description_am']) !== ''
+        ? (string)$input['description_am'] : null;
+    $locationEn = $optStr($input['location_en'] ?? null, 200);
+    $locationAm = $optStr($input['location_am'] ?? null, 200);
+    $imageUrl = $optStr($input['image_url'] ?? null, 500);
     $start = trim($input['start_datetime'] ?? '');
     $end   = isset($input['end_datetime']) && $input['end_datetime'] !== '' ? trim((string)$input['end_datetime']) : null;
     $isRecurring = !empty($input['is_recurring']) ? 1 : 0;
@@ -102,18 +115,21 @@ if ($method === 'POST' || $method === 'PUT') {
     if (strtotime($start) === false) Response::error('Invalid start_datetime', 422);
     if ($end !== null && strtotime($end) === false) Response::error('Invalid end_datetime', 422);
     if ($end !== null && $end < $start) Response::error('end_datetime must be on/after start_datetime', 422);
+    if ($imageUrl !== null && !preg_match('#^(/[^/\\\\]|https?://)#i', $imageUrl)) {
+        Response::error('image_url must be a site path starting with / or an http(s) URL', 422);
+    }
 
     try {
         $pdo->beginTransaction();
         if ($method === 'POST') {
             // Admin-created events are always immediately approved (explicit for clarity;
             // 'approved' is also the column default).
-            $ins = $pdo->prepare("INSERT INTO events (title, description, start_datetime, end_datetime, is_recurring, status) VALUES (?, ?, ?, ?, ?, 'approved')");
-            $ins->execute([$title, $description, $start, $end, $isRecurring]);
+            $ins = $pdo->prepare("INSERT INTO events (title, title_am, description, description_am, start_datetime, end_datetime, location_en, location_am, image_url, is_recurring, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')");
+            $ins->execute([$title, $titleAm, $description, $descriptionAm, $start, $end, $locationEn, $locationAm, $imageUrl, $isRecurring]);
             $id = (int)$pdo->lastInsertId();
         } else {
-            $upd = $pdo->prepare('UPDATE events SET title=?, description=?, start_datetime=?, end_datetime=?, is_recurring=? WHERE id=?');
-            $upd->execute([$title, $description, $start, $end, $isRecurring, $id]);
+            $upd = $pdo->prepare('UPDATE events SET title=?, title_am=?, description=?, description_am=?, start_datetime=?, end_datetime=?, location_en=?, location_am=?, image_url=?, is_recurring=? WHERE id=?');
+            $upd->execute([$title, $titleAm, $description, $descriptionAm, $start, $end, $locationEn, $locationAm, $imageUrl, $isRecurring, $id]);
         }
         if ($isRecurring && $rec) {
             _writeRecurrence($pdo, $id, $rec);

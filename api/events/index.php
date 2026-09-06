@@ -1,5 +1,5 @@
 <?php
-// api/events/index.php — public read-only feed of upcoming events (no auth required)
+// api/events/index.php: public read-only feed of upcoming events (no auth required)
 
 use App\Database;
 use App\Utils\Response;
@@ -13,7 +13,9 @@ $config = app_config();
 $db = new Database($config['db']);
 $pdo = $db->pdo();
 
-$sql = "SELECT e.id, e.title, e.description, e.start_datetime, e.end_datetime, e.is_recurring,
+$sql = "SELECT e.id, e.title, e.title_am, e.description, e.description_am,
+               e.start_datetime, e.end_datetime, e.location_en, e.location_am,
+               e.image_url, e.is_recurring,
                r.freq, r.interval_num, r.by_day, r.until_date
         FROM events e
         LEFT JOIN event_recurrence_rules r ON r.event_id = e.id

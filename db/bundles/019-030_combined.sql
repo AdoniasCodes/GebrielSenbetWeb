@@ -1,20 +1,23 @@
 -- ---------------------------------------------------------------------------
 -- Mekane Selam / GebrielSenbetWeb
--- Combined migration bundle: 019_registrations.sql .. 029_registration_form_renames.sql
+-- Combined migration bundle: 019_registrations.sql .. 030_event_details.sql
 -- Generated 2026-09-06
 --
 -- Use this ONLY if you are applying migrations by hand in phpMyAdmin.
 -- The normal path is a single POST to /api/admin/deploy/migrate.php, which
 -- already applies every pending migration in order by itself.
 --
--- This file records each migration in schema_migrations with the exact sha256
--- of its SOURCE file under db/migrations, so the migrate endpoint afterwards
--- reports them as 'skipped' instead of applying them a second time. Comment
--- punctuation is normalised on the way in; executable SQL is byte-identical.
+-- Every statement here is idempotent, so importing this against a database
+-- that already has some of these migrations is safe.
+--
+-- The checksum recorded for each migration is the sha256 of its SOURCE file
+-- under db/migrations, so the migrate endpoint afterwards reports them as
+-- 'skipped'. Comment punctuation is normalised on the way in; executable SQL
+-- is byte-identical to the source.
 --
 -- Import into phpMyAdmin against database mekanefh_RealDb.
--- Take a backup first: 025 rebuilds three join tables and 026 alters the
--- registration tables.
+-- Take a backup first: 025 rebuilds three join tables, 026 alters the
+-- registration tables and 030 alters events.
 -- ---------------------------------------------------------------------------
 
 SET NAMES utf8mb4;
@@ -818,4 +821,73 @@ VALUES ('migration_029_applied', '1')
 ON DUPLICATE KEY UPDATE setting_value = '1';
 
 INSERT INTO schema_migrations (filename, checksum) VALUES ('029_registration_form_renames.sql', 'bc78de159bc0f064178ef94c85b0b5200d7744519522154ba6c1f7a7b6684400')
+ON DUPLICATE KEY UPDATE checksum = VALUES(checksum);
+
+-- =========================================================================
+-- 030_event_details.sql
+-- =========================================================================
+-- 030_event_details.sql
+-- The landing page shows events as cards: venue and time at a glance, then a
+-- detail view with an optional poster. The events table carried none of that,
+-- and no Amharic columns either, so every event was English-only and had
+-- nowhere to record where it happens.
+--
+-- Adds, all nullable so existing rows stay valid:
+--   title_am / description_am  bilingual pair for the existing columns
+--   location_en / location_am  the venue, shown on the card face
+--   image_url                  poster or photo, shown in the detail view
+--
+-- Idempotent: each ALTER is guarded by an information_schema check, because
+-- MariaDB has no ADD COLUMN IF NOT EXISTS that is safe across versions here.
+
+SET @ddl = IF((SELECT COUNT(*) FROM information_schema.columns
+               WHERE table_schema = DATABASE() AND table_name = 'events'
+                 AND column_name = 'title_am') = 0,
+              'ALTER TABLE events ADD COLUMN title_am VARCHAR(200) NULL AFTER title',
+              'SELECT 1');
+PREPARE st FROM @ddl;
+EXECUTE st;
+DEALLOCATE PREPARE st;
+
+SET @ddl = IF((SELECT COUNT(*) FROM information_schema.columns
+               WHERE table_schema = DATABASE() AND table_name = 'events'
+                 AND column_name = 'description_am') = 0,
+              'ALTER TABLE events ADD COLUMN description_am TEXT NULL AFTER description',
+              'SELECT 1');
+PREPARE st FROM @ddl;
+EXECUTE st;
+DEALLOCATE PREPARE st;
+
+SET @ddl = IF((SELECT COUNT(*) FROM information_schema.columns
+               WHERE table_schema = DATABASE() AND table_name = 'events'
+                 AND column_name = 'location_en') = 0,
+              'ALTER TABLE events ADD COLUMN location_en VARCHAR(200) NULL AFTER end_datetime',
+              'SELECT 1');
+PREPARE st FROM @ddl;
+EXECUTE st;
+DEALLOCATE PREPARE st;
+
+SET @ddl = IF((SELECT COUNT(*) FROM information_schema.columns
+               WHERE table_schema = DATABASE() AND table_name = 'events'
+                 AND column_name = 'location_am') = 0,
+              'ALTER TABLE events ADD COLUMN location_am VARCHAR(200) NULL AFTER location_en',
+              'SELECT 1');
+PREPARE st FROM @ddl;
+EXECUTE st;
+DEALLOCATE PREPARE st;
+
+SET @ddl = IF((SELECT COUNT(*) FROM information_schema.columns
+               WHERE table_schema = DATABASE() AND table_name = 'events'
+                 AND column_name = 'image_url') = 0,
+              'ALTER TABLE events ADD COLUMN image_url VARCHAR(500) NULL AFTER location_am',
+              'SELECT 1');
+PREPARE st FROM @ddl;
+EXECUTE st;
+DEALLOCATE PREPARE st;
+
+INSERT INTO app_settings (setting_key, setting_value)
+VALUES ('migration_030_applied', '1')
+ON DUPLICATE KEY UPDATE setting_value = '1';
+
+INSERT INTO schema_migrations (filename, checksum) VALUES ('030_event_details.sql', 'db9b6eb6748124c8abb84b02af1cf94061bfd5d4c488bf05611c2e99a5c91324')
 ON DUPLICATE KEY UPDATE checksum = VALUES(checksum);

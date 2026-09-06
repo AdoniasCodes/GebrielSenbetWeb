@@ -28,10 +28,20 @@ require __DIR__ . '/_partials/page-shell.php';
   </header>
   <form id="entityForm" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
     <input type="hidden" id="f_id" />
-    <div class="md:col-span-2"><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Title</label><input id="f_title" class="input-field" required /></div>
-    <div class="md:col-span-2"><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Description</label><textarea id="f_desc" class="input-field" rows="3"></textarea></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Title (English)</label><input id="f_title" class="input-field" required /></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">ርዕስ (አማርኛ)</label><input id="f_title_am" class="input-field ethiopic" /></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Description (English)</label><textarea id="f_desc" class="input-field" rows="4"></textarea></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">ዝርዝር (አማርኛ)</label><textarea id="f_desc_am" class="input-field ethiopic" rows="4"></textarea></div>
     <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Start</label><input id="f_start" type="datetime-local" class="input-field" required /></div>
     <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">End (optional)</label><input id="f_end" type="datetime-local" class="input-field" /></div>
+
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Venue (English)</label><input id="f_loc_en" class="input-field" placeholder="Sunday school hall" /></div>
+    <div><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">ቦታ (አማርኛ)</label><input id="f_loc_am" class="input-field ethiopic" placeholder="በሰንበት ት/ቤቱ አዳራሽ" /></div>
+
+    <div class="md:col-span-2"><label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Poster or photo (optional)</label>
+      <input id="f_image" class="input-field" placeholder="/images/my-poster.webp  or  https://..." />
+      <p class="text-xs text-ink-soft mt-1.5">Shown in the event detail view on the landing page. Upload the file first, then paste its path. Must start with / or http(s).</p>
+    </div>
 
     <div class="md:col-span-2 mt-2">
       <label class="inline-flex items-center gap-2"><input type="checkbox" id="f_recurring" class="w-4 h-4" /> <span class="text-sm">Repeats</span></label>
@@ -65,7 +75,7 @@ require __DIR__ . '/_partials/page-shell.php';
 
 <section class="panel">
   <header class="px-6 py-5 border-b border-outline-soft/40 flex items-center justify-between flex-wrap gap-3">
-    <h2 class="font-display text-lg text-ink">Events · <span id="rowCount" class="text-ink-soft text-sm">—</span></h2>
+    <h2 class="font-display text-lg text-ink">Events · <span id="rowCount" class="text-ink-soft text-sm">…</span></h2>
     <div class="flex items-center gap-4">
       <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="pendingOnly" type="checkbox" class="w-4 h-4" /> <span data-en="Pending only" data-am="በመጠባበቅ ብቻ">Pending only</span></label>
       <label class="text-xs text-ink-soft inline-flex items-center gap-2"><input id="upcomingOnly" type="checkbox" class="w-4 h-4" /> <span>Upcoming only</span></label>
@@ -87,7 +97,7 @@ require __DIR__ . '/_partials/page-shell.php';
   var all = [];
 
   function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
-  function fmtDate(s) { return s ? gs.fmtDate(s, 'datetime') : '—'; }
+  function fmtDate(s) { return s ? gs.fmtDate(s, 'datetime') : '-'; }
 
   function showRecurrenceFields() {
     var on = document.getElementById('f_recurring').checked;
@@ -100,7 +110,12 @@ require __DIR__ . '/_partials/page-shell.php';
     msg.classList.add('hidden');
     document.getElementById('f_id').value = item ? item.id : '';
     document.getElementById('f_title').value = item ? item.title : '';
+    document.getElementById('f_title_am').value = item && item.title_am ? item.title_am : '';
     document.getElementById('f_desc').value = item && item.description ? item.description : '';
+    document.getElementById('f_desc_am').value = item && item.description_am ? item.description_am : '';
+    document.getElementById('f_loc_en').value = item && item.location_en ? item.location_en : '';
+    document.getElementById('f_loc_am').value = item && item.location_am ? item.location_am : '';
+    document.getElementById('f_image').value = item && item.image_url ? item.image_url : '';
     document.getElementById('f_start').value = item && item.start_datetime ? item.start_datetime.replace(' ','T').slice(0,16) : '';
     document.getElementById('f_end').value = item && item.end_datetime ? item.end_datetime.replace(' ','T').slice(0,16) : '';
     var recurring = item && item.is_recurring == 1;
@@ -131,7 +146,7 @@ require __DIR__ . '/_partials/page-shell.php';
     var tbody = document.getElementById('tbody');
     if (!all.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-ink-soft py-16">No events.</td></tr>'; return; }
     tbody.innerHTML = all.map(function (e) {
-      var rec = e.is_recurring == 1 ? ('<span class="pill pill-draft">'+escHtml(e.freq||'recurring')+'</span>') : '<span class="text-outline text-xs">—</span>';
+      var rec = e.is_recurring == 1 ? ('<span class="pill pill-draft">'+escHtml(e.freq||'recurring')+'</span>') : '<span class="text-outline text-xs">-</span>';
       var origin = (e.department_name || e.created_by_email)
         ? '<p class="text-xs text-outline mt-0.5">' +
             (e.department_name ? escHtml(e.department_name) : '') +
@@ -176,7 +191,12 @@ require __DIR__ . '/_partials/page-shell.php';
     var id = document.getElementById('f_id').value;
     var body = {
       title: document.getElementById('f_title').value.trim(),
+      title_am: document.getElementById('f_title_am').value.trim() || null,
       description: document.getElementById('f_desc').value || null,
+      description_am: document.getElementById('f_desc_am').value || null,
+      location_en: document.getElementById('f_loc_en').value.trim() || null,
+      location_am: document.getElementById('f_loc_am').value.trim() || null,
+      image_url: document.getElementById('f_image').value.trim() || null,
       start_datetime: document.getElementById('f_start').value.replace('T',' '),
       end_datetime: document.getElementById('f_end').value ? document.getElementById('f_end').value.replace('T',' ') : null,
       is_recurring: document.getElementById('f_recurring').checked ? 1 : 0,

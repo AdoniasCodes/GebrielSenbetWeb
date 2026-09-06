@@ -262,7 +262,7 @@ the `reference_new_host_mekaneselamss` memory). It returns
 the runner reads the `db/migrations` files that the deploy just copied up.
 
 **Fallback path, phpMyAdmin.** If the endpoint cannot be reached, import
-`db/bundles/019-029_combined.sql` into `mekanefh_RealDb` from phpMyAdmin's
+`db/bundles/019-030_combined.sql` into `mekanefh_RealDb` from phpMyAdmin's
 Import tab. The bundle concatenates the pending migrations *and* writes their
 `schema_migrations` rows with each file's real sha256, so the endpoint afterwards
 reports them as `skipped` rather than trying to apply them twice. Regenerate it

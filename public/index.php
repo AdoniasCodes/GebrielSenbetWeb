@@ -260,10 +260,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
             <a href="#register" class="inline-flex justify-center items-center gap-2 border border-surface/40 text-surface px-7 py-3.5 rounded text-xs font-semibold uppercase tracking-widestest hover:bg-surface/10 transition-colors" data-en="Request enrollment" data-am="ምዝገባ ይጠይቁ">Request enrollment</a>
           </div>
 
-          <div class="mt-10 flex items-center gap-6 text-sm text-surface/75">
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="13 levels" data-am="13 ደረጃዎች">13 levels</span></div>
-            <div class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-gold-warm"></span><span data-en="One faith" data-am="አንድ እምነት">One faith</span></div>
-          </div>
         </div>
       </div>
     </section>
@@ -275,8 +271,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <h2 class="font-display text-3xl lg:text-4xl text-primary mt-5 mb-6 leading-tight" data-en="Spreading the Gospel, forming the faithful." data-am="ወንጌልን ማስፋፋት፣ ምዕመናንን መገንባት።">
           Spreading the Gospel, forming the faithful.
         </h2>
-        <p class="text-lg text-ink-soft leading-relaxed" data-en="Our ultimate mission is to spread the Gospel of Jesus Christ, raise Orthodox Christians who deeply know and defend their faith, and guide all our members to actively participate in the Holy Communion (Holy Qurban)." data-am="ዋናውና የመጨረሻው ግባችን የወንጌልን ብርሃን ማስፋፋት፣ እምነታቸውን ጠንቅቀው የሚያውቁና የሚከላከሉ የኦርቶዶክስ ክርስቲያኖችን ማፍራት እንዲሁም አባላቶቻችን በሙሉ የቅዱስ ቁርባን ተሳታፊ እንዲሆኑ መምራት ነው።">
-          Our ultimate mission is to spread the Gospel of Jesus Christ, raise Orthodox Christians who deeply know and defend their faith, and guide all our members to actively participate in the Holy Communion (Holy Qurban).
+        <p class="text-lg text-ink-soft leading-relaxed" data-en="To gather spiritually minded young people into the Sunday school, where they keep the faith, order and tradition of the Ethiopian Orthodox Tewahedo Church, come to know the history of both their country and their church, grow into a higher standard of spiritual life, and become fit to take up the responsibility of tomorrow's church." data-am="መንፈሳዊ ወጣቶች በሰንበት ት/ቤት ተደራጅተው የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን እምነት፣ ሥርዓትና ትውፊት በመጠበቅ እየተማሩ የሀገርንም ሆነ የቤተ ክርስቲያንን ታሪክ በሚገባ አውቀው ለላቀ የመንፈሳዊ ሕይወት ደረጃ የሚበቁበትንና የነገዋን ቤተ ክርስቲያን በኃላፊነት ለመረከብ ብቁዎች እንዲሆኑ ማድረግ።">
+          To gather spiritually minded young people into the Sunday school, where they keep the faith, order and tradition of the Ethiopian Orthodox Tewahedo Church, come to know the history of both their country and their church, grow into a higher standard of spiritual life, and become fit to take up the responsibility of tomorrow's church.
         </p>
       </div>
     </section>
@@ -289,8 +285,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
           <!-- story -->
           <div>
             <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="49 years · one home left to finish" data-am="49 ዓመታት · የቀረን አንድ ቤት">49 years · one home left to finish</span></p>
-            <h2 class="ethiopic font-display text-3xl lg:text-5xl text-surface mt-5 leading-tight">የጀመርነውን እንጨርሰው።</h2>
-            <p class="mt-3 text-gold-warm text-lg font-medium" data-en="Let's finish what we started." data-am="የጀመርነውን እንጨርሰው።">Let's finish what we started.</p>
+            <h2 class="font-display text-3xl lg:text-5xl text-surface mt-5 leading-tight" data-en="Let&rsquo;s finish what we started." data-am="የጀመርነውን እንጨርሰው።">Let&rsquo;s finish what we started.</h2>
 
             <p class="mt-7 text-surface/85 leading-relaxed" data-en="For 49 years, as one of the oldest Sabbath schools in Addis Ababa, we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more, designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains: gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary." data-am="ለ49 ዓመታት፣ በአዲስ አበባ ካሉት ጥንታዊ ሰንበት ት/ቤቶች አንዱ ሆነን፣ የራሳችን ቤት ሳይኖረን አስተምረናል፣ አገልግለናል። ለአንድ አስርት ዓመት የራሳችንን እየገነባን ነው፦ በመማሪያ ክፍሎች፣ ባለ ሁለት ፎቅ አዳራሽና በሌሎችም የተሟላ ዘመናዊ ጂ+2 ሕንፃ፣ በራሳችን አባላት ተነድፎ በህንፃ አሰሪ ኮሚቴያችን እየተመራ። ለዓመታት ከቆመ በኋላ ሥራው የመጨረሻ ደረጃ ላይ ደርሷል፤ የቀረው የማጠናቀቂያ ሥራ ብቻ ነው፦ ጂፕሰም፣ ቀለም፣ ተከላዎች፣ የውስጥ ዲዛይንና ፈርኒቸር። ለ50ኛ ዓመት ኢዮቤልዩ ለማጠናቀቅ ቆርጠናል።">
               For 49 years, as one of the oldest Sabbath schools in Addis Ababa, we have taught and served without a home of our own. For a decade we have been building one: a state-of-the-art G+2 complex with classrooms, a two-level hall, and more, designed by our own members and overseen by our building committee. After years dormant, the work has reached its final stage; only the finishing remains: gypsum, paint, installations, interiors, and furniture. We are determined to complete it for our 50th anniversary.
@@ -559,13 +554,22 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
     </section>
 
     <!-- ============ PROGRAMS ============ -->
+    <!-- Two families of programme: መደበኛ (the formal, graded tracks) and
+         ኢ-መደበኛ (the non-formal course for long-standing members). -->
     <section id="programs" class="bg-surface-low border-y border-outline-soft/40">
       <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
         <div class="flex items-end justify-between mb-12 gap-6 flex-wrap">
           <div>
             <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Programs." data-am="የትምህርት መርሃግብሮች።">Programs.</h2>
           </div>
-          <p class="max-w-md text-ink-soft" data-en="Every member of the parish has a place. Our curriculum begins in the nursery and continues through the five traditional stages of adult formation." data-am="የቤተ ክርስቲያኒቱ አባል ሁሉ ቦታ አለው። ሥርዓተ ትምህርታችን ከሕፃናት ክፍል ይጀምር እና በአምስቱ ባህላዊ የአዋቂ ምስረታ ደረጃዎች ይቀጥላል።">Every member of the parish has a place. Our curriculum begins in the nursery and continues through the five traditional stages of adult formation.</p>
+          <p class="max-w-md text-ink-soft" data-en="Every member of the parish has a place, from the youngest child to the elders who have served for decades." data-am="ከትንሹ ሕፃን እስከ ለዓመታት ያገለገሉ አረጋውያን ድረስ የቤተ ክርስቲያኒቱ አባል ሁሉ የሚማርበት ቦታ አለው።">Every member of the parish has a place, from the youngest child to the elders who have served for decades.</p>
+        </div>
+
+        <!-- ---------- መደበኛ / Formal ---------- -->
+        <div class="flex items-center gap-4 mb-7">
+          <h3 class="font-display text-2xl text-primary whitespace-nowrap" data-en="Formal" data-am="መደበኛ">Formal</h3>
+          <span class="h-px flex-1 bg-outline-soft/60"></span>
+          <span class="text-xs uppercase tracking-widestest text-outline whitespace-nowrap" data-en="Graded tracks" data-am="በደረጃ የተከፋፈሉ ኮርሶች">Graded tracks</span>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
@@ -578,13 +582,13 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 01" data-am="ኮርስ 01">Track 01</span>
             </div>
             <div class="p-7">
-              <h3 class="font-display text-2xl text-primary mb-1" data-en="Children's Track" data-am="የልጆች ኮርስ">Children's Track</h3>
-              <p class="text-sm text-outline mb-5" data-en="Nursery → Grade 6" data-am="ሕጻናት → 6ኛ ክፍል">Nursery → Grade 6</p>
+              <h3 class="font-display text-2xl text-primary mb-1" data-en="Children&rsquo;s Course" data-am="የልጆች ኮርስ">Children&rsquo;s Course</h3>
+              <p class="text-sm text-outline mb-5" data-en="Kirkos &rarr; Grade 6" data-am="ቂርቆስ &rarr; 6ኛ ክፍል">Kirkos &rarr; Grade 6</p>
               <p class="text-ink-soft leading-relaxed mb-6" data-en="Foundational catechesis through stories, song, and sacred text, paced for young hearts and curious minds." data-am="በታሪኮች፣ በመዝሙር እና በቅዱስ ጽሑፍ የተመሠረተ መሠረታዊ ትምህርት፣ ለልጆች ልብ እና ለማወቅ ለሚፈልጉ አእምሮዎች።">Foundational catechesis through stories, song, and sacred text, paced for young hearts and curious minds.</p>
               <div class="flex flex-wrap gap-1.5 mb-6">
                 <?php
-                  $children_levels_en = ['Nursery','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6'];
-                  $children_levels_am = ['ሕጻናት','1ኛ ክፍል','2ኛ ክፍል','3ኛ ክፍል','4ኛ ክፍል','5ኛ ክፍል','6ኛ ክፍል'];
+                  $children_levels_en = ['Kirkos','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6'];
+                  $children_levels_am = ['ቂርቆስ','1ኛ ክፍል','2ኛ ክፍል','3ኛ ክፍል','4ኛ ክፍል','5ኛ ክፍል','6ኛ ክፍል'];
                   foreach ($children_levels_en as $i => $en):
                     $am = $children_levels_am[$i];
                 ?>
@@ -607,14 +611,47 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 02" data-am="ኮርስ 02">Track 02</span>
             </div>
             <div class="p-7">
-              <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth &amp; Adult Track" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adult Track</h3>
-              <p class="ethiopic text-sm text-outline mb-5">ቀዳማይ → ሃምሳይ</p>
-              <p class="text-ink-soft leading-relaxed mb-6" data-en="The five traditional stages of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike." data-am="የአምስቱ ባህላዊ የምስረታ ደረጃዎች፣ በአማርኛ እና በትግርኛ የሚሰጥ፣ ለወጣቶች፣ ለወላጆች እና ለአዛውንቶች።">The five traditional stages of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike.</p>
+              <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth &amp; Adults&rsquo; Course" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adults&rsquo; Course</h3>
+              <p class="text-sm text-outline mb-5" data-en="Grade 7 &rarr; Grade 12" data-am="7ኛ ክፍል &rarr; 12ኛ ክፍል">Grade 7 &rarr; Grade 12</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="Six graded years of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike." data-am="ስድስት የክፍል ደረጃዎችን የያዘ ትምህርት፣ በአማርኛ እና በትግርኛ የሚሰጥ፣ ለወጣቶች፣ ለወላጆች እና ለአረጋውያን።">Six graded years of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike.</p>
               <div class="flex flex-wrap gap-1.5 mb-6">
-                <?php foreach (['ቀዳማይ','ካላዓይ','ሳልሳይ','ራብዓይ','ሃምሳይ'] as $lvl): ?>
-                  <span class="ethiopic text-xs px-2.5 py-1 rounded-full bg-surface-mid text-ink-soft border border-outline-soft/50"><?= $lvl ?></span>
+                <?php
+                  $youth_levels_en = ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'];
+                  $youth_levels_am = ['7ኛ ክፍል','8ኛ ክፍል','9ኛ ክፍል','10ኛ ክፍል','11ኛ ክፍል','12ኛ ክፍል'];
+                  foreach ($youth_levels_en as $i => $en):
+                    $am = $youth_levels_am[$i];
+                ?>
+                  <span class="text-xs px-2.5 py-1 rounded-full bg-surface-mid text-ink-soft border border-outline-soft/50" data-en="<?= htmlspecialchars($en) ?>" data-am="<?= htmlspecialchars($am) ?>"><?= htmlspecialchars($en) ?></span>
                 <?php endforeach; ?>
               </div>
+              <a href="#" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary hover:text-primary-soft">
+                <span data-en="Explore the curriculum" data-am="ሥርዓተ ትምህርቱን ይመልከቱ">Explore the curriculum</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- ---------- ኢ-መደበኛ / Non-Formal ---------- -->
+        <div class="flex items-center gap-4 mb-7 mt-16">
+          <h3 class="font-display text-2xl text-primary whitespace-nowrap" data-en="Non-Formal" data-am="ኢ-መደበኛ">Non-Formal</h3>
+          <span class="h-px flex-1 bg-outline-soft/60"></span>
+          <span class="text-xs uppercase tracking-widestest text-outline whitespace-nowrap" data-en="For long-standing members" data-am="ለነባር አባላት">For long-standing members</span>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group md:col-span-2 md:grid md:grid-cols-2 md:items-stretch">
+            <div class="h-48 md:h-full relative overflow-hidden min-h-[13rem]">
+              <img src="/images/begena-ensemble.w800.webp" width="800" height="534" loading="lazy" decoding="async"
+                   alt="Long-standing members of the Sunday school seated together in white robes"
+                   class="absolute inset-0 w-full h-full object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-surface"></div>
+              <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 03" data-am="ኮርስ 03">Track 03</span>
+            </div>
+            <div class="p-7">
+              <h3 class="font-display text-2xl text-primary mb-1" data-en="Adults&rsquo; Course" data-am="የአዋቂዎች ኮርስ">Adults&rsquo; Course</h3>
+              <p class="text-sm text-outline mb-5" data-en="Daily &middot; for existing members" data-am="በየቀኑ &middot; ለነባር አባላት">Daily &middot; for existing members</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="A daily course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish." data-am="ለነባር የሰንበት ት/ቤቱ አባላት በየቀኑ የሚሰጥ የአዋቂዎች ኮርስ፤ ከመደበኛው የክፍል ደረጃ ውጪ የሚሰጥና በአገልግሎት ላይ ላሉ አባላት ክፍት ነው።">A daily course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish.</p>
               <a href="#" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary hover:text-primary-soft">
                 <span data-en="Explore the curriculum" data-am="ሥርዓተ ትምህርቱን ይመልከቱ">Explore the curriculum</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -650,11 +687,18 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               'svg'      => '<path d="M4 19.5A2.2 2.2 0 0 1 6.2 17.3H20M4 19.5V4h14a2 2 0 0 1 2 2v13.5M8 8h8M8 12h5"/>',
             ],
             [
-              'en_title' => 'Dogmatics',
-              'am_title' => 'ነገረ ሃይማኖት',
-              'en_desc'  => 'Learning the core dogmas, doctrines, and pillars of our faith.',
-              'am_desc'  => 'የእምነታችንን መሠረታዊ ትምህርቶች እና ምሰሶዎች መማር።',
+              'en_title' => 'Foundations of Faith',
+              'am_title' => 'መሠረተ ሃይማኖት',
+              'en_desc'  => 'Learning the core doctrines and pillars our faith rests on.',
+              'am_desc'  => 'እምነታችን የቆመባቸውን መሠረታዊ ትምህርቶችና ምሰሶዎች መማር።',
               'svg'      => '<path d="M12 2.5l2.4 6.9H21l-5.6 4.3 2.1 7.1L12 16.6l-5.5 4.2 2.1-7.1L3 9.4h6.6z"/>',
+            ],
+            [
+              'en_title' => 'Christian Ethics',
+              'am_title' => 'ክርስቲያናዊ ሥነ ምግባር',
+              'en_desc'  => 'How the faith is lived out in daily conduct, character, and choices.',
+              'am_desc'  => 'እምነት በዕለት ተዕለት ኑሮ፣ በጠባይና በምርጫ እንዴት እንደሚገለጥ።',
+              'svg'      => '<circle cx="12" cy="8" r="3.2"/><path d="M12 2.5a5.7 5.7 0 0 1 0 0M5 21c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/>',
             ],
             [
               'en_title' => 'Ecclesiology & Liturgical Canons',
@@ -664,36 +708,87 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               'svg'      => '<path d="M12 2.5v6M4 21V11l8-4 8 4v10M7 21v-6h3v6M14 21v-6h3v6"/>',
             ],
             [
-              'en_title' => 'Hagiology',
-              'am_title' => 'ነገረ ቅድሳን',
-              'en_desc'  => 'The study of the lives of the holy saints, martyrs, and angels.',
-              'am_desc'  => 'የቅዱሳን፣ የሰማዕታት እና የመላእክት ሕይወት ጥናት።',
-              'svg'      => '<circle cx="12" cy="8" r="3.2"/><path d="M12 2.5a5.7 5.7 0 0 1 0 0M5 21c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/>',
-            ],
-            [
-              'en_title' => 'Mariology',
-              'am_title' => 'ነገረ ማርያም',
-              'en_desc'  => 'The theological study of our Holy Virgin Mother Mary.',
-              'am_desc'  => 'ስለ ቅድስት ድንግል ማርያም ሥነ መለኮታዊ ጥናት።',
+              'en_title' => 'Bible Study',
+              'am_title' => 'የመጽሐፍ ቅዱስ ጥናት',
+              'en_desc'  => 'Reading and interpreting the Holy Scriptures in the mind of the Church.',
+              'am_desc'  => 'ቅዱሳት መጻሕፍትን በቤተ ክርስቲያን አረዳድ ማንበብና መተርጎም።',
               'svg'      => '<path d="M12 20.5s-7.5-4.7-7.5-10.3A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.8c0 5.6-7.5 10.3-7.5 10.3z"/>',
             ],
             [
-              'en_title' => 'Christology',
-              'am_title' => 'ነገረ ክርስቶስ',
-              'en_desc'  => 'The study of the person, nature, and redemptive work of Jesus Christ.',
-              'am_desc'  => 'ስለ ኢየሱስ ክርስቶስ ማንነት፣ ባህርይና የቤዛነት ሥራ ጥናት።',
+              'en_title' => 'Mysteries of the Church',
+              'am_title' => 'ምሥጢራተ ቤተክርስቲያን',
+              'en_desc'  => 'The seven Holy Sacraments through which the grace of the Holy Spirit is received.',
+              'am_desc'  => 'የመንፈስ ቅዱስ ጸጋ የሚሰጥባቸው ሰባቱ ቅዱሳት ምሥጢራት።',
               'svg'      => '<path d="M12 2.5v19M6.5 6.5h11"/>',
+              'sacraments' => true,
             ],
           ];
-          foreach ($features as $f): ?>
-            <div class="bg-surface p-7 lg:p-8 group">
+          foreach ($features as $f):
+            $isSac = !empty($f['sacraments']);
+          ?>
+            <div class="bg-surface p-7 lg:p-8 group<?= $isSac ? ' flex flex-col' : '' ?>">
               <div class="w-9 h-9 rounded-sm bg-gold/10 text-gold inline-flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><?= $f['svg'] ?></svg>
               </div>
               <h3 class="font-display text-lg text-primary mb-2" data-en="<?= htmlspecialchars($f['en_title']) ?>" data-am="<?= htmlspecialchars($f['am_title']) ?>"><?= htmlspecialchars($f['en_title']) ?></h3>
               <p class="text-sm text-ink-soft leading-relaxed" data-en="<?= htmlspecialchars($f['en_desc']) ?>" data-am="<?= htmlspecialchars($f['am_desc']) ?>"><?= htmlspecialchars($f['en_desc']) ?></p>
+              <?php if ($isSac): ?>
+                <button type="button" id="sacToggle" aria-expanded="false" aria-controls="sacPanel"
+                        class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widestest text-primary hover:text-primary-soft self-start">
+                  <span data-en="The seven sacraments" data-am="ሰባቱ ምሥጢራት">The seven sacraments</span>
+                  <svg id="sacChevron" class="transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              <?php endif; ?>
             </div>
           <?php endforeach; ?>
+      </div>
+
+      <!-- Expandable detail for ምሥጢራተ ቤተክርስቲያን. It sits below the tiled grid, at
+           full width, so opening it never distorts the four-column rhythm. -->
+      <div id="sacPanel" hidden class="mt-px bg-surface border border-outline-soft/40 rounded-b-lg overflow-hidden">
+        <div class="p-7 lg:p-10">
+          <p class="eyebrow mb-4"><span class="rule-gold-tiny"></span><span data-en="Mysteries of the Church" data-am="ምሥጢራተ ቤተክርስቲያን">Mysteries of the Church</span><span class="rule-gold-tiny"></span></p>
+          <p class="text-ink-soft leading-relaxed max-w-3xl mb-8"
+             data-en="In the Ethiopian Orthodox Tewahedo Church there are seven Holy Sacraments, known as the Mysteries of the Church. Through these sacred rites believers receive the invisible grace of the Holy Spirit."
+             data-am="በኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ሰባት ቅዱሳት ምሥጢራት አሉ፤ ምሥጢራተ ቤተ ክርስቲያን ተብለው ይጠራሉ። በእነዚህ ቅዱሳት ሥርዓቶች ምእመናን የማይታየውን የመንፈስ ቅዱስ ጸጋ ይቀበላሉ።">In the Ethiopian Orthodox Tewahedo Church there are seven Holy Sacraments, known as the Mysteries of the Church. Through these sacred rites believers receive the invisible grace of the Holy Spirit.</p>
+
+          <ol class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 counter-reset">
+            <?php
+              $sacraments = [
+                ['ምሥጢረ ጥምቀት', 'Mystery of Baptism',
+                 'The gateway to the Church, where a person is born again of water and the Holy Spirit for the salvation of their soul.',
+                 'ወደ ቤተ ክርስቲያን የሚያስገባ በር፤ ሰው ከውኃና ከመንፈስ ቅዱስ ዳግመኛ ተወልዶ ነፍሱ የምትድንበት ምሥጢር።'],
+                ['ምሥጢረ ሜሮን', 'Mystery of Myron',
+                 'The anointing with holy oil immediately after baptism, sealing the believer with the gifts of the Holy Spirit.',
+                 'ከጥምቀት በኋላ ወዲያውኑ በቅዱስ ሜሮን የሚደረግ ቅባት፤ ምእመኑን በመንፈስ ቅዱስ ጸጋዎች የሚያትም።'],
+                ['ምሥጢረ ቁርባን', 'Mystery of Holy Communion',
+                 'The supreme sacrament, where believers partake of the true Body and Blood of Jesus Christ for spiritual strength and eternal life.',
+                 'ምእመናን ለመንፈሳዊ ብርታትና ለዘላለም ሕይወት የክርስቶስን እውነተኛ ሥጋና ደም የሚቀበሉበት የበላይ ምሥጢር።'],
+                ['ምሥጢረ ንስሐ', 'Mystery of Penance',
+                 'Confessing sins to a priest, repenting sincerely, and receiving absolution and forgiveness.',
+                 'ኃጢአትን ለንስሐ አባት ተናዞ በእውነት ተጸጽቶ ሥርየትና ይቅርታ የሚገኝበት ምሥጢር።'],
+                ['ምሥጢረ ተክሊል', 'Mystery of Holy Matrimony',
+                 'The sacred union of a man and a woman in marriage, blessed by the Church to form a holy family.',
+                 'ወንድና ሴት በቤተ ክርስቲያን ቡራኬ በጋብቻ ተጣምረው ቅድስት ቤተሰብን የሚመሠርቱበት ምሥጢር።'],
+                ['ምሥጢረ ቀንዲል', 'Mystery of Unction of the Sick',
+                 'The anointing of the sick with blessed oil, accompanied by prayers for physical and spiritual healing.',
+                 'ለሥጋዊና ለመንፈሳዊ ፈውስ ከጸሎት ጋር በተባረከ ዘይት ሕሙማንን የሚቀቡበት ምሥጢር።'],
+                ['ምሥጢረ ክህነት', 'Mystery of Holy Orders',
+                 'The sacrament through which deacons, priests, and bishops receive the authority and grace to administer the sacraments and lead the flock.',
+                 'ዲያቆናት፣ ካህናትና ጳጳሳት ምሥጢራትን ለመፈጸምና መንጋውን ለመምራት ሥልጣንና ጸጋ የሚቀበሉበት ምሥጢር።'],
+              ];
+              foreach ($sacraments as $i => $sc): ?>
+                <li class="flex gap-4">
+                  <span class="shrink-0 w-7 h-7 rounded-full bg-gold/15 text-gold text-xs font-semibold inline-flex items-center justify-center mt-0.5"><?= $i + 1 ?></span>
+                  <div>
+                    <h4 class="ethiopic font-display text-base text-primary leading-snug"><?= $sc[0] ?></h4>
+                    <p class="text-[11px] uppercase tracking-widestest text-outline mt-0.5 mb-1.5" data-en="<?= htmlspecialchars($sc[1]) ?>" data-am="__skip__"><?= htmlspecialchars($sc[1]) ?></p>
+                    <p class="text-sm text-ink-soft leading-relaxed" data-en="<?= htmlspecialchars($sc[2]) ?>" data-am="<?= htmlspecialchars($sc[3]) ?>"><?= htmlspecialchars($sc[2]) ?></p>
+                  </div>
+                </li>
+            <?php endforeach; ?>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -710,6 +805,12 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
     <!-- ============ SCRIPTURE / QUOTE ============ -->
     <section class="scripture relative overflow-hidden">
+      <!-- the parish choir, laid faintly under the blue so the verse stays the subject -->
+      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <img src="/images/photo_2026-06-14-17.28.07.webp" width="1280" height="853" loading="lazy" decoding="async" alt=""
+             class="w-full h-full object-cover object-[50%_35%] opacity-[0.22]" />
+        <div class="absolute inset-0 bg-gradient-to-b from-ink/35 via-transparent to-ink/35"></div>
+      </div>
       <svg class="absolute -right-10 -top-10 opacity-10" width="280" height="280" viewBox="0 0 24 24" fill="none" stroke="#c9a14a" stroke-width="0.6" stroke-linecap="round">
         <path d="M12 2.5v19M2.5 12h19M6.5 6.5l11 11M17.5 6.5l-11 11"/>
         <circle cx="12" cy="12" r="2.5"/>
@@ -718,9 +819,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <div class="rule-gold mb-10 max-w-[120px] mx-auto opacity-60"></div>
         <p class="font-display text-[28px] lg:text-[36px] leading-[1.3] italic text-surface mb-7" data-en="&ldquo;Train up a child in the way he should go, and when he is old he will not depart from it.&rdquo;" data-am="&ldquo;ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜም ከእርሱ አይለይም።&rdquo;">
           &ldquo;Train up a child in the way he should go, and when he is old he will not depart from it.&rdquo;
-        </p>
-        <p class="ethiopic text-xl text-gold-warm/90 mb-10" data-en="ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜ ከዚያ አይለይም።" data-am="__skip__">
-          ሕጻን በሚሄድበት መንገድ አስተምረው፣ ከሸመገለ ጊዜ ከዚያ አይለይም።
         </p>
         <p class="eyebrow text-gold-warm/80"><span class="rule-gold-tiny"></span><span data-en="Proverbs 22:6" data-am="ምሳሌ 22፥6">Proverbs 22:6</span><span class="rule-gold-tiny"></span></p>
       </div>
@@ -743,6 +841,116 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <p class="text-sm text-ink-soft col-span-full text-center py-8" data-en="Loading upcoming events…" data-am="መጪ ዝግጅቶችን በመጫን ላይ…">Loading upcoming events…</p>
       </div>
     </section>
+
+    <!-- Event detail. Poster (when set) sits alongside the text on desktop and
+         stacks above it on mobile, so a portrait flyer never crowds the copy. -->
+    <div id="eventModal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-ink/85 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="evTitle">
+      <div class="bg-surface rounded-lg w-full max-w-3xl max-h-[88vh] overflow-y-auto relative shadow-2xl">
+        <button id="evClose" class="absolute top-3 right-3 z-10 p-2 rounded-full bg-surface/90 text-ink-soft hover:text-ink hover:bg-surface-mid transition-colors" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+
+        <div id="evPosterWrap" class="hidden bg-surface-mid">
+          <img id="evPoster" src="" alt="" class="w-full max-h-[45vh] object-contain mx-auto" />
+        </div>
+
+        <div class="p-7 lg:p-9">
+          <div class="flex flex-wrap items-center gap-3 mb-4">
+            <span id="evDateBadge" class="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widestest text-gold bg-gold/10 rounded-full px-3 py-1"></span>
+            <span id="evVenueBadge" class="hidden items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widestest text-primary bg-primary/8 rounded-full px-3 py-1">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span id="evVenueText"></span>
+            </span>
+          </div>
+
+          <h3 id="evTitle" class="font-display text-2xl lg:text-3xl text-primary leading-snug mb-3"></h3>
+          <p id="evWhen" class="text-sm text-ink-soft mb-6"></p>
+          <div id="evBody" class="text-ink-soft leading-relaxed whitespace-pre-wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      var modal = document.getElementById('eventModal');
+      if (!modal) return;
+      var closeBtn = document.getElementById('evClose');
+      var lastFocus = null;
+
+      function lang() { return document.documentElement.getAttribute('data-lang') === 'am' ? 'am' : 'en'; }
+      function pick(en, am) { return lang() === 'am' ? (am || en || '') : (en || am || ''); }
+
+      function open(ev) {
+        if (!ev) return;
+        lastFocus = document.activeElement;
+        var am = lang() === 'am';
+
+        document.getElementById('evTitle').textContent = pick(ev.title, ev.title_am);
+
+        var body = document.getElementById('evBody');
+        body.textContent = pick(ev.description, ev.description_am) || '';
+        body.classList.toggle('hidden', !body.textContent);
+
+        // Date badge and the long form both follow the active language, using
+        // the Ethiopian calendar helper the rest of the page already uses.
+        var d = window.parseDt ? parseDt(ev.start_datetime) : new Date(ev.start_datetime.replace(' ', 'T'));
+        var badge = document.getElementById('evDateBadge');
+        var when = document.getElementById('evWhen');
+        if (d && !isNaN(d)) {
+          var ec = window.EC ? EC.gregorianToEC(d) : null;
+          badge.textContent = am && ec
+            ? (window.AM_MONTHS_SHORT ? AM_MONTHS_SHORT[ec.month - 1] : '') + ' ' + ec.day + ' ' + ec.year
+            : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          var t = d.toLocaleTimeString(am ? 'am-ET' : 'en-US', { hour: 'numeric', minute: '2-digit' });
+          when.textContent = (am ? 'ሰዓት፦ ' : 'Starts at ') + t;
+        } else {
+          badge.textContent = ''; when.textContent = '';
+        }
+
+        var venue = pick(ev.location_en, ev.location_am);
+        var vb = document.getElementById('evVenueBadge');
+        document.getElementById('evVenueText').textContent = venue;
+        vb.classList.toggle('hidden', !venue);
+        vb.classList.toggle('inline-flex', !!venue);
+
+        var wrap = document.getElementById('evPosterWrap');
+        var img = document.getElementById('evPoster');
+        if (ev.image_url) {
+          img.src = ev.image_url;
+          img.alt = pick(ev.title, ev.title_am);
+          wrap.classList.remove('hidden');
+        } else {
+          img.removeAttribute('src');
+          wrap.classList.add('hidden');
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+      }
+
+      function close() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      // The grid is rendered after fetch, so delegate from the document.
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.event-open') : null;
+        if (!btn) return;
+        var ev = (window._eventsById || {})[btn.getAttribute('data-event-id')];
+        open(ev);
+      });
+      closeBtn.addEventListener('click', close);
+      modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+      });
+    })();
+    </script>
 
     <!-- ============ ANNOUNCEMENTS ============ -->
     <section id="liveAnnouncementsSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-12 hidden">
@@ -951,6 +1159,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
   <script>
     function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];}); }
+    // escHtml already escapes both quote characters, so it is safe for attribute
+    // values too. The alias just makes the intent obvious at the call site.
+    var escAttr = escHtml;
 
     var EN_MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     var AM_MONTHS_SHORT = ['መስከ','ጥቅም','ኅዳር','ታኅሳ','ጥር','የካቲ','መጋቢ','ሚያዝ','ግንቦት','ሰኔ','ሐምሌ','ነሐሴ','ጳጉሜ'];
@@ -959,27 +1170,51 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
     // Build a card whose date pill carries data-iso so EC.rerenderIsoNodes
     // refreshes it on language change.
+    // Events are rendered as cards: date, time and venue on the face, full
+    // detail (and a poster when one is set) behind a click.
+    window._eventsById = {};
+
     function eventCardHtml(e) {
       var d = parseDt(e.start_datetime);
       if (!d) return '';
+      window._eventsById[e.id] = e;
       var moEn = EN_MONTHS_SHORT[d.getMonth()];
       var ec = window.EC ? EC.gregorianToEC(d) : null;
       var moAm = ec ? AM_MONTHS_SHORT[ec.month - 1] : EN_MONTHS_SHORT[d.getMonth()];
       var dayEn = String(d.getDate());
       var dayAm = ec ? String(ec.day) : dayEn;
-      var iso = e.start_datetime;
-      var title = escHtml(e.title || '');
-      var desc  = escHtml(e.description || '');
-      return '<article class="bg-surface rounded-lg border border-outline-soft/40 p-6 hover:shadow-md transition-shadow flex gap-4">' +
-        '<div class="flex-shrink-0 w-14 text-center">' +
-          '<div class="text-[10px] font-semibold uppercase tracking-widestest text-gold" data-en="'+moEn+'" data-am="'+moAm+'">'+moEn+'</div>' +
-          '<div class="font-display text-3xl text-primary leading-none mt-1" data-en="'+dayEn+'" data-am="'+dayAm+'">'+dayEn+'</div>' +
-        '</div>' +
-        '<div class="border-l border-outline-soft/40 pl-4">' +
-          '<h3 class="font-display text-base text-ink leading-tight mb-1">'+title+'</h3>' +
-          '<p class="text-xs text-ink-soft mb-2" data-iso="'+escHtml(iso)+'" data-fmt-style="datetime">'+escHtml(iso)+'</p>' +
-          (desc ? '<span class="text-[10px] uppercase tracking-widestest text-outline">'+desc.substring(0, 48)+(desc.length > 48 ? '…' : '')+'</span>' : '') +
-        '</div>' +
+
+      var titleEn = e.title || '';
+      var titleAm = e.title_am || e.title || '';
+      var locEn = e.location_en || '';
+      var locAm = e.location_am || e.location_en || '';
+
+      var venue = locEn
+        ? '<p class="flex items-start gap-1.5 text-xs text-ink-soft mt-2">' +
+            '<svg class="shrink-0 mt-0.5 text-gold" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+            '<span data-en="'+escAttr(locEn)+'" data-am="'+escAttr(locAm)+'">'+escHtml(locEn)+'</span>' +
+          '</p>'
+        : '';
+
+      var poster = e.image_url
+        ? '<span class="inline-flex items-center gap-1 text-[10px] uppercase tracking-widestest text-gold mt-3">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>' +
+            '<span data-en="Poster" data-am="ፖስተር">Poster</span>' +
+          '</span>'
+        : '';
+
+      return '<article class="group bg-surface rounded-lg border border-outline-soft/40 hover:border-gold/50 hover:shadow-md transition-all">' +
+        '<button type="button" class="event-open w-full text-left p-6 flex gap-4" data-event-id="'+escAttr(String(e.id))+'">' +
+          '<div class="flex-shrink-0 w-14 text-center">' +
+            '<div class="text-[10px] font-semibold uppercase tracking-widestest text-gold" data-en="'+escAttr(moEn)+'" data-am="'+escAttr(moAm)+'">'+escHtml(moEn)+'</div>' +
+            '<div class="font-display text-3xl text-primary leading-none mt-1" data-en="'+escAttr(dayEn)+'" data-am="'+escAttr(dayAm)+'">'+escHtml(dayEn)+'</div>' +
+          '</div>' +
+          '<div class="border-l border-outline-soft/40 pl-4 min-w-0 flex-1">' +
+            '<h3 class="font-display text-base text-ink leading-snug mb-1 group-hover:text-primary transition-colors" data-en="'+escAttr(titleEn)+'" data-am="'+escAttr(titleAm)+'">'+escHtml(titleEn)+'</h3>' +
+            '<p class="text-xs text-ink-soft" data-iso="'+escAttr(e.start_datetime)+'" data-fmt-style="datetime">'+escHtml(e.start_datetime)+'</p>' +
+            venue + poster +
+          '</div>' +
+        '</button>' +
       '</article>';
     }
 
@@ -1148,6 +1383,30 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
     })();
   </script>
 
+
+  <script>
+    // Sacraments disclosure. The panel lives outside the tiled grid, so opening
+    // it cannot distort the four-column rhythm.
+    (function () {
+      var btn = document.getElementById('sacToggle');
+      var panel = document.getElementById('sacPanel');
+      var chevron = document.getElementById('sacChevron');
+      if (!btn || !panel) return;
+      btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        panel.hidden = open;
+        if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
+        if (!open) {
+          // only pull the page down when the panel would otherwise open offscreen
+          var r = panel.getBoundingClientRect();
+          if (r.top > window.innerHeight - 120) {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      });
+    })();
+  </script>
 
   <script>
     // Building progress / final design slider: native overflow-x scroll-snap
