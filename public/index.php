@@ -642,9 +642,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <div class="grid md:grid-cols-2 gap-6">
           <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group md:col-span-2 md:grid md:grid-cols-2 md:items-stretch">
             <div class="h-48 md:h-full relative overflow-hidden min-h-[13rem]">
-              <img src="/images/dsc-1689.w800.webp" width="800" height="533" loading="lazy" decoding="async"
-                   alt="Adult members of the Sunday school in ceremonial robes and patterned caps"
-                   class="absolute inset-0 w-full h-full object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/adults-course.w800.webp" width="800" height="534" loading="lazy" decoding="async"
+                   alt="Adult members of the Sunday school in white traditional dress at a parish gathering"
+                   class="absolute inset-0 w-full h-full object-cover object-[50%_40%] transition-transform duration-700 group-hover:scale-105" />
               <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-surface"></div>
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 03" data-am="ኮርስ 03">Track 03</span>
             </div>
@@ -694,10 +694,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               'en_desc'  => 'The order, rites, and canons by which the church lives.',
               'am_desc'  => 'ቤተ ክርስቲያን የምትመራበት ሥርዓት፣ ሥነ ሥርዓትና ደንብ።',
               'svg'      => '<path d="M12 2.5v6M4 21V11l8-4 8 4v10M7 21v-6h3v6M14 21v-6h3v6"/>',
-              // The seven sacraments are the rites of the church, so the
-              // disclosure lives on this subject now that ምሥጢራተ ቤተክርስቲያን is
-              // no longer a subject of its own.
-              'sacraments' => true,
             ],
             [
               'en_title' => 'History of the Church',
@@ -735,73 +731,17 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               'svg'      => '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2.5a9.5 9.5 0 1 0 0 19c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6h1.9a5.3 5.3 0 0 0 5.3-5.3c0-4.7-4.3-8.3-9.5-8.3z"/>',
             ],
           ];
-          foreach ($features as $f):
-            $isSac = !empty($f['sacraments']);
-          ?>
-            <div class="bg-surface p-7 lg:p-8 group<?= $isSac ? ' flex flex-col' : '' ?>">
+          foreach ($features as $f): ?>
+            <div class="bg-surface p-7 lg:p-8 group">
               <div class="w-9 h-9 rounded-sm bg-gold/10 text-gold inline-flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><?= $f['svg'] ?></svg>
               </div>
               <h3 class="font-display text-lg text-primary mb-2" data-en="<?= htmlspecialchars($f['en_title']) ?>" data-am="<?= htmlspecialchars($f['am_title']) ?>"><?= htmlspecialchars($f['en_title']) ?></h3>
               <p class="text-sm text-ink-soft leading-relaxed" data-en="<?= htmlspecialchars($f['en_desc']) ?>" data-am="<?= htmlspecialchars($f['am_desc']) ?>"><?= htmlspecialchars($f['en_desc']) ?></p>
-              <?php if ($isSac): ?>
-                <button type="button" id="sacToggle" aria-expanded="false" aria-controls="sacPanel"
-                        class="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widestest text-primary hover:text-primary-soft self-start">
-                  <span data-en="The seven sacraments" data-am="ሰባቱ ምሥጢራት">The seven sacraments</span>
-                  <svg id="sacChevron" class="transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              <?php endif; ?>
             </div>
           <?php endforeach; ?>
       </div>
 
-      <!-- Expandable detail for ምሥጢራተ ቤተክርስቲያን. It sits below the tiled grid, at
-           full width, so opening it never distorts the four-column rhythm. -->
-      <div id="sacPanel" hidden class="mt-px bg-surface border border-outline-soft/40 rounded-b-lg overflow-hidden">
-        <div class="p-7 lg:p-10">
-          <p class="eyebrow mb-4"><span class="rule-gold-tiny"></span><span data-en="Mysteries of the Church" data-am="ምሥጢራተ ቤተክርስቲያን">Mysteries of the Church</span><span class="rule-gold-tiny"></span></p>
-          <p class="text-ink-soft leading-relaxed max-w-3xl mb-8"
-             data-en="In the Ethiopian Orthodox Tewahedo Church there are seven Holy Sacraments, known as the Mysteries of the Church. Through these sacred rites believers receive the invisible grace of the Holy Spirit."
-             data-am="በኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተ ክርስቲያን ሰባት ቅዱሳት ምሥጢራት አሉ፤ ምሥጢራተ ቤተ ክርስቲያን ተብለው ይጠራሉ። በእነዚህ ቅዱሳት ሥርዓቶች ምእመናን የማይታየውን የመንፈስ ቅዱስ ጸጋ ይቀበላሉ።">In the Ethiopian Orthodox Tewahedo Church there are seven Holy Sacraments, known as the Mysteries of the Church. Through these sacred rites believers receive the invisible grace of the Holy Spirit.</p>
-
-          <ol class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 counter-reset">
-            <?php
-              $sacraments = [
-                ['ምሥጢረ ጥምቀት', 'Mystery of Baptism',
-                 'The gateway to the Church, where a person is born again of water and the Holy Spirit for the salvation of their soul.',
-                 'ወደ ቤተ ክርስቲያን የሚያስገባ በር፤ ሰው ከውኃና ከመንፈስ ቅዱስ ዳግመኛ ተወልዶ ነፍሱ የምትድንበት ምሥጢር።'],
-                ['ምሥጢረ ሜሮን', 'Mystery of Myron',
-                 'The anointing with holy oil immediately after baptism, sealing the believer with the gifts of the Holy Spirit.',
-                 'ከጥምቀት በኋላ ወዲያውኑ በቅዱስ ሜሮን የሚደረግ ቅባት፤ ምእመኑን በመንፈስ ቅዱስ ጸጋዎች የሚያትም።'],
-                ['ምሥጢረ ቁርባን', 'Mystery of Holy Communion',
-                 'The supreme sacrament, where believers partake of the true Body and Blood of Jesus Christ for spiritual strength and eternal life.',
-                 'ምእመናን ለመንፈሳዊ ብርታትና ለዘላለም ሕይወት የክርስቶስን እውነተኛ ሥጋና ደም የሚቀበሉበት የበላይ ምሥጢር።'],
-                ['ምሥጢረ ንስሐ', 'Mystery of Penance',
-                 'Confessing sins to a priest, repenting sincerely, and receiving absolution and forgiveness.',
-                 'ኃጢአትን ለንስሐ አባት ተናዞ በእውነት ተጸጽቶ ሥርየትና ይቅርታ የሚገኝበት ምሥጢር።'],
-                ['ምሥጢረ ተክሊል', 'Mystery of Holy Matrimony',
-                 'The sacred union of a man and a woman in marriage, blessed by the Church to form a holy family.',
-                 'ወንድና ሴት በቤተ ክርስቲያን ቡራኬ በጋብቻ ተጣምረው ቅድስት ቤተሰብን የሚመሠርቱበት ምሥጢር።'],
-                ['ምሥጢረ ቀንዲል', 'Mystery of Unction of the Sick',
-                 'The anointing of the sick with blessed oil, accompanied by prayers for physical and spiritual healing.',
-                 'ለሥጋዊና ለመንፈሳዊ ፈውስ ከጸሎት ጋር በተባረከ ዘይት ሕሙማንን የሚቀቡበት ምሥጢር።'],
-                ['ምሥጢረ ክህነት', 'Mystery of Holy Orders',
-                 'The sacrament through which deacons, priests, and bishops receive the authority and grace to administer the sacraments and lead the flock.',
-                 'ዲያቆናት፣ ካህናትና ጳጳሳት ምሥጢራትን ለመፈጸምና መንጋውን ለመምራት ሥልጣንና ጸጋ የሚቀበሉበት ምሥጢር።'],
-              ];
-              foreach ($sacraments as $i => $sc): ?>
-                <li class="flex gap-4">
-                  <span class="shrink-0 w-7 h-7 rounded-full bg-gold/15 text-gold text-xs font-semibold inline-flex items-center justify-center mt-0.5"><?= $i + 1 ?></span>
-                  <div>
-                    <h4 class="ethiopic font-display text-base text-primary leading-snug"><?= $sc[0] ?></h4>
-                    <p class="text-[11px] uppercase tracking-widestest text-outline mt-0.5 mb-1.5" data-en="<?= htmlspecialchars($sc[1]) ?>" data-am="__skip__"><?= htmlspecialchars($sc[1]) ?></p>
-                    <p class="text-sm text-ink-soft leading-relaxed" data-en="<?= htmlspecialchars($sc[2]) ?>" data-am="<?= htmlspecialchars($sc[3]) ?>"><?= htmlspecialchars($sc[2]) ?></p>
-                  </div>
-                </li>
-            <?php endforeach; ?>
-          </ol>
-        </div>
-      </div>
     </section>
 
     <!-- ============ ABNET TRADITIONAL EDUCATION ============ -->
@@ -1415,29 +1355,6 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
   </script>
 
 
-  <script>
-    // Sacraments disclosure. The panel lives outside the tiled grid, so opening
-    // it cannot distort the four-column rhythm.
-    (function () {
-      var btn = document.getElementById('sacToggle');
-      var panel = document.getElementById('sacPanel');
-      var chevron = document.getElementById('sacChevron');
-      if (!btn || !panel) return;
-      btn.addEventListener('click', function () {
-        var open = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!open));
-        panel.hidden = open;
-        if (chevron) chevron.style.transform = open ? '' : 'rotate(180deg)';
-        if (!open) {
-          // only pull the page down when the panel would otherwise open offscreen
-          var r = panel.getBoundingClientRect();
-          if (r.top > window.innerHeight - 120) {
-            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        }
-      });
-    })();
-  </script>
 
   <script>
     // Building progress / final design slider: native overflow-x scroll-snap
