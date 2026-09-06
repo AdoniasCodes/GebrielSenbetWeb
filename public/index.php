@@ -583,7 +583,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
     <!-- ============ PROGRAMS ============ -->
     <!-- Two families of programme: መደበኛ (the formal, graded tracks) and
-         ኢ-መደበኛ (the non-formal course for long-standing members). -->
+         ልዩ መደበኛ (the special course for long-standing members). -->
     <section id="programs" class="bg-surface-low border-y border-outline-soft/40">
       <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-20">
         <div class="flex items-end justify-between mb-12 gap-6 flex-wrap">
@@ -660,9 +660,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
           </article>
         </div>
 
-        <!-- ---------- ኢ-መደበኛ / Non-Formal ---------- -->
+        <!-- ---------- ልዩ መደበኛ / Special ---------- -->
         <div class="flex items-center gap-4 mb-7 mt-16">
-          <h3 class="font-display text-2xl text-primary whitespace-nowrap" data-en="Non-Formal" data-am="ኢ-መደበኛ">Non-Formal</h3>
+          <h3 class="font-display text-2xl text-primary whitespace-nowrap" data-en="Special" data-am="ልዩ መደበኛ">Special</h3>
           <span class="h-px flex-1 bg-outline-soft/60"></span>
           <span class="text-xs uppercase tracking-widestest text-outline whitespace-nowrap" data-en="For long-standing members" data-am="ለነባር አባላት">For long-standing members</span>
         </div>
@@ -678,8 +678,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
             </div>
             <div class="p-7">
               <h3 class="font-display text-2xl text-primary mb-1" data-en="Adults&rsquo; Course" data-am="የአዋቂዎች ኮርስ">Adults&rsquo; Course</h3>
-              <p class="text-sm text-outline mb-5" data-en="Daily &middot; for existing members" data-am="በየቀኑ &middot; ለነባር አባላት">Daily &middot; for existing members</p>
-              <p class="text-ink-soft leading-relaxed mb-6" data-en="A daily course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish." data-am="ለነባር የሰንበት ት/ቤቱ አባላት በየቀኑ የሚሰጥ የአዋቂዎች ኮርስ፤ ከመደበኛው የክፍል ደረጃ ውጪ የሚሰጥና በአገልግሎት ላይ ላሉ አባላት ክፍት ነው።">A daily course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish.</p>
+              <p class="text-sm text-outline mb-5" data-en="Monthly &middot; for existing members" data-am="በየወሩ &middot; ለነባር አባላት">Monthly &middot; for existing members</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="A monthly course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish." data-am="ለነባር የሰንበት ት/ቤቱ አባላት በየወሩ የሚሰጥ የአዋቂዎች ኮርስ፤ ከመደበኛው የክፍል ደረጃ ውጪ የሚሰጥና በአገልግሎት ላይ ላሉ አባላት ክፍት ነው።">A monthly course for long-standing members of the Sunday school, held outside the graded tracks and open to those already serving in the parish.</p>
               <a href="#" class="link-arrow inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widestest text-primary hover:text-primary-soft">
                 <span data-en="Explore the curriculum" data-am="ሥርዓተ ትምህርቱን ይመልከቱ">Explore the curriculum</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
