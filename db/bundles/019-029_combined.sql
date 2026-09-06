@@ -1,15 +1,16 @@
 -- ---------------------------------------------------------------------------
 -- Mekane Selam / GebrielSenbetWeb
 -- Combined migration bundle: 019_registrations.sql .. 029_registration_form_renames.sql
--- Generated 2026-09-04
+-- Generated 2026-09-06
 --
 -- Use this ONLY if you are applying migrations by hand in phpMyAdmin.
 -- The normal path is a single POST to /api/admin/deploy/migrate.php, which
 -- already applies every pending migration in order by itself.
 --
 -- This file records each migration in schema_migrations with the exact sha256
--- of its source file, so the migrate endpoint afterwards reports them as
--- 'skipped' instead of trying to apply them a second time.
+-- of its SOURCE file under db/migrations, so the migrate endpoint afterwards
+-- reports them as 'skipped' instead of applying them a second time. Comment
+-- punctuation is normalised on the way in; executable SQL is byte-identical.
 --
 -- Import into phpMyAdmin against database mekanefh_RealDb.
 -- Take a backup first: 025 rebuilds three join tables and 026 alters the
@@ -319,7 +320,7 @@ INSERT INTO app_settings (setting_key, setting_value)
 VALUES ('migration_022_applied', '1')
 ON DUPLICATE KEY UPDATE setting_value = '1';
 
-INSERT INTO schema_migrations (filename, checksum) VALUES ('022_notification_reads.sql', 'd46622a17840ddaa011b66dba00749d6e8768c762db2c2097eb5c2ce95910e7b')
+INSERT INTO schema_migrations (filename, checksum) VALUES ('022_notification_reads.sql', '8d59b2639e13ef229dfc51ce23f8562a5ff7e15afea8cccfa03370b81a16f250')
 ON DUPLICATE KEY UPDATE checksum = VALUES(checksum);
 
 -- =========================================================================

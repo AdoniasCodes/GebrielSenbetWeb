@@ -274,9 +274,17 @@ whenever a migration is added or edited, then re-verify by restoring a
 each file's sha256 against the tracker row and reports
 `checksum_mismatch_already_applied` when they differ. That is non-fatal (it
 `continue`s), but the entry then shows up as `failed` on *every* future run and
-hides real failures. Ship a new migration instead. For this reason 006, 010 and
-015 keep their em dashes in comments: they are already applied on prod, so
-touching them would trade a cosmetic fix for permanent noise.
+hides real failures. Ship a new migration instead.
+
+**This applies to any migration that is applied ANYWHERE, and "anywhere" includes
+prod the moment someone runs the endpoint.** 006, 010, 015 and 022 all keep the
+em dashes in their comments for this reason. 022 is the cautionary case: it was
+edited on 2026-09-04 while still unapplied on prod, which looked safe, but the
+2026-09-06 migrate run applied the old copy before the edit was deployed. The
+next run then reported a permanent mismatch, and the fix was to restore the file
+byte-for-byte to what prod had applied (`git show <commit>:<path> > <path>`).
+Treat an unapplied migration as editable only while no deploy or migrate is
+pending on it.
 
 ## Testing endpoints and portals locally
 

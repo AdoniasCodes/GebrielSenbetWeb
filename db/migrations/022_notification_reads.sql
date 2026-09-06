@@ -2,7 +2,7 @@
 -- Phase 2.1 (SYSTEM_AUDIT_AND_BLUEPRINT.md §9): per-user read state moves out of
 -- the notifications.read_by JSON array into a proper join table. Fixes the
 -- lost-update race in the old read-modify-write (api/teacher/notifications.php)
--- and gives every portal, not just teachers, a queryable unread model.
+-- and gives every portal — not just teachers — a queryable unread model.
 -- read_by is left on notifications for rollback safety; Phase 3's column-debris
 -- pass drops it. Idempotent: safe to re-run.
 
