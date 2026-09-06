@@ -178,6 +178,34 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       outline: 2px solid #c9a14a; outline-offset: 2px; border-radius: 2px;
     }
 
+
+    /* Notice board. The blue backing carries a faint grid so it reads as a
+       board rather than a flat panel; the notes sit on top, slightly turned. */
+    .pinboard {
+      background: radial-gradient(ellipse at 30% 0%, #2f52a6 0%, #16357e 55%, #0f2559 100%);
+    }
+    .pinboard::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .13;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 46px 46px;
+    }
+    .notice { transform: rotate(-0.5deg); transition: transform .25s ease, box-shadow .25s ease; }
+    .notice:nth-child(even) { transform: rotate(0.55deg); }
+    .notice:hover { transform: rotate(0deg) translateY(-3px); }
+    /* the pin head, centred over the top edge of the note */
+    .notice-pin {
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      width: 22px; height: 22px; border-radius: 9999px;
+      background: radial-gradient(circle at 34% 30%, #fff6df 0%, #e0b45d 42%, #a97c23 100%);
+      box-shadow: 0 2px 5px rgba(10,20,50,.45);
+    }
+    .notice-pin::after {
+      content: ''; position: absolute; left: 50%; top: 15px; transform: translateX(-50%);
+      width: 2px; height: 7px; border-radius: 1px; background: rgba(20,30,60,.35);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .notice, .notice:hover { transform: none; transition: none; }
+    }
   </style>
 </head>
 <body class="bg-surface text-ink font-body antialiased">
@@ -909,14 +937,15 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
     </script>
 
     <!-- ============ ANNOUNCEMENTS ============ -->
-    <section id="liveAnnouncementsSection" class="max-w-[1280px] mx-auto px-6 lg:px-8 py-12 hidden">
-      <div class="flex items-end justify-between mb-8 gap-6 flex-wrap">
-        <div>
-          <p class="eyebrow"><span class="rule-gold-tiny"></span><span data-en="Notice Board" data-am="የማስታወቂያ ሰሌዳ">Notice Board</span><span class="rule-gold-tiny"></span></p>
-          <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4" data-en="Announcements." data-am="ማስታወቂያዎች።">Announcements.</h2>
+    <!-- A real notice board: deep blue backing, notes pinned to it. -->
+    <section id="liveAnnouncementsSection" class="pinboard relative hidden">
+      <div class="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20 relative">
+        <div class="mb-10">
+          <p class="eyebrow text-gold-warm"><span class="rule-gold-tiny"></span><span data-en="Notice Board" data-am="የማስታወቂያ ሰሌዳ">Notice Board</span><span class="rule-gold-tiny"></span></p>
+          <h2 class="font-display text-3xl lg:text-4xl text-surface mt-4" data-en="Announcements." data-am="ማስታወቂያዎች።">Announcements.</h2>
         </div>
+        <div id="liveAnnouncementsGrid" class="grid md:grid-cols-2 gap-7 lg:gap-8"></div>
       </div>
-      <div id="liveAnnouncementsGrid" class="grid md:grid-cols-2 gap-4"></div>
     </section>
 
     <!-- ============ LATEST POSTS ============ -->
@@ -1189,10 +1218,28 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       '</article>';
     }
 
+    // A notice is a note pinned to the board. Pinned ones are floated to the
+    // front by the API and say so, so the important one cannot be missed.
     function announcementCardHtml(n) {
-      return '<article class="bg-surface rounded-lg border border-outline-soft/40 p-5">' +
-        '<h3 class="font-display text-base text-ink mb-2">'+escHtml(n.title || '')+'</h3>' +
-        '<p class="text-sm text-ink-soft whitespace-pre-wrap">'+escHtml(n.message || '')+'</p>' +
+      // Carry both languages as data attributes rather than picking one at
+      // render time, so _applyLang swaps them on toggle like everything else.
+      var tEn = n.title || n.title_am || '';
+      var tAm = n.title_am || n.title || '';
+      var bEn = n.message || n.message_am || '';
+      var bAm = n.message_am || n.message || '';
+      var pinned = String(n.is_pinned) === '1';
+      var flag = pinned
+        ? '<span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widestest text-gold mb-2">' +
+            '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 10.8V4h6v6.8l2 3.2H7z"/></svg>' +
+            '<span data-en="Pinned" data-am="ተሰክቷል">Pinned</span>' +
+          '</span><br />'
+        : '';
+      return '<article class="notice relative bg-surface rounded-sm border border-outline-soft/40 shadow-lg px-6 pt-8 pb-6' +
+             (pinned ? ' ring-1 ring-gold/40' : '') + '">' +
+        '<span class="notice-pin" aria-hidden="true"></span>' +
+        flag +
+        '<h3 class="font-display text-lg text-primary mb-2 leading-snug" data-en="'+escAttr(tEn)+'" data-am="'+escAttr(tAm)+'">'+escHtml(tEn)+'</h3>' +
+        '<p class="text-sm text-ink-soft leading-relaxed whitespace-pre-wrap" data-en="'+escAttr(bEn)+'" data-am="'+escAttr(bAm)+'">'+escHtml(bEn)+'</p>' +
       '</article>';
     }
 
@@ -1292,6 +1339,10 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         if (!rows.length) return;
         document.getElementById('liveAnnouncementsSection').classList.remove('hidden');
         document.getElementById('liveAnnouncementsGrid').innerHTML = rows.map(announcementCardHtml).join('');
+        // The cards are built with the English half showing and both languages
+        // on data attributes, so the active language has to be re-applied to
+        // the freshly inserted nodes.
+        if (window._applyLang) window._applyLang(window._currentLang || 'am');
       }).catch(function () {});
 
       fetch('/api/posts/index.php?limit=3').then(function (r) { return r.json(); }).then(function (d) {

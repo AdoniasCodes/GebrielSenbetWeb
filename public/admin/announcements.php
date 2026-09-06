@@ -21,13 +21,23 @@ require __DIR__ . '/_partials/page-shell.php';
       <h2 class="font-display text-lg text-ink" data-en="Compose announcement" data-am="ማስታወቂያ ጻፍ">Compose announcement</h2>
     </header>
     <form id="composeForm" class="p-6 space-y-4">
-      <div>
-        <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Title</label>
-        <input id="f_title" class="input-field" required maxlength="200" />
-      </div>
-      <div>
-        <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Message</label>
-        <textarea id="f_message" class="input-field" rows="6" required></textarea>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Title (English)</label>
+          <input id="f_title" class="input-field" required maxlength="200" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">ርዕስ (አማርኛ)</label>
+          <input id="f_title_am" class="input-field ethiopic" maxlength="200" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">Message (English)</label>
+          <textarea id="f_message" class="input-field" rows="6" required></textarea>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-widestest text-ink-soft mb-2">መልእክት (አማርኛ)</label>
+          <textarea id="f_message_am" class="input-field ethiopic" rows="6"></textarea>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -45,10 +55,16 @@ require __DIR__ . '/_partials/page-shell.php';
         </div>
       </div>
 
-      <label class="inline-flex items-center gap-2 mt-1">
-        <input id="f_public" type="checkbox" class="w-4 h-4" />
-        <span class="text-sm text-ink-soft" data-en="Also show on the public site" data-am="በይፋዊ ጣቢያ ላይም አሳይ">Also show on the public site</span>
-      </label>
+      <div class="flex flex-col gap-2 mt-1">
+        <label class="inline-flex items-center gap-2">
+          <input id="f_public" type="checkbox" class="w-4 h-4" />
+          <span class="text-sm text-ink-soft" data-en="Also show on the public site" data-am="በይፋዊ ጣቢያ ላይም አሳይ">Also show on the public site</span>
+        </label>
+        <label class="inline-flex items-center gap-2">
+          <input id="f_pinned" type="checkbox" class="w-4 h-4" />
+          <span class="text-sm text-ink-soft" data-en="Pin to the top of the notice board" data-am="በማስታወቂያ ሰሌዳው ላይ ሰካ">Pin to the top of the notice board</span>
+        </label>
+      </div>
 
       <div class="flex items-center gap-3">
         <button type="submit" class="btn-primary">Send</button>
@@ -123,7 +139,8 @@ require __DIR__ . '/_partials/page-shell.php';
       var ul = document.getElementById('listWrap');
       if (!rows.length) { ul.innerHTML = '<li class="px-6 py-12 text-center text-ink-soft text-sm">No announcements yet.</li>'; return; }
       ul.innerHTML = rows.map(function (n) {
-        var publicPill = n.is_public == 1 ? '<span class="pill pill-active text-[10px] ml-2">Public</span>' : '';
+        var publicPill = (n.is_public == 1 ? '<span class="pill pill-active text-[10px] ml-2">Public</span>' : '')
+        + (n.is_pinned == 1 ? '<span class="pill pill-draft text-[10px] ml-2">Pinned</span>' : '');
         return '<li class="px-6 py-4">' +
           '<div class="flex items-start justify-between gap-3 mb-1">' +
             '<p class="font-medium leading-tight">'+escHtml(n.title)+publicPill+'</p>' +
@@ -157,10 +174,13 @@ require __DIR__ . '/_partials/page-shell.php';
     var msg = document.getElementById('msg'); msg.className = 'text-sm hidden';
     var body = {
       title: document.getElementById('f_title').value.trim(),
+      title_am: document.getElementById('f_title_am').value.trim() || null,
       message: document.getElementById('f_message').value,
+      message_am: document.getElementById('f_message_am').value || null,
       target_type: document.getElementById('f_target').value,
       target_payload: buildPayload(),
       is_public: document.getElementById('f_public').checked ? 1 : 0,
+      is_pinned: document.getElementById('f_pinned').checked ? 1 : 0,
     };
     try {
       await gs.api('/api/admin/announcements/index.php', { method:'POST', body: JSON.stringify(body) });

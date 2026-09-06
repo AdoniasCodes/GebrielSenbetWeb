@@ -25,7 +25,7 @@ if ($method === 'GET') {
     // read_count comes from notification_reads (the Phase 2.1 source of truth).
     // This used to return the legacy notifications.read_by JSON array, which no
     // caller consumed and which migration 028 drops.
-    $sql = "SELECT n.id, n.title, n.message, n.target_type, n.target_payload, n.is_public,
+    $sql = "SELECT n.id, n.title, n.title_am, n.message, n.message_am, n.target_type, n.target_payload, n.is_public, n.is_pinned,
                    n.is_archived, n.created_at, n.updated_at,
                    u.email AS sender_email, r.name AS sender_role,
                    (SELECT COUNT(*) FROM notification_reads nr WHERE nr.notification_id = n.id) AS read_count
@@ -50,6 +50,11 @@ if ($method === 'POST') {
     $tgt     = trim($input['target_type'] ?? '');
     $payload = $input['target_payload'] ?? null;
     $isPublic = !empty($input['is_public']) ? 1 : 0;
+    $isPinned = !empty($input['is_pinned']) ? 1 : 0;
+    $titleAm   = isset($input['title_am']) && trim((string)$input['title_am']) !== ''
+        ? mb_substr(trim((string)$input['title_am']), 0, 200) : null;
+    $messageAm = isset($input['message_am']) && trim((string)$input['message_am']) !== ''
+        ? (string)$input['message_am'] : null;
 
     if ($title === '' || $message === '') Response::error('title and message are required', 422);
     if ($payload !== null && !is_array($payload)) Response::error('target_payload must be an object', 422);
@@ -74,7 +79,13 @@ if ($method === 'POST') {
     } catch (NotifyError $e) {
         Response::error($e->getMessage(), 422);
     }
-    \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt, 'is_public' => $isPublic]);
+    // notify() owns the base insert and its shape validation. The bilingual
+    // half and the pin flag are a straight follow-up update on the row it just
+    // created, so notify() keeps its single-choke-point role.
+    $pdo->prepare('UPDATE notifications SET title_am=?, message_am=?, is_pinned=? WHERE id=?')
+        ->execute([$titleAm, $messageAm, $isPinned, $newId]);
+
+    \App\Audit::log('announcement.send', 'notification', $newId, ['target_type' => $tgt, 'is_public' => $isPublic, 'is_pinned' => $isPinned]);
     Response::json(['ok' => true, 'id' => $newId]);
 }
 

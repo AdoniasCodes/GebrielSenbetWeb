@@ -1,5 +1,5 @@
 <?php
-// api/announcements/index.php — public read-only feed of announcements
+// api/announcements/index.php: public read-only feed of announcements
 // flagged as is_public by an admin. No auth required.
 
 use App\Database;
@@ -14,10 +14,10 @@ $config = app_config();
 $db = new Database($config['db']);
 $pdo = $db->pdo();
 
-$sql = "SELECT id, title, message, created_at
+$sql = "SELECT id, title, title_am, message, message_am, is_pinned, created_at
         FROM notifications
         WHERE is_archived = 0 AND is_public = 1
-        ORDER BY created_at DESC
+        ORDER BY is_pinned DESC, created_at DESC
         LIMIT $limit";
 $rows = $pdo->query($sql)->fetchAll();
 
