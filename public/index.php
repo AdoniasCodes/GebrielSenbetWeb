@@ -671,56 +671,68 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-outline-soft/30 rounded-lg overflow-hidden border border-outline-soft/40">
         <?php
+          // The eight core academic subjects. Eight fills the four-column grid
+          // exactly, which is why there is no longer a blank trailing cell.
           $features = [
-            [
-              'en_title' => 'Geez Language',
-              'am_title' => 'ግዕዝ',
-              'en_desc'  => 'The root language of our liturgy and heritage.',
-              'am_desc'  => 'የአምልኮታችን እና የቅርሳችን መሠረት ቋንቋ።',
-              'svg'      => '<path d="M4 19.5V6.2A2.2 2.2 0 0 1 6.2 4H20v15.5M4 19.5A2.2 2.2 0 0 0 6.2 21.7H20v-2.2M4 19.5H20"/>',
-            ],
-            [
-              'en_title' => 'History of Orthodoxy & EOTC',
-              'am_title' => 'የቤተክርስቲያን ታሪክ',
-              'en_desc'  => 'Understanding the journey of Christianity globally and locally in Ethiopia.',
-              'am_desc'  => 'የክርስትናን ጉዞ በዓለም አቀፍና በኢትዮጵያ ደረጃ መረዳት።',
-              'svg'      => '<path d="M4 19.5A2.2 2.2 0 0 1 6.2 17.3H20M4 19.5V4h14a2 2 0 0 1 2 2v13.5M8 8h8M8 12h5"/>',
-            ],
             [
               'en_title' => 'Foundations of Faith',
               'am_title' => 'መሠረተ ሃይማኖት',
-              'en_desc'  => 'Learning the core doctrines and pillars our faith rests on.',
-              'am_desc'  => 'እምነታችን የቆመባቸውን መሠረታዊ ትምህርቶችና ምሰሶዎች መማር።',
+              'en_desc'  => 'The core doctrines and pillars our faith rests on.',
+              'am_desc'  => 'እምነታችን የቆመባቸው መሠረታዊ ትምህርቶችና ምሰሶዎች።',
               'svg'      => '<path d="M12 2.5l2.4 6.9H21l-5.6 4.3 2.1 7.1L12 16.6l-5.5 4.2 2.1-7.1L3 9.4h6.6z"/>',
+            ],
+            [
+              'en_title' => 'Holy Scriptures',
+              'am_title' => 'ቅዱሳት መጻሕፍት',
+              'en_desc'  => 'Reading and interpreting the Holy Books in the mind of the Church.',
+              'am_desc'  => 'ቅዱሳት መጻሕፍትን በቤተ ክርስቲያን አረዳድ ማንበብና መተርጎም።',
+              'svg'      => '<path d="M4 19.5A2.2 2.2 0 0 1 6.2 17.3H20M4 19.5V4h14a2 2 0 0 1 2 2v13.5M8 8h8M8 12h5"/>',
+            ],
+            [
+              'en_title' => 'Order of the Church',
+              'am_title' => 'ሥርዓተ ቤተክርስቲያን',
+              'en_desc'  => 'The order, rites, and canons by which the church lives.',
+              'am_desc'  => 'ቤተ ክርስቲያን የምትመራበት ሥርዓት፣ ሥነ ሥርዓትና ደንብ።',
+              'svg'      => '<path d="M12 2.5v6M4 21V11l8-4 8 4v10M7 21v-6h3v6M14 21v-6h3v6"/>',
+              // The seven sacraments are the rites of the church, so the
+              // disclosure lives on this subject now that ምሥጢራተ ቤተክርስቲያን is
+              // no longer a subject of its own.
+              'sacraments' => true,
+            ],
+            [
+              'en_title' => 'History of the Church',
+              'am_title' => 'የቤተክርስቲያን ታሪክ',
+              'en_desc'  => 'The journey of Christianity worldwide and here in Ethiopia.',
+              'am_desc'  => 'የክርስትና ጉዞ በዓለምና በኢትዮጵያ።',
+              'svg'      => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 1.9"/>',
             ],
             [
               'en_title' => 'Christian Ethics',
               'am_title' => 'ክርስቲያናዊ ሥነ ምግባር',
-              'en_desc'  => 'How the faith is lived out in daily conduct, character, and choices.',
-              'am_desc'  => 'እምነት በዕለት ተዕለት ኑሮ፣ በጠባይና በምርጫ እንዴት እንደሚገለጥ።',
-              'svg'      => '<circle cx="12" cy="8" r="3.2"/><path d="M12 2.5a5.7 5.7 0 0 1 0 0M5 21c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/>',
+              'en_desc'  => 'How the faith is lived out in daily conduct and character.',
+              'am_desc'  => 'እምነት በዕለት ተዕለት ኑሮና በጠባይ እንዴት እንደሚገለጥ።',
+              'svg'      => '<circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-3.6 3.1-6.5 7-6.5s7 2.9 7 6.5"/>',
             ],
             [
-              'en_title' => 'Ecclesiology & Liturgical Canons',
-              'am_title' => 'ስርዓተ ቤተክርስቲያን',
-              'en_desc'  => 'The order, rites, and administrative canons of the church.',
-              'am_desc'  => 'የቤተክርስቲያኒቱ ሥርዓት፣ ሥነ ሥርዓቶች እና የአስተዳደር ደንቦች።',
-              'svg'      => '<path d="M12 2.5v6M4 21V11l8-4 8 4v10M7 21v-6h3v6M14 21v-6h3v6"/>',
+              'en_title' => 'Geez',
+              'am_title' => 'ግእዝ',
+              'en_desc'  => 'The root language of our liturgy and our written heritage.',
+              'am_desc'  => 'የአምልኮታችንና የጽሑፍ ቅርሳችን መሠረት ቋንቋ።',
+              'svg'      => '<path d="M4 19.5V6.2A2.2 2.2 0 0 1 6.2 4H20v15.5M4 19.5A2.2 2.2 0 0 0 6.2 21.7H20v-2.2M4 19.5H20"/>',
             ],
             [
-              'en_title' => 'Bible Study',
-              'am_title' => 'የመጽሐፍ ቅዱስ ጥናት',
-              'en_desc'  => 'Reading and interpreting the Holy Scriptures in the mind of the Church.',
-              'am_desc'  => 'ቅዱሳት መጻሕፍትን በቤተ ክርስቲያን አረዳድ ማንበብና መተርጎም።',
-              'svg'      => '<path d="M12 20.5s-7.5-4.7-7.5-10.3A4.2 4.2 0 0 1 12 7.4a4.2 4.2 0 0 1 7.5 2.8c0 5.6-7.5 10.3-7.5 10.3z"/>',
+              'en_title' => 'Zema (Sacred Chant)',
+              'am_title' => 'ዜማ',
+              'en_desc'  => 'The chant of the church, and the instruments that carry it.',
+              'am_desc'  => 'የቤተ ክርስቲያን ዜማና የሚያጅቡት የዜማ መሳሪያዎች።',
+              'svg'      => '<path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>',
             ],
             [
-              'en_title' => 'Mysteries of the Church',
-              'am_title' => 'ምሥጢራተ ቤተክርስቲያን',
-              'en_desc'  => 'The seven Holy Sacraments through which the grace of the Holy Spirit is received.',
-              'am_desc'  => 'የመንፈስ ቅዱስ ጸጋ የሚሰጥባቸው ሰባቱ ቅዱሳት ምሥጢራት።',
-              'svg'      => '<path d="M12 2.5v19M6.5 6.5h11"/>',
-              'sacraments' => true,
+              'en_title' => 'Sacred Arts',
+              'am_title' => 'ሥነ ጥበባት',
+              'en_desc'  => 'Iconography, poetry, and the craft traditions of the church.',
+              'am_desc'  => 'ሥዕለ አድኅኖ፣ ቅኔና የቤተ ክርስቲያን የጥበብ ትውፊቶች።',
+              'svg'      => '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2.5a9.5 9.5 0 1 0 0 19c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6h1.9a5.3 5.3 0 0 0 5.3-5.3c0-4.7-4.3-8.3-9.5-8.3z"/>',
             ],
           ];
           foreach ($features as $f):
