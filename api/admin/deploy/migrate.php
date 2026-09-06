@@ -72,6 +72,7 @@ function _migration_artifact_present(\PDO $pdo, string $filename): ?bool {
         '028_notification_column_debris.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_028_applied' LIMIT 1",
         '029_registration_form_renames.sql' => "SELECT 1 FROM app_settings WHERE setting_key='migration_029_applied' LIMIT 1",
         '030_event_details.sql'            => "SELECT 1 FROM app_settings WHERE setting_key='migration_030_applied' LIMIT 1",
+        '031_seed_real_events.sql'         => "SELECT 1 FROM app_settings WHERE setting_key='migration_031_applied' LIMIT 1",
     ];
     if (!isset($checks[$filename])) return null;
     try {

@@ -642,8 +642,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <div class="grid md:grid-cols-2 gap-6">
           <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group md:col-span-2 md:grid md:grid-cols-2 md:items-stretch">
             <div class="h-48 md:h-full relative overflow-hidden min-h-[13rem]">
-              <img src="/images/begena-ensemble.w800.webp" width="800" height="534" loading="lazy" decoding="async"
-                   alt="Long-standing members of the Sunday school seated together in white robes"
+              <img src="/images/dsc-1689.w800.webp" width="800" height="533" loading="lazy" decoding="async"
+                   alt="Adult members of the Sunday school in ceremonial robes and patterned caps"
                    class="absolute inset-0 w-full h-full object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-105" />
               <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-surface"></div>
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 03" data-am="ኮርስ 03">Track 03</span>
@@ -1031,9 +1031,16 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         <h2 class="font-display text-3xl lg:text-4xl text-primary mt-4 leading-tight" data-en="Register for a program." data-am="ለፕሮግራም ይመዝገቡ።">Register for a program.</h2>
       </div>
 
-      <div id="regTabs" class="flex flex-wrap gap-3 mb-8" role="tablist"></div>
+      <div class="max-w-2xl">
+        <label for="regSelect" class="block text-sm font-medium text-ink mb-2" data-en="Choose a program" data-am="ፕሮግራም ይምረጡ">Choose a program</label>
+        <div class="relative">
+          <select id="regSelect" class="w-full appearance-none rounded-lg border border-outline-soft/60 bg-surface pl-4 pr-11 py-3.5 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"></select>
+          <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-outline" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <p id="regStatusLine" class="hidden mt-3"></p>
+      </div>
 
-      <div id="regFormHost" class="max-w-2xl"></div>
+      <div id="regFormHost" class="max-w-2xl mt-8"></div>
     </section>
 
     <!-- ============ FOLLOW US / SOCIAL ============ -->
@@ -1469,16 +1476,23 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
     // Frozen contract, see spec. Hides gracefully if the backend isn't deployed yet.
     (function () {
       var section = document.getElementById('register');
-      var tabsHost = document.getElementById('regTabs');
+      var selectHost = document.getElementById('regSelect');
+      var statusLine = document.getElementById('regStatusLine');
       var formHost = document.getElementById('regFormHost');
       var modal = document.getElementById('regModal');
       var modalCard = document.getElementById('regModalCard');
       var modalMsg = document.getElementById('regModalMsg');
       var modalOk = document.getElementById('regModalOk');
-      if (!section || !tabsHost || !formHost || !modal) return;
+      if (!section || !selectHost || !statusLine || !formHost || !modal) return;
 
       var forms = [];
       var activeIndex = -1;
+
+      // One listener on the select itself. renderTabs() only swaps <option>
+      // nodes, so the element (and this handler) survives every re-render.
+      selectHost.addEventListener('change', function () {
+        selectForm(parseInt(selectHost.value, 10));
+      });
       var pendingSlug = null;
       var lastSuccess = false;
 
@@ -1526,20 +1540,31 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         });
       }
 
+      // The form is no longer dumped onto the page. A program is chosen from
+      // this dropdown first, and only then is its form built.
       function renderTabs() {
-        tabsHost.innerHTML = forms.map(function (f, i) {
-          var m = statusMeta(f.status);
-          var active = i === activeIndex;
-          return '<button type="button" role="tab" aria-selected="' + (active ? 'true' : 'false') + '" data-idx="' + i + '" ' +
-            'class="reg-tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium transition-colors ' +
-            (active ? 'bg-primary text-surface border-primary' : 'bg-surface text-ink-soft border-outline-soft/50 hover:border-primary/40') + '">' +
-            '<span>' + escHtml(t(f.title_en, f.title_am)) + '</span>' +
-            '<span class="text-[10px] font-semibold uppercase tracking-widestest px-2 py-0.5 rounded-full ' + (active ? 'bg-surface/20 text-surface' : m.cls) + '">' + escHtml(t(m.en, m.am)) + '</span>' +
-            '</button>';
-        }).join('');
-        Array.prototype.slice.call(tabsHost.querySelectorAll('.reg-tab-btn')).forEach(function (btn) {
-          btn.addEventListener('click', function () { selectForm(parseInt(btn.getAttribute('data-idx'), 10)); });
-        });
+        var prompt = t('Select a program…', 'ፕሮግራም ይምረጡ…');
+        selectHost.innerHTML =
+          '<option value="-1"' + (activeIndex < 0 ? ' selected' : '') + '>' + escHtml(prompt) + '</option>' +
+          forms.map(function (f, i) {
+            var m = statusMeta(f.status);
+            return '<option value="' + i + '"' + (i === activeIndex ? ' selected' : '') + '>' +
+              escHtml(t(f.title_en, f.title_am)) + '  (' + escHtml(t(m.en, m.am)) + ')' +
+            '</option>';
+          }).join('');
+
+        // Status of the chosen program, shown as a pill beneath the dropdown.
+        if (activeIndex >= 0 && forms[activeIndex]) {
+          var mm = statusMeta(forms[activeIndex].status);
+          statusLine.className = 'mt-3';
+          statusLine.innerHTML =
+            '<span class="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widestest px-2.5 py-1 rounded-full ' + mm.cls + '">' +
+              escHtml(t(mm.en, mm.am)) +
+            '</span>';
+        } else {
+          statusLine.className = 'hidden mt-3';
+          statusLine.innerHTML = '';
+        }
       }
 
       function fieldInputName(f) { return 'field_' + f.id; }
@@ -1586,8 +1611,20 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
           '</div>';
       }
 
+      function renderChoosePrompt() {
+        formHost.innerHTML = '<div class="rounded-lg border border-dashed border-outline-soft/60 bg-surface-low p-8 text-center">' +
+          '<svg class="mx-auto mb-3 text-outline" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg>' +
+          '<p class="text-sm text-ink-soft">' + escHtml(t('Choose a program above to open its registration form.', 'የምዝገባ ቅጹን ለመክፈት ከላይ ፕሮግራም ይምረጡ።')) + '</p>' +
+        '</div>';
+      }
+
       function selectForm(i) {
-        if (i < 0 || i >= forms.length) return;
+        if (i < 0 || i >= forms.length) {
+          activeIndex = -1;
+          renderTabs();
+          renderChoosePrompt();
+          return;
+        }
         activeIndex = i;
         renderTabs();
         var f = forms[i];
@@ -1720,9 +1757,8 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
       });
 
       window.__regRerenderPlaceholders = function () {
-        if (activeIndex < 0) return;
         renderTabs();
-        selectForm(activeIndex);
+        if (activeIndex < 0) renderChoosePrompt(); else selectForm(activeIndex);
         updateAnnounceBadges();
       };
 
@@ -1735,7 +1771,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
         section.classList.remove('hidden');
         updateAnnounceBadges();
         renderTabs();
-        if (pendingSlug) selectBySlug(pendingSlug); else selectForm(0);
+        // Deliberately do NOT preselect a form: the section should read as a
+        // chooser, not as an open form. A card click still jumps straight in.
+        if (pendingSlug) selectBySlug(pendingSlug); else { renderTabs(); renderChoosePrompt(); }
       }).catch(function () {
         section.classList.add('hidden');
       });
