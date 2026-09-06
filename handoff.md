@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-09-06 (migrations 019-028 applied on prod; 029 awaits one redeploy)
+**Last updated:** 2026-09-06 (019-029 applied on prod; landing refresh live; 022 checksum cleanup pending a deploy)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -10,10 +10,10 @@ This file is current state only.
 
 - **Code on prod is current** (commit `7d42048` pushed to main). The follow band, JSON-LD,
   and the YouTube feed endpoint all answer on mekaneselamss.com.
-- **Migrations 019-028 were applied on prod on 2026-09-06** (`failed: []`). The
-  registrations endpoint, the landing `#register` section and everything from Phase 2.1
-  through 3.4 are now live. Only 029 is outstanding, and only because the deploy predated
-  it; see "Next up". Code deploy and migrate remain two separate steps.
+- **Migrations 019-029 were all applied on prod on 2026-09-06.** The registrations
+  endpoint, the landing `#register` section and everything from Phase 2.1 through 3.4 are
+  live. Code deploy and migrate remain two separate steps, and doing them out of order is
+  what produced the 022 checksum note in "Next up".
 - **The deploy was dry-run for real on 2026-08-10** against a JetBackup dump of live
   `mekanefh_RealDb` (MariaDB 10.11.18, ~134 rows, migrations 001-018 applied). Two blockers
   were found and fixed first: 022's `CAST(x AS JSON)` backfill (invalid MariaDB, would have
@@ -64,26 +64,26 @@ This file is current state only.
 
 ## Next up
 
-**2026-09-06: migrations 019-028 are APPLIED ON PROD.** The run returned
-`failed: []`, and `GET /api/registrations/index.php` now answers 200 with the
-three forms (it had returned 500 since July). The long-standing "biggest open
-item" is closed.
+**2026-09-06: migrations 019-029 are all applied on prod and the landing refresh
+is live.** Verified against mekaneselamss.com: the three registration forms
+return 200 with the renamed titles (`የዜማ መሳሪያ ስልጠና ምዝገባ`,
+`የመንፈሳዊ ጉዞ ምዝገባ`), the static `#join` cards match, the page defaults to
+Amharic, and the new hero image is serving. The registrations endpoint had been
+500 since July; that is closed.
 
-**One step remains.** The deploy happened between the two commits, so prod is
-running `8a0ac82` (new hero image is live) but not `429bb4b`. That means 029 was
-not on disk when the runner went looking, and the registration card copy is
-still the old wording. To finish:
+**One cosmetic cleanup is pending a deploy.** The 2026-09-06 run reports
+`022_notification_reads.sql -> checksum_mismatch_already_applied`. The schema is
+correct; only the tracker checksum disagrees, because 022 was edited (an em dash
+removed from a comment) after prod had already applied the previous copy. Commit
+`af4157a` restores 022 byte-for-byte to what prod applied, which clears it with
+no database write. To finish: Update from Remote + Deploy HEAD Commit, then run
+the migrate endpoint once more. Expect `applied: [], failed: []`.
 
-1. cPanel > Git Version Control > Update from Remote, then Deploy HEAD Commit
-   (target `429bb4b` or later).
-2. Re-run the migrate endpoint. Expect `applied: ["029_registration_form_renames.sql"]`
-   and everything else skipped. The runner is idempotent, so re-running is safe.
+Until that deploy lands, a `failed` entry for 022 in the migrate output is
+expected and harmless. Do not "fix" it by editing 022 again.
 
-After that, the two renamed forms read `የዜማ መሳሪያ ስልጠና ምዝገባ` and
-`የመንፈሳዊ ጉዞ ምዝገባ` in both the DB and the static `#join` cards.
-
-Post-migration smoke, all 200 on prod: `registrations`, `announcements`,
-`events`, `posts`, `videos`, `terms`, `auth/csrf`, `social/youtube`.
+**Lesson recorded in instructions.md:** a migration is safe to edit only while no
+deploy or migrate is pending on it, not merely while it is unapplied on prod.
 
 ## Open decisions / next work
 
