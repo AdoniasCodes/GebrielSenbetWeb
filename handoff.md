@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-09-06 (landing copy pass + events system pushed; prod needs deploy, migrate 030, seed events)
+**Last updated:** 2026-09-06 (register dropdown + events migration pushed; prod needs deploy then migrate 031)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -64,29 +64,33 @@ This file is current state only.
 
 ## Next up
 
-**Deploy, then migrate, then seed the events.** Commit `e0a19b2` adds the landing
-copy pass, the programs restructure, the sacraments panel and the events system.
-It needs three steps on prod, in this order:
+**Two steps on prod, both from Eyoel's own terminal.** Commit `d2aafb5`.
 
-1. cPanel > Update from Remote + Deploy HEAD Commit. This also picks up `af4157a`,
-   which clears the 022 checksum mismatch the last migrate run reported.
-2. Run the migrate endpoint. Expect `applied: ["030_event_details.sql"]` and
-   `failed: []`. If 022 still appears in `failed`, the deploy did not land.
-3. In cPanel Terminal, from the repo root: `php scripts/seed_events.php`
-   Adds the general assembly and the feast of Saint Raphael as ordinary event
-   rows, editable afterwards in admin > Events. Idempotent, and `--dry-run`
-   previews. Requires 030, and refuses to run without it.
+1. cPanel > Update from Remote + Deploy HEAD Commit.
+2. Run the migrate endpoint. Expect
+   `applied: ["031_seed_real_events.sql"]` and `failed: []`.
 
-**Known:** the general assembly is dated 6 September 2026, so it is already past
-and the public feed (which filters on `end_datetime >= NOW()`) will not show it.
-It is stored and editable; change the date in admin if it should appear.
+031 seeds the general assembly and the feast of Saint Raphael. **This host has
+no cPanel Terminal**, so `scripts/seed_events.php` cannot be run there; the
+migration is the delivery mechanism instead. Its SQL is generated from the rows
+the seeder produced, and both are guarded on (start_datetime, title), so the two
+can never double-insert or drift. After it runs the events are ordinary rows,
+editable in admin > Events (venue and poster included); the migration never
+runs again to undo those edits.
 
-**Still open, deliberately not done:** 164 em dashes remain in the admin, staff,
-teacher, student and parent portals, nearly all of them loading or empty-value
-placeholders (the character used as a loading or empty-value glyph). Only
-`public/admin/events.php` was cleaned, since
-that file was being edited anyway. The rest is a mechanical sweep worth doing as
-its own commit rather than buried in a feature change.
+**Known:** the general assembly is dated 6 September 2026, so it is past and the
+public feed (`end_datetime >= NOW()`) will not show it. Only the Saint Raphael
+feast will appear. Change the date in admin if it should be visible.
+
+**Do not add production admin credentials to any script.** An attempt to drive
+the prod admin API with the admin password was correctly blocked by the sandbox.
+Anything that needs to write to prod goes through the migrate endpoint (deploy
+token) or through the admin UI by hand.
+
+**Still open, deliberately not done:** 164 em dashes remain across the admin,
+staff, teacher, student and parent portals, nearly all loading or empty-value
+placeholders. Only `public/admin/events.php` was cleaned, since it was being
+edited anyway. Worth a dedicated mechanical commit.
 
 ## Open decisions / next work
 
