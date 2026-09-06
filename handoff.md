@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-09-06 (register dropdown + events migration pushed; prod needs deploy then migrate 031)
+**Last updated:** 2026-09-06 (Ethiopian clock fixed, registration cards+modal, eight subjects, overview deck; prod needs a deploy only)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -64,33 +64,19 @@ This file is current state only.
 
 ## Next up
 
-**Two steps on prod, both from Eyoel's own terminal.** Commit `d2aafb5`.
+**One step: deploy.** Everything since the last migrate is front-end only, so
+there is no migration to run. cPanel > Update from Remote + Deploy HEAD Commit.
 
-1. cPanel > Update from Remote + Deploy HEAD Commit.
-2. Run the migrate endpoint. Expect
-   `applied: ["031_seed_real_events.sql"]` and `failed: []`.
+Prod is on migrations 001-031 with `failed: []`. Nothing outstanding there.
 
-031 seeds the general assembly and the feast of Saint Raphael. **This host has
-no cPanel Terminal**, so `scripts/seed_events.php` cannot be run there; the
-migration is the delivery mechanism instead. Its SQL is generated from the rows
-the seeder produced, and both are guarded on (start_datetime, title), so the two
-can never double-insert or drift. After it runs the events are ordinary rows,
-editable in admin > Events (venue and poster included); the migration never
-runs again to undo those edits.
+## Open question, needs Eyoel
 
-**Known:** the general assembly is dated 6 September 2026, so it is past and the
-public feed (`end_datetime >= NOW()`) will not show it. Only the Saint Raphael
-feast will appear. Change the date in admin if it should be visible.
-
-**Do not add production admin credentials to any script.** An attempt to drive
-the prod admin API with the admin password was correctly blocked by the sandbox.
-Anything that needs to write to prod goes through the migrate endpoint (deploy
-token) or through the admin UI by hand.
-
-**Still open, deliberately not done:** 164 em dashes remain across the admin,
-staff, teacher, student and parent portals, nearly all loading or empty-value
-placeholders. Only `public/admin/events.php` was cleaned, since it was being
-edited anyway. Worth a dedicated mechanical commit.
+**Class levels disagree with the landing page.** The database holds 11 active
+`class_levels`, but the programmes section now advertises thirteen: ቂርቆስ plus
+grades 1 to 6 in the children's course, then 7 to 12 in the youth and adults'
+course. One of the two is wrong. Either the DB is missing ቂርቆስ and grade 12, or
+the page overstates. The system overview deck deliberately says "graded levels"
+with no number to avoid repeating a claim that might not hold.
 
 ## Open decisions / next work
 
@@ -100,6 +86,16 @@ edited anyway. Worth a dedicated mechanical commit.
   laid down for it).
 
 ## Recent work (full detail in the archive)
+
+- **2026-09-06** (commits `a0b2424`, `9496cc8`, `4de64c9`): fixed the Ethiopian
+  clock (Amharic was showing a Western clock with Amharic words on it; the hour
+  is now Western minus six with ጠዋት/ከሰዓት/ማታ/ሌሊት, owned by `ec-date.js` and so
+  corrected everywhere at once, see memory `project_ethiopian_time`);
+  registration moved from a dropdown back to cards with the form in a modal;
+  the eight core academic subjects replaced the old seven; the sacraments panel
+  was added then removed at Eyoel's request; the adults' course got its own
+  photograph. `docs/Mekane-Selam-System-Overview.pptx` is an eight-slide system
+  overview built from the codebase's real figures.
 
 - **2026-09-04** (commit `8a0ac82`, pushed, NOT yet deployed): landing page refresh.
   Amharic is now the default language site-wide (public pages plus admin/staff/
