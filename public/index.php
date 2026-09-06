@@ -611,9 +611,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 02" data-am="ኮርስ 02">Track 02</span>
             </div>
             <div class="p-7">
-              <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth &amp; Adults&rsquo; Course" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adults&rsquo; Course</h3>
+              <h3 class="font-display text-2xl text-primary mb-1" data-en="Youth Course" data-am="የወጣቶች ኮርስ">Youth Course</h3>
               <p class="text-sm text-outline mb-5" data-en="Grade 7 &rarr; Grade 12" data-am="7ኛ ክፍል &rarr; 12ኛ ክፍል">Grade 7 &rarr; Grade 12</p>
-              <p class="text-ink-soft leading-relaxed mb-6" data-en="Six graded years of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike." data-am="ስድስት የክፍል ደረጃዎችን የያዘ ትምህርት፣ በአማርኛ እና በትግርኛ የሚሰጥ፣ ለወጣቶች፣ ለወላጆች እና ለአረጋውያን።">Six graded years of formation, taught in Amharic and Tigrinya, for youth, parents, and elders alike.</p>
+              <p class="text-ink-soft leading-relaxed mb-6" data-en="Six graded years of formation, taught in Amharic and Tigrinya, for the young people of the parish." data-am="ስድስት የክፍል ደረጃዎችን የያዘ ትምህርት፣ በአማርኛ እና በትግርኛ የሚሰጥ፣ ለቤተ ክርስቲያኒቱ ወጣቶች።">Six graded years of formation, taught in Amharic and Tigrinya, for the young people of the parish.</p>
               <div class="flex flex-wrap gap-1.5 mb-6">
                 <?php
                   $youth_levels_en = ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'];
@@ -1090,7 +1090,7 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
           <h4 class="text-[11px] font-semibold uppercase tracking-widestest text-gold mb-4" data-en="Programs" data-am="የትምህርት መርሃግብሮች">Programs</h4>
           <ul class="space-y-2.5 text-sm text-ink-soft">
             <li><a href="#programs" class="hover:text-primary transition-colors" data-en="Children's Track" data-am="የልጆች ኮርስ">Children's Track</a></li>
-            <li><a href="#programs" class="hover:text-primary transition-colors" data-en="Youth &amp; Adult Track" data-am="የወጣቶች እና አዋቂዎች ኮርስ">Youth &amp; Adult Track</a></li>
+            <li><a href="#programs" class="hover:text-primary transition-colors" data-en="Youth Course" data-am="የወጣቶች ኮርስ">Youth Course</a></li>
             <li><a href="#calendar" class="hover:text-primary transition-colors" data-en="Academic calendar" data-am="የትምህርት የቀን መቁጠሪያ">Academic calendar</a></li>
             <li><a href="#" class="hover:text-primary transition-colors" data-en="Curriculum" data-am="ሥርዓተ ትምህርት">Curriculum</a></li>
           </ul>
