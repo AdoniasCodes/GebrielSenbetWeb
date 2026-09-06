@@ -604,9 +604,9 @@ $ttHandle   = $social['tiktok_handle']  ?? '';
 
           <article class="bg-surface rounded-lg overflow-hidden border border-outline-soft/40 hover:shadow-md transition-shadow group">
             <div class="h-48 relative overflow-hidden">
-              <img src="/images/track-youth.w800.webp" width="800" height="533" loading="lazy" decoding="async"
-                   alt="Young men of the choir playing kebero drums during a celebration"
-                   class="absolute inset-0 w-full h-full object-cover object-[50%_40%] transition-transform duration-700 group-hover:scale-105" />
+              <img src="/images/track-youth-class.w800.webp" width="800" height="534" loading="lazy" decoding="async"
+                   alt="A full class of youth seated in rows during a lesson in the new hall"
+                   class="absolute inset-0 w-full h-full object-cover object-[50%_45%] transition-transform duration-700 group-hover:scale-105" />
               <div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/15 to-transparent"></div>
               <span class="absolute top-5 left-6 text-[11px] font-semibold uppercase tracking-widestest text-gold-warm drop-shadow-md" data-en="Track 02" data-am="ኮርስ 02">Track 02</span>
             </div>
