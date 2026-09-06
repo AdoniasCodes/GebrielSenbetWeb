@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-09-04 (landing page refresh pushed; prod migrate still pending)
+**Last updated:** 2026-09-06 (migrations 019-028 applied on prod; 029 awaits one redeploy)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -10,11 +10,10 @@ This file is current state only.
 
 - **Code on prod is current** (commit `7d42048` pushed to main). The follow band, JSON-LD,
   and the YouTube feed endpoint all answer on mekaneselamss.com.
-- **Migrations 019-028 have never run on prod. This is the single biggest open item.**
-  Until the migrate step runs, `GET /api/registrations/index.php` returns 500, the landing
-  `#register` section and the public registration flow are broken, and nothing from
-  Phase 2.1 through 3.4 exists on the live site. Code deploy and migrate are two separate
-  steps; only the first has been done.
+- **Migrations 019-028 were applied on prod on 2026-09-06** (`failed: []`). The
+  registrations endpoint, the landing `#register` section and everything from Phase 2.1
+  through 3.4 are now live. Only 029 is outstanding, and only because the deploy predated
+  it; see "Next up". Code deploy and migrate remain two separate steps.
 - **The deploy was dry-run for real on 2026-08-10** against a JetBackup dump of live
   `mekanefh_RealDb` (MariaDB 10.11.18, ~134 rows, migrations 001-018 applied). Two blockers
   were found and fixed first: 022's `CAST(x AS JSON)` backfill (invalid MariaDB, would have
@@ -63,27 +62,28 @@ This file is current state only.
 - Housekeeping: a stray probe doc "zz-probe-delete-me" sits in Eyoel's Drive root; no MCP
   delete tool exists, so it needs deleting by hand.
 
-## Next up (agreed 2026-09-04)
+## Next up
 
-**Everything is written and tested; the only remaining step is on prod.**
-Migrations 019-029 are ready to apply. Verified this session: prod is still on
-001-018, local dev `eagleerq_gebriel` is on 029.
+**2026-09-06: migrations 019-028 are APPLIED ON PROD.** The run returned
+`failed: []`, and `GET /api/registrations/index.php` now answers 200 with the
+three forms (it had returned 500 since July). The long-standing "biggest open
+item" is closed.
 
-Two ways to apply them, both verified against a rebuilt 001-018 replica of prod:
+**One step remains.** The deploy happened between the two commits, so prod is
+running `8a0ac82` (new hero image is live) but not `429bb4b`. That means 029 was
+not on disk when the runner went looking, and the registration card copy is
+still the old wording. To finish:
 
-1. **Endpoint (preferred, one call applies all of 019-029):**
-   `curl -X POST -H "X-DEPLOY-TOKEN: <token>" https://mekaneselamss.com/api/admin/deploy/migrate.php`
-   Test result: applies exactly 019-029, `failed: []`, second run a clean no-op.
-2. **phpMyAdmin fallback:** import `db/bundles/019-029_combined.sql`. It carries
-   the `schema_migrations` rows with each file's real sha256, so the endpoint
-   afterwards reports `applied: [], failed: [], skipped: 29`.
+1. cPanel > Git Version Control > Update from Remote, then Deploy HEAD Commit
+   (target `429bb4b` or later).
+2. Re-run the migrate endpoint. Expect `applied: ["029_registration_form_renames.sql"]`
+   and everything else skipped. The runner is idempotent, so re-running is safe.
 
-Deploy the code first either way, since the runner reads the migration files the
-deploy copies up. Take a DB backup first (025 rebuilds three join tables, 026
-alters the registration tables).
+After that, the two renamed forms read `የዜማ መሳሪያ ስልጠና ምዝገባ` and
+`የመንፈሳዊ ጉዞ ምዝገባ` in both the DB and the static `#join` cards.
 
-Expected deltas on real prod data: `class_levels` 24 -> 11, `people` 15 -> 16,
-3 registration forms seeded by 019 then renamed by 029, 1 eligibility rule.
+Post-migration smoke, all 200 on prod: `registrations`, `announcements`,
+`events`, `posts`, `videos`, `terms`, `auth/csrf`, `social/youtube`.
 
 ## Open decisions / next work
 
