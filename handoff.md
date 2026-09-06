@@ -1,6 +1,6 @@
 # Handoff: GebrielSenbetWeb
 
-**Last updated:** 2026-09-06 (Ethiopian clock fixed, registration cards+modal, eight subjects, overview deck; prod needs a deploy only)
+**Last updated:** 2026-09-06 (pinned notice board + assembly notice; prod needs deploy then migrate 032)
 
 Task history from 2026-07-05 through 2026-08-09 (including the older per-release deploy
 checklists and superseded "Current phase" notes) lives in `archive/handoff-archive-2026-07.md`.
@@ -64,10 +64,16 @@ This file is current state only.
 
 ## Next up
 
-**One step: deploy.** Everything since the last migrate is front-end only, so
-there is no migration to run. cPanel > Update from Remote + Deploy HEAD Commit.
+**Deploy, then migrate.** Commit `3c0dc3c` and after.
 
-Prod is on migrations 001-031 with `failed: []`. Nothing outstanding there.
+1. cPanel > Update from Remote + Deploy HEAD Commit.
+2. Run the migrate endpoint. Expect `applied: ["032_announcement_pinboard.sql"]`
+   and `failed: []`.
+
+032 adds `title_am`, `message_am` and `is_pinned` to `notifications` and posts
+the general assembly notice, pinned. After it runs the notice is an ordinary
+row, editable and archivable in admin > Announcements; the composer now has
+Amharic title and message fields and a pin checkbox.
 
 ## Open question, needs Eyoel
 
