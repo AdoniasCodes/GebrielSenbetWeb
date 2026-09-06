@@ -83,7 +83,8 @@ It is stored and editable; change the date in admin if it should appear.
 
 **Still open, deliberately not done:** 164 em dashes remain in the admin, staff,
 teacher, student and parent portals, nearly all of them loading or empty-value
-placeholders (`—` as a glyph). Only `public/admin/events.php` was cleaned, since
+placeholders (the character used as a loading or empty-value glyph). Only
+`public/admin/events.php` was cleaned, since
 that file was being edited anyway. The rest is a mechanical sweep worth doing as
 its own commit rather than buried in a feature change.
 
