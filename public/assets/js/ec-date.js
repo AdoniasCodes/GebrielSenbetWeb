@@ -70,10 +70,29 @@
     };
   }
 
+  // Ethiopian clock. The day is counted from dawn, not from midnight: 6:00 AM
+  // is 12:00, 7:00 AM is 1:00, noon is 6:00, 6:00 PM is 12:00 again. So the
+  // hour is the Western hour minus six, wrapped into 1..12.
+  //
+  // Which half of the cycle you are in is carried by the day-part word rather
+  // than by AM/PM, and Amharic names four of them:
+  //   ጠዋት   morning    06:00-11:59  (ET 12:00-5:59)
+  //   ከሰዓት  afternoon  12:00-17:59  (ET  6:00-11:59)
+  //   ማታ    evening    18:00-23:59  (ET 12:00-5:59)
+  //   ሌሊት   late night 00:00-05:59  (ET  6:00-11:59)
+  function toEthiopianHour(h) {
+    var e = ((h - 6) % 12 + 12) % 12;
+    return e === 0 ? 12 : e;
+  }
+  function ethiopianDayPart(h) {
+    if (h >= 6 && h < 12) return 'ጠዋት';
+    if (h >= 12 && h < 18) return 'ከሰዓት';
+    if (h >= 18) return 'ማታ';
+    return 'ሌሊት';
+  }
   function fmt12hAm(h, m) {
-    var ap = h >= 12 ? 'ከሰዓት' : 'ጥዋት';
-    var hh = h % 12; if (hh === 0) hh = 12;
-    return hh + ':' + pad2(m) + ' ' + ap;
+    // Ethiopic wordspace is the conventional separator in written Amharic times.
+    return toEthiopianHour(h) + '\u1361' + pad2(m) + ' ' + ethiopianDayPart(h);
   }
   function fmt12hEn(h, m) {
     var ap = h >= 12 ? 'PM' : 'AM';
@@ -145,6 +164,10 @@
     formatEC: formatEC,
     formatGregorian: formatGregorian,
     fmtDate: fmtDate,
+    toEthiopianHour: toEthiopianHour,
+    ethiopianDayPart: ethiopianDayPart,
+    fmtTimeAm: fmt12hAm,
+    fmtTimeEn: fmt12hEn,
     rerenderIsoNodes: rerenderIsoNodes,
     installLangHook: installLangHook,
   };
